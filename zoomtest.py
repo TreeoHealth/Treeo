@@ -13,3 +13,6 @@ for user in user_list['users']:
     user_id = user['id']
     print(user_id)
     print(json.loads(client.meeting.list(user_id=user_id).content))
+
+
+
