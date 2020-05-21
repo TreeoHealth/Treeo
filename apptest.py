@@ -59,14 +59,21 @@ def check_login():
         print(e.response['Error']['Message'])
     return home()
 
-#register new user
-##response = table.put_item(
-##   Item={
-##        'username': username,
-##        'password': title
-##    }
-##)
+@app.route('/registerrender', methods=['POST'])
+def regPg():
+    return render_template('register.html')
+
+@app.route('/register', methods=['POST'])
+def new_register():
     
+#register new user
+    response = dynamo_client.put_item(TableName= 'YourTestTable',
+       Item={
+            'username': {"S":request.form['username']},
+            'password': {"S":request.form['password']}
+        }
+       )
+    return home()
     
 
 @app.route("/logout")
