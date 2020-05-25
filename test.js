@@ -9,7 +9,7 @@ const meetConfig = {
     role: 1 // 1 for host; 0 for attendee or webinar
 };
 function getSignature(meetConfig) {
-	fetch(`${YOUR_SIGNATURE_ENDPOINT}`, { //https://api.zoom.us/v2/users/cq7614/meetings
+	fetch(`${https://api.zoom.us/v1/}`, { //https://api.zoom.us/v2/users/cq7614/meetings
 			method: 'POST',
 			body: JSON.stringify({ meetingData: meetConfig })
 		})
@@ -34,13 +34,6 @@ function getSignature(meetConfig) {
 						}
 					})		
 				}
-			})
-		}
-		)
-		.then(response => 
-		{
-			ZoomMtg.join({
-				
 			})
 		}
 		)
