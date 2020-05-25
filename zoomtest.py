@@ -3,8 +3,8 @@ import json
 from zoomus import ZoomClient
 
 client = ZoomClient('oURxTkQkTL6USazzprxmuw', 'aN9ShhzoaxLX0BCJwLpjNOpAK1pd8lkVWkax')
-#key/client id?? + secret --> must be jwt app*
-#go to marketplace.zoom.us, sign in, hit manage, select the created project
+#key + secret --> must be jwt app*
+#go to marketplace.zoom.us, sign in, hit manage, select the created project -> those are the secret and key
 
 user_list_response = client.user.list()
 user_list = json.loads(user_list_response.content)

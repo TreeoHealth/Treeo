@@ -1,19 +1,21 @@
+import fetch from 'cross-fetch';
 const meetConfig = {
-    apiKey: '3239845720934223459'
+    apiKey: 'oURxTkQkTL6USazzprxmuw',
     meetingNumber: '123456789',
-    leaveUrl: 'https://yoursite.com/meetingEnd',
-    userName: 'Firstname Lastname',
-    userEmail: 'firstname.lastname@yoursite.com', // required for webinar
+    leaveUrl: 'https://gmail.com',
+    userName: 'Sophia Vaughn',
+    userEmail: 'cq7614@gmail.com', // required for webinar
     passWord: 'password', // if required
     role: 1 // 1 for host; 0 for attendee or webinar
 };
-getSignature(meetConfig) {
-	fetch(`${YOUR_SIGNATURE_ENDPOINT}`, {
+function getSignature(meetConfig) {
+	fetch(`${YOUR_SIGNATURE_ENDPOINT}`, { //https://api.zoom.us/v2/users/cq7614/meetings
 			method: 'POST',
 			body: JSON.stringify({ meetingData: meetConfig })
 		})
 		.then(result => result.text())
-		.then(response => {
+		.then(response => 
+		{
 			ZoomMtg.init({
 				leaveUrl: meetConfig.leaveUrl,
 				isSupportAV: true,
@@ -26,12 +28,22 @@ getSignature(meetConfig) {
 						// Email required for Webinars
 						userEmail: meetConfig.userEmail, 
 						// password optional; set by Host
-						password: meetConfig.passWord 
+						password: meetConfig.passWord, 
 						error(res) { 
 							console.log(res) 
 						}
 					})		
 				}
 			})
-	}
+		}
+		)
+		.then(response => 
+		{
+			ZoomMtg.join({
+				
+			})
+		}
+		)
 }
+
+getSignature(meetConfig)
