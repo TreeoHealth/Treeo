@@ -1,72 +1,61 @@
-##import http.client
-##
-##conn = http.client.HTTPSConnection("api.zoom.us")
-##
-##{
-##  "topic": "string",
-##  "type": "integer",
-##  "start_time": "string [date-time]",
-##  "duration": "integer",
-##  "schedule_for": "string",
-##  "timezone": "string",
-##  "password": "string",
-##  "agenda": "string",
-##  "recurrence": {
-##    "type": "integer",
-##    "repeat_interval": "integer",
-##    "weekly_days": "string",
-##    "monthly_day": "integer",
-##    "monthly_week": "integer",
-##    "monthly_week_day": "integer",
-##    "end_times": "integer",
-##    "end_date_time": "string [date-time]"
-##  },
-##  "settings": {
-##    "host_video": "boolean",
-##    "participant_video": "boolean",
-##    "cn_meeting": "boolean",
-##    "in_meeting": "boolean",
-##    "join_before_host": "boolean",
-##    "mute_upon_entry": "boolean",
-##    "watermark": "boolean",
-##    "use_pmi": "boolean",
-##    "approval_type": "integer",
-##    "registration_type": "integer",
-##    "audio": "string",
-##    "auto_recording": "string",
-##    "enforce_login": "boolean",
-##    "enforce_login_domains": "string",
-##    "alternative_hosts": "string",
-##    "global_dial_in_countries": [
-##      "string"
-##    ],
-##    "registrants_email_notification": "boolean"
-##  }
-##}
-##headers = {
-##    'content-type': "application/json",
-##    'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTA5OTgwODEsImlhdCI6MTU5MDM5MzI4MX0.YOkr0BEfcgDd6gNk2lAfuWqGF0yYQphqI_MQDQUw79o"
-##    }
-##
-##conn.request("POST", "/v2/users/cq7614/meetings", payload, headers)
-##
-##res = conn.getresponse()
-##data = res.read()
-##
-##print(data.decode("utf-8"))
-
-
-#gets info about a meeting --------------------------------
-
 import http.client
-
+import json
 conn = http.client.HTTPSConnection("api.zoom.us")
 
 headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTA5OTgwODEsImlhdCI6MTU5MDM5MzI4MX0.YOkr0BEfcgDd6gNk2lAfuWqGF0yYQphqI_MQDQUw79o" }
 
-conn.request("GET", "/v2/meetings/72951983398", headers=headers)
+conn.request("GET", "/v2/users?page_number=1&page_size=30&status=active", headers=headers)
 
 res = conn.getresponse()
 data = res.read()
 
 print(data.decode("utf-8"))
+
+
+#----post below
+payload={
+  "topic": "Sophia Test",
+  "type": 8,
+  "start_time": "2020-06-14T10:21:57",
+  "duration": 40,
+  "timezone": "Eastern Time (US and Canada)",
+  "password": "abc123",
+"recurrence": {
+"type": 1,
+"repeat_interval": 1,
+"end_date_time": "2020-06-14T10:21:57"
+},
+  "settings": {
+    "host_video": 'true',
+    "mute_upon_entry": 'true',
+    "approval_type": 0,
+    "enforce_login": 'true'
+  }
+}
+
+headers = {
+    'content-type': "application/json",
+    'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTA5OTgwODEsImlhdCI6MTU5MDM5MzI4MX0.YOkr0BEfcgDd6gNk2lAfuWqGF0yYQphqI_MQDQUw79o"
+    }
+
+conn.request("POST", "/v2/users/HE1A37EjRIiGjh_wekf90A/meetings", bytes(json.dumps(payload), encoding="utf-8"), headers)
+##urllib.request.urlopen({api_url}, data=bytes(json.dumps(headers), encoding="utf-8"))
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+
+#gets info about a meeting --------------------------------
+##
+##import http.client
+##
+##conn = http.client.HTTPSConnection("api.zoom.us")
+##
+##headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTA5OTgwODEsImlhdCI6MTU5MDM5MzI4MX0.YOkr0BEfcgDd6gNk2lAfuWqGF0yYQphqI_MQDQUw79o" }
+##
+##conn.request("GET", "/v2/meetings/72951983398", headers=headers)
+##
+##res = conn.getresponse()
+##data = res.read()
+##
+##print(data.decode("utf-8"))
