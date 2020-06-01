@@ -2,14 +2,14 @@ import http.client
 import json
 conn = http.client.HTTPSConnection("api.zoom.us")
 
-headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTA5OTgwODEsImlhdCI6MTU5MDM5MzI4MX0.YOkr0BEfcgDd6gNk2lAfuWqGF0yYQphqI_MQDQUw79o" }
+headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTE2MjI4ODIsImlhdCI6MTU5MTAxODA4NH0.jpITACB91xADqzpSlu4BgYWf5LDx79DuGHasDZ5HK1Y" }
 
 conn.request("GET", "/v2/users?page_number=1&page_size=30&status=active", headers=headers)
 
 res = conn.getresponse()
 data = res.read()
 
-print(data.decode("utf-8"))
+#print(data.decode("utf-8"))
 
 
 #----post below
@@ -35,36 +35,39 @@ payload={
 
 headers = {
     'content-type': "application/json",
-    'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTA5OTgwODEsImlhdCI6MTU5MDM5MzI4MX0.YOkr0BEfcgDd6gNk2lAfuWqGF0yYQphqI_MQDQUw79o"
+    'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTE2MjI4ODIsImlhdCI6MTU5MTAxODA4NH0.jpITACB91xADqzpSlu4BgYWf5LDx79DuGHasDZ5HK1Y"
     }
 
-conn.request("POST", "/v2/users/HE1A37EjRIiGjh_wekf90A/meetings", bytes(json.dumps(payload), encoding="utf-8"), headers)
+conn.request("POST", "/v2/users/HE1A37EjRIiGjh_wekf90A/meetings", json.dumps(payload), headers)
 ##urllib.request.urlopen({api_url}, data=bytes(json.dumps(headers), encoding="utf-8"))
 res = conn.getresponse()
 data = res.read()
+#print(data.decode("utf-8"))
 
-print(data.decode("utf-8"))
-
-headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTA5OTgwODEsImlhdCI6MTU5MDM5MzI4MX0.YOkr0BEfcgDd6gNk2lAfuWqGF0yYQphqI_MQDQUw79o" }
+headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTE2MjI4ODIsImlhdCI6MTU5MTAxODA4NH0.jpITACB91xADqzpSlu4BgYWf5LDx79DuGHasDZ5HK1Y" }
 
 conn.request("GET", "/v2/meetings/78851018678", headers=headers)
-
 res = conn.getresponse()
-data = res.read()
-
-print(data.decode("utf-8"))
+raw_data = res.read()
+data = json.loads(raw_data.decode("utf-8"))
+print(data)
+print(data.get('join_url'))
+info=data.get('id')
+print(info)
+print(data.get('start_time'))
 
 #gets info about a meeting --------------------------------
 ##
 ##import http.client
 ##
-##conn = http.client.HTTPSConnection("api.zoom.us")
+conn = http.client.HTTPSConnection("api.zoom.us")
 ##
-##headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTA5OTgwODEsImlhdCI6MTU5MDM5MzI4MX0.YOkr0BEfcgDd6gNk2lAfuWqGF0yYQphqI_MQDQUw79o" }
+headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTE2MjI4ODIsImlhdCI6MTU5MTAxODA4NH0.jpITACB91xADqzpSlu4BgYWf5LDx79DuGHasDZ5HK1Y" }
 ##
-##conn.request("GET", "/v2/meetings/72951983398", headers=headers)
+conn.request("GET", "/v2/meetings/"+str(info), headers=headers)
 ##
-##res = conn.getresponse()
-##data = res.read()
-##
-##print(data.decode("utf-8"))
+res = conn.getresponse()
+raw_data = res.read()
+data = json.loads(raw_data.decode("utf-8"))
+print(data.get('topic'))
+print(data.get('start_time'))
