@@ -6,6 +6,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import aws_controller
 from botocore.exceptions import ClientError
+from zoomtest_post import createMtg
 
 app = Flask(__name__)
 
@@ -74,7 +75,17 @@ def new_register():
         }
        )
     return home()
-    
+
+@app.route('/createrender', methods=['POST'])
+def createPg():
+    return render_template('create_mtg.html')
+
+@app.route('/createmtg', methods=['POST'])
+def create_mtg():
+    time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
+    jsonResp = createMtg(str(request.form['mtgname']), time, str(request.form['password']))
+    return jsonResp
+
 
 @app.route("/logout")
 def logout():

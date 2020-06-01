@@ -2,29 +2,27 @@
 <!--&#123;% block body %&#125;-->
 
 
-<form action="/register" method="POST">
+<form action="/createmtg" method="POST">
 <div class="login">
 <div class="login-screen">
 <div class="app-title">
-<h1>Register</h1>
+<h1>Create Meeting</h1>
 </div>
 <div class="login-form">
 <div class="control-group">
-	<input type="text" class="login-field" value="" placeholder="username" name="username">
+	<input type="text" class="login-field" value="" placeholder="name of mtg" name="mtgname">
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
 				<input type="password" class="login-field" value="" placeholder="password" name="password">
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
 <div class="control-group">
-				<input type="number" class="login-field" value="" placeholder="age" name="age">
+				<input type="time" class="login-field" value="" placeholder="time" name="time">
 <label class="login-field-icon fui-lock" for="login-name"></label></div>
 <div class="control-group">
-				<input type="text" class="login-field" value="" placeholder="first name" name="fn">
+				<input type="date" class="login-field" value="" placeholder="day" name="day">
 <label class="login-field-icon fui-lock" for="login-name"></label></div>
-<div class="control-group">
-				<input type="text" class="login-field" value="" placeholder="last name" name="ln">
-<label class="login-field-icon fui-lock" for="login-name"></label></div>
-<input type="submit" value="Register" class="btn btn-primary btn-large btn-block">
+<!--make a dropdown with time zones-->
+<input type="submit" value="Schedule" class="btn btn-primary btn-large btn-block">
 
 </div>
 </div>
