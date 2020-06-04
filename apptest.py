@@ -6,7 +6,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import aws_controller
 from botocore.exceptions import ClientError
-from zoomtest_post import createMtg
+from zoomtest_post import createMtg, getMtgsFromUserID,getUserFromEmail
 
 app = Flask(__name__)
 
@@ -83,9 +83,14 @@ def createPg():
 @app.route('/createmtg', methods=['POST'])
 def create_mtg():
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
-    jsonResp = createMtg(str(request.form['mtgname']), time, str(request.form['password']))
+    jsonResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']))
     return jsonResp
 
+@app.route('/showallmtgs', methods=['POST'])
+def show_mtg():
+    jsonResp = getUserFromEmail('cq7614@gmail.com')#getMtgsFromUserID(78851018678);
+    jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
+    return jsonResp;
 
 @app.route("/logout")
 def logout():
