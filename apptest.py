@@ -6,7 +6,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import aws_controller
 from botocore.exceptions import ClientError
-from zoomtest_post import createMtg, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
+from zoomtest_post import createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
 
 app = Flask(__name__)
 
@@ -128,7 +128,9 @@ def show_mtg():
     #for each mtg, make an array of strs with host name, join URL, date and mtgID
     return finalStr #tuple(arrOfMtgs) --> wrong format (not sure how to format it to display but it can't be a list)
 
-@app.route("/deleterender", methods=['POST'])
+#This is what is needed to be able to link to this page
+#make a get method a part of the route
+@app.route("/deleterender", methods=['POST','GET'])
 def deletePg():
     return render_template('delete.html')
 
@@ -138,9 +140,10 @@ def deletePg():
 #Need to figure out how to catch that, the below try except is not enough
 @app.route("/deletemtg", methods=['POST'])
 def deleteMtg():
+    jsonResp = getMtgFromMtgID(str(request.form['mtgID']))
     try:
         x=jsonResp.get("code")
-        return "That is a bad meeting ID, please go back and try again<br><a href='/'>Home</a>"
+        return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender'>Delete</a>"
 #TODO!!! cannot link to any page that has a [POST] method, not sure how to make them able to be navigated to ? Nav bar?
     except:
         deleteMtgFromID(str(request.form['mtgID']))
