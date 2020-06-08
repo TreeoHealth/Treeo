@@ -103,7 +103,6 @@ def show_mtg():
     #jsonResp = getUserFromEmail('cq7614@gmail.com')#getMtgsFromUserID(78851018678);
     jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
     #return jsonResp
-#---------------- needs work below  vvvv
     #TODO how to make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
     
     arrOfMtgs = []
@@ -124,7 +123,9 @@ def show_mtg():
         temp.append(strTmp)
         finalStr+=strTmp
         arrOfMtgs.append(temp)
-        finalStr = finalStr+"<a href='/'>Home</a><br>"
+        finalStr = finalStr+"<a href='/deleterender/"+str(item.get("id"))+"'>Delete</a><br><a href='/'>Home</a><br><br>"
+        
+        #HOW TO MAKE THIS CALL SEND MTG ID???
     #for each mtg, make an array of strs with host name, join URL, date and mtgID
     return finalStr #tuple(arrOfMtgs) --> wrong format (not sure how to format it to display but it can't be a list)
 
@@ -132,10 +133,23 @@ def show_mtg():
 #make a get method a part of the route
 @app.route("/deleterender", methods=['POST','GET'])
 def deletePg():
-    return render_template('delete.html')
+    #if ???:
+    #(if it came from the showallmtgs list instead of the home page, expect a mtg # along with it)
+        #return render_template('delete.html', mtg=str(???))
+    #else:
+    return render_template('delete.html', mtg="")
 
+#This will render the delete with the mtgID in the box filled in already
+#doesn't work currently
+@app.route("/deleterender/<mtgid>", methods=['POST','GET'])
+def deletePgFromID(mtgid):
+    return render_template('delete.html', mtg=str(mtgid))
 
-#TODO!!! the delete goes through and removes the meeting correctly
+#TODO -- make a function+page that allows you to view/edit specific mtg details?
+#TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid??
+#     -- fix the "blank" render (no 'placeholder' in the box)
+
+#DONE the delete goes through and removes the meeting correctly
 #BUT it has an incorrect JSON response (regardless of wherther the data from the delete function is returned to the flask page or not.
 #Need to figure out how to catch that, the below try except is not enough
 @app.route("/deletemtg", methods=['POST'])
@@ -144,7 +158,7 @@ def deleteMtg():
     try:
         x=jsonResp.get("code")
         return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender'>Delete</a>"
-#TODO!!! cannot link to any page that has a [POST] method, not sure how to make them able to be navigated to ? Nav bar?
+#DONE cannot link to any page that has a [POST] method, not sure how to make them able to be navigated to ? Nav bar?
     except:
         deleteMtgFromID(str(request.form['mtgID']))
         return "Successfully deleted meeting "+str(request.form['mtgID'])+"<br><a href='/'>Home</a>"
