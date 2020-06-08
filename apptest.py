@@ -6,7 +6,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import aws_controller
 from botocore.exceptions import ClientError
-from zoomtest_post import createMtg, getMtgsFromUserID,getUserFromEmail
+from zoomtest_post import createMtg, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
 
 app = Flask(__name__)
 
@@ -88,9 +88,29 @@ def create_mtg():
 
 @app.route('/showallmtgs', methods=['POST'])
 def show_mtg():
-    jsonResp = getUserFromEmail('cq7614@gmail.com')#getMtgsFromUserID(78851018678);
+    #jsonResp = getUserFromEmail('cq7614@gmail.com')#getMtgsFromUserID(78851018678);
     jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
-    return jsonResp;
+    return jsonResp
+#---------------- needs work below  vvvv
+    #TODO how to make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
+    
+    arrOfMtgs = []
+    mtgList = jsonResp.get("meetings")
+    for item in mtgList:
+        temp = []
+        temp.append("Meeting Title: "+str(item.get("topic")))
+        temp.append("Meeting Time: "+str(item.get("start_time")))
+        temp.append("Join URL: "+str(item.get("join_url")))
+        temp.append("Meeting ID: "+str(item.get("id")))
+        arrOfMtgs.append(temp)
+    #for each mtg, make an array of strs with host name, join URL, date and mtgID
+
+    #TODO figure out how to get this to display, not currently working
+    #return tuple(arrOfMtgs) #jsonResp;
+
+@app.route("/deletemtg", methods=['POST'])
+def deleteMtg():
+    return deleteMtgFromID(str(request.form['mtgID']))
 
 @app.route("/logout")
 def logout():

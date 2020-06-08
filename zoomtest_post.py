@@ -1,25 +1,31 @@
+#set up selenium to go to the page that has the oauth key of the jwt app on it
+#https://marketplace.zoom.us/develop/apps/_ZCj-XJeSXuT8Dbv1bcZ6A/credentials
+#overwrite a txt that hold the key every week (timer tracks weeks/checks if key is valid)
+#at the start of the code, read in the txt and sent it as a param to each function
 
 import http.client
 import json
 from OpenSSL import SSL
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
+headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg" }
 
 def addParticipant(mtgID, firstName, lastName, email):
     #conn = http.client.HTTPSConnection("api.zoom.us", context = ssl._create_unverified_context())
-
-    payload = "{\"email\":\"myemail@mycompany.com\",\"first_name\":\"Mike\",\"last_name\":\"Brown\",\"address\":\"123 Main ST\",\"city\":\"San Jose\",\"country\":\"US\",\"zip\":\"95550\",\"state\":\"CA\",\"phone\":\"111-444-4444\",\"industry\":\"Tech\",\"org\":\"IT\",\"job_title\":\"DA\",\"purchasing_time_frame\":\"More Than 6 Months\",\"role_in_purchase_process\":\"Influencer\",\"no_of_employees\":\"1-20\",\"comments\":\"Excited to host you.\",\"custom_questions\":[{\"title\":\"Favorite thing about Zoom\",\"value\":\"Meet Happy\"}]}"
-
-    headers = {
+    payload = {
+        "email":str(email),
+        "first_name":str(firstName),
+        "last_name":str(lastName)
+        }
+    headers = { #post needs this different headers definition, get doesn't
         'content-type': "application/json",
-        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTA5OTgwODEsImlhdCI6MTU5MDM5MzI4MX0.YOkr0BEfcgDd6gNk2lAfuWqGF0yYQphqI_MQDQUw79o"
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg"
         }
 
     conn.request("POST", "/v2/meetings/"+str(mtgID)+"/registrants", payload, headers)
-
     res = conn.getresponse()
-    data = res.read()
-
-    print(data.decode("utf-8"))
+    raw_data = res.read()
+    data = json.loads(raw_data.decode("utf-8"))
+    return data;
 
 #----post below
 def createMtg(topic, time, password):
@@ -41,7 +47,7 @@ def createMtg(topic, time, password):
 
     headers = {
         'content-type': "application/json",
-        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTE2MjI4ODIsImlhdCI6MTU5MTAxODA4NH0.jpITACB91xADqzpSlu4BgYWf5LDx79DuGHasDZ5HK1Y"
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg"
         }
 
     conn.request("POST", "/v2/users/HE1A37EjRIiGjh_wekf90A/meetings", json.dumps(payload), headers)##HE1A37EjRIiGjh_wekf90A
@@ -50,10 +56,15 @@ def createMtg(topic, time, password):
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     return data
-    #print(data.decode("utf-8"))
+
+def deleteMtgFromID(mtgID):
+    conn.request("DELETE", "/v2/meetings/"+str(mtgID), headers=headers)
+    res = conn.getresponse()
+    raw_data = res.read()
+    data = json.loads(raw_data.decode("utf-8"))
+    return data
 
 def getMtgsFromUserID(userID):
-    headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTE2MjI4ODIsImlhdCI6MTU5MTAxODA4NH0.jpITACB91xADqzpSlu4BgYWf5LDx79DuGHasDZ5HK1Y" }
 
     conn.request("GET", "/v2/users/"+str(userID)+"/meetings", headers=headers)#78851018678
     res = conn.getresponse()
@@ -68,10 +79,6 @@ def getMtgsFromUserID(userID):
 
 #gets info about a meeting --------------------------------
 def getMtgFromMtgID(info):
-    #conn = http.client.HTTPSConnection("api.zoom.us", context = ssl._create_unverified_context())
-    ##
-    headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTE2MjI4ODIsImlhdCI6MTU5MTAxODA4NH0.jpITACB91xADqzpSlu4BgYWf5LDx79DuGHasDZ5HK1Y" }
-    ##
     conn.request("GET", "/v2/meetings/"+str(info), headers=headers)
     ##
     res = conn.getresponse()
@@ -82,12 +89,8 @@ def getMtgFromMtgID(info):
 ##    print(data.get('start_time'))
 
 def getUserFromEmail(email):
-    headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTE2MjI4ODIsImlhdCI6MTU5MTAxODA4NH0.jpITACB91xADqzpSlu4BgYWf5LDx79DuGHasDZ5HK1Y" }
-    ##
     conn.request("GET", "/v2/users/"+str(email), headers=headers)
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     return data
-
-print(getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A'))#78851018678))
