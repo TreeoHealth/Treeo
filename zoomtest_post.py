@@ -60,10 +60,11 @@ def createMtg(topic, time, password):
 def deleteMtgFromID(mtgID):
     #if given a valid meeting ID, this crashes the display???
     conn.request("DELETE", "/v2/meetings/"+str(mtgID), headers=headers)
-    res = conn.getresponse()
-    raw_data = res.read()
-    data = json.loads(raw_data.decode("utf-8"))
-    return data
+    #response is not JSON like the rest
+##    res = conn.getresponse()
+##    raw_data = res.read()
+##    data = json.loads(raw_data.decode("utf-8"))
+##    return data
     #the return is what messes this up, just print a message
 
 def getMtgsFromUserID(userID):
