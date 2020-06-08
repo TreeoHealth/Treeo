@@ -84,33 +84,67 @@ def createPg():
 def create_mtg():
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
     jsonResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']))
-    return jsonResp
+
+    finalStr = ""
+    strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
+    finalStr+=strTmp
+    strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
+    finalStr+=strTmp
+    strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
+    finalStr+=strTmp
+    strTmp = "Meeting ID: "+str(jsonResp.get("id"))+" <br>"
+    finalStr+=strTmp
+    finalStr = finalStr+"<a href='/'>Home</a><br>"
+    
+    return finalStr#jsonResp
 
 @app.route('/showallmtgs', methods=['POST'])
 def show_mtg():
     #jsonResp = getUserFromEmail('cq7614@gmail.com')#getMtgsFromUserID(78851018678);
     jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
-    return jsonResp
+    #return jsonResp
 #---------------- needs work below  vvvv
     #TODO how to make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
     
     arrOfMtgs = []
     mtgList = jsonResp.get("meetings")
+    finalStr = ""
     for item in mtgList:
         temp = []
-        temp.append("Meeting Title: "+str(item.get("topic")))
-        temp.append("Meeting Time: "+str(item.get("start_time")))
-        temp.append("Join URL: "+str(item.get("join_url")))
-        temp.append("Meeting ID: "+str(item.get("id")))
+        strTmp = "Meeting Title: "+str(item.get("topic"))+" <br>"
+        temp.append(strTmp)
+        finalStr+=strTmp
+        strTmp = "Meeting Time: "+str(item.get("start_time"))+" <br>"
+        temp.append(strTmp)
+        finalStr+=strTmp
+        strTmp = "Join URL: "+str(item.get("join_url"))+" <br>"
+        temp.append(strTmp)
+        finalStr+=strTmp
+        strTmp = "Meeting ID: "+str(item.get("id"))+" <br>"
+        temp.append(strTmp)
+        finalStr+=strTmp
         arrOfMtgs.append(temp)
+        finalStr = finalStr+"<a href='/'>Home</a><br>"
     #for each mtg, make an array of strs with host name, join URL, date and mtgID
+    return finalStr #tuple(arrOfMtgs) --> wrong format (not sure how to format it to display but it can't be a list)
 
-    #TODO figure out how to get this to display, not currently working
-    #return tuple(arrOfMtgs) #jsonResp;
+@app.route("/deleterender", methods=['POST'])
+def deletePg():
+    return render_template('delete.html')
 
+
+#TODO!!! the delete goes through and removes the meeting correctly
+#BUT it has an incorrect JSON response (regardless of wherther the data from the delete function is returned to the flask page or not.
+#Need to figure out how to catch that, the below try except is not enough
 @app.route("/deletemtg", methods=['POST'])
 def deleteMtg():
-    return deleteMtgFromID(str(request.form['mtgID']))
+    try:
+        x=jsonResp.get("code")
+        return "That is a bad meeting ID, please go back and try again<br><a href='/'>Home</a>"
+#TODO!!! cannot link to any page that has a [POST] method, not sure how to make them able to be navigated to ? Nav bar?
+    except:
+        deleteMtgFromID(str(request.form['mtgID']))
+        return "Successfully deleted meeting "+str(request.form['mtgID'])+"<br><a href='/'>Home</a>"
 
 @app.route("/logout")
 def logout():

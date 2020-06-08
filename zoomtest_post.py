@@ -58,35 +58,30 @@ def createMtg(topic, time, password):
     return data
 
 def deleteMtgFromID(mtgID):
+    #if given a valid meeting ID, this crashes the display???
     conn.request("DELETE", "/v2/meetings/"+str(mtgID), headers=headers)
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     return data
+    #the return is what messes this up, just print a message
 
 def getMtgsFromUserID(userID):
-
-    conn.request("GET", "/v2/users/"+str(userID)+"/meetings", headers=headers)#78851018678
+    conn.request("GET", "/v2/users/"+str(userID)+"/meetings?page_number=1&page_size=30&type=upcoming", headers=headers)
+#this request gets ALL past meetings as well, not as useful, a lot of bogged down info
+    #conn.request("GET", "/v2/users/"+str(userID)+"/meetings", headers=headers)#78851018678
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     return data;
-##    print(data)
-##    print(data.get('join_url'))
-##    info=data.get('id')
-##    print(info)
-##    print(data.get('start_time'))
 
 #gets info about a meeting --------------------------------
 def getMtgFromMtgID(info):
     conn.request("GET", "/v2/meetings/"+str(info), headers=headers)
-    ##
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     return data
-##    print(data.get('topic'))
-##    print(data.get('start_time'))
 
 def getUserFromEmail(email):
     conn.request("GET", "/v2/users/"+str(email), headers=headers)
