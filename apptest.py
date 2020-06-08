@@ -146,7 +146,7 @@ def deletePgFromID(mtgid):
     return render_template('delete.html', mtg=str(mtgid))
 
 #TODO -- make a function+page that allows you to view/edit specific mtg details?
-#TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid??
+#TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid?? ALL deletions are not working??
 #     -- fix the "blank" render (no 'placeholder' in the box)
 
 #DONE the delete goes through and removes the meeting correctly
@@ -156,12 +156,13 @@ def deletePgFromID(mtgid):
 def deleteMtg():
     jsonResp = getMtgFromMtgID(str(request.form['mtgID']))
     try:
-        x=jsonResp.get("code")
-        return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender'>Delete</a>"
-#DONE cannot link to any page that has a [POST] method, not sure how to make them able to be navigated to ? Nav bar?
-    except:
+        x=jsonResp.get("start_time")
         deleteMtgFromID(str(request.form['mtgID']))
         return "Successfully deleted meeting "+str(request.form['mtgID'])+"<br><a href='/'>Home</a>"
+#DONE cannot link to any page that has a [POST] method, not sure how to make them able to be navigated to ? Nav bar?
+    except:
+        return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender/"+str(request.form['mtgID'])+"'>Delete</a>"
+        
 
 @app.route("/logout")
 def logout():
