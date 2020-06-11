@@ -110,7 +110,6 @@ def return_data():
     #"url":"absolute or relative?"},{...}]
     
     mtgList = jsonResp.get("meetings")
-    print(jsonResp)
     finalStr = ""
     for item in mtgList:
         time = str(item.get("start_time"))
@@ -120,6 +119,7 @@ def return_data():
         strend = time[:11]+str(end_time)+time[13:]
         mtgObj = {"title":str(item.get("topic")), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
         arrOfMtgs.append(mtgObj)
+    #BADDDD (change this)
     with open('appts.json', 'w') as outfile:
         json.dump(arrOfMtgs, outfile)
     with open('appts.json', "r") as input_data:
@@ -143,41 +143,17 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
 
     return finalStr
 
+#TODO ---> delete is a little unreliable?
+    #It said it was deleted but it was still on the schedule??
 
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
 #TODO -- make a link in each entry to an EDITABLE/EXTENDED appt description
     #in this area, make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
 #*****************************************************************************************
-@app.route('/showallmtgs', methods=['POST'])
+@app.route('/showallmtgs', methods=['POST','GET'])
 def show_mtg():     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
     return render_template("calendar.html")
-
-###xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-##    jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
-##    arrOfMtgs = []
-##    mtgList = jsonResp.get("meetings")
-##    finalStr = ""
-##    for item in mtgList:
-##        temp = []
-##        strTmp = "Meeting Title: "+str(item.get("topic"))+" <br>"
-##        temp.append(strTmp)
-##        finalStr+=strTmp
-##        strTmp = "Meeting Time: "+str(item.get("start_time"))+" <br>"
-##        temp.append(strTmp)
-##        finalStr+=strTmp
-##        strTmp = "Join URL: "+str(item.get("join_url"))+" <br>"
-##        temp.append(strTmp)
-##        finalStr+=strTmp
-##        strTmp = "Meeting ID: "+str(item.get("id"))+" <br>"
-##        temp.append(strTmp)
-##        finalStr+=strTmp
-##        arrOfMtgs.append(temp)
-##        finalStr = finalStr+"<a href='/deleterender/"+str(item.get("id"))+"'>Delete</a><br><a href='/'>Home</a><br><br>"
-##        
-##        #HOW TO MAKE THIS CALL SEND MTG ID???
-##    #for each mtg, make an array of strs with host name, join URL, date and mtgID
-##    return finalStr #tuple(arrOfMtgs) --> wrong format (not sure how to format it to display but it can't be a list)
 
 #This is what is needed to be able to link to this page
 #make a get method a part of the route
@@ -199,7 +175,7 @@ def deletePgFromID(mtgid):
 #TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid?? ALL deletions are not working??
 #     -- fix the "blank" render (no 'placeholder' in the box)
 
-#DONE the delete goes through and removes the meeting correctly
+#TODOOOOOO (again) the delete goes through and removes the meeting correctly
 #BUT it has an incorrect JSON response (regardless of wherther the data from the delete function is returned to the flask page or not.
 #Need to figure out how to catch that, the below try except is not enough
 @app.route("/deletemtg", methods=['POST'])
@@ -207,8 +183,8 @@ def deleteMtg():
     jsonResp = getMtgFromMtgID(str(request.form['mtgID']))
     try:
         x=jsonResp.get("start_time")
-        deleteMtgFromID(str(request.form['mtgID']))
-        return "Successfully deleted meeting "+str(request.form['mtgID'])+"<br><a href='/'>Home</a>"
+        print(deleteMtgFromID(str(request.form['mtgID'])))
+        return "Successfully deleted meeting "+str(request.form['mtgID'])+"<br><a href='/showallmtgs'>Calendar</a>"
 #DONE cannot link to any page that has a [POST] method, not sure how to make them able to be navigated to ? Nav bar?
     except:
         return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender/"+str(request.form['mtgID'])+"'>Delete</a>"

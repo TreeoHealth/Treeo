@@ -64,6 +64,7 @@ def deleteMtgFromID(mtgID):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     #if given a valid meeting ID, this crashes the display???
     conn.request("DELETE", "/v2/meetings/"+str(mtgID), headers=headers)
+    conn.close()
     #response is not JSON like the rest
 
 def getMtgsFromUserID(userID):
@@ -112,8 +113,4 @@ def mtgInfoToJSON():
         strend = time[:11]+str(end_time)+time[13:]
         mtgObj = {"title":str(item.get("topic")), "start": time, "end":strend}
         arrOfMtgs.append(mtgObj)
-    print(arrOfMtgs)
-    
-        
 
-mtgInfoToJSON()
