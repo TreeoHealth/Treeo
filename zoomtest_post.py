@@ -29,7 +29,6 @@ def addParticipant(mtgID, firstName, lastName, email):
 
 #----post below
 def createMtg(topic, time, password):
-
     payload={
       "topic": topic,
       "type": 2,
@@ -61,11 +60,6 @@ def deleteMtgFromID(mtgID):
     #if given a valid meeting ID, this crashes the display???
     conn.request("DELETE", "/v2/meetings/"+str(mtgID), headers=headers)
     #response is not JSON like the rest
-##    res = conn.getresponse()
-##    raw_data = res.read()
-##    data = json.loads(raw_data.decode("utf-8"))
-##    return data
-    #the return is what messes this up, just print a message
 
 def getMtgsFromUserID(userID):
     conn.request("GET", "/v2/users/"+str(userID)+"/meetings?page_number=1&page_size=30&type=upcoming", headers=headers)
@@ -90,3 +84,25 @@ def getUserFromEmail(email):
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     return data
+
+def mtgInfoToJSON():
+    jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
+    arrOfMtgs = []
+    #[{ "title": "Meeting",
+    #"start": "2014-09-12T10:30:00-05:00",
+    #"end": "2014-09-12T12:30:00-05:00"},{...}]
+    
+    mtgList = jsonResp.get("meetings")
+    finalStr = ""
+    for item in mtgList:
+        time = str(item.get("start_time"))
+        time = time[:-1]
+        end_time = ((int(time[11:13])+1)%24)
+        strend = time[:11]+str(end_time)+time[13:]
+        mtgObj = {"title":str(item.get("topic")), "start": time, "end":strend}
+        arrOfMtgs.append(mtgObj)
+    print(arrOfMtgs)
+    
+        
+
+mtgInfoToJSON()

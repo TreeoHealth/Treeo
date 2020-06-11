@@ -2,6 +2,7 @@ from flask import Flask
 from flask import Flask, flash, redirect, render_template, request, session, abort
 import os
 from flask import Flask, jsonify
+import json
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import aws_controller
@@ -98,12 +99,41 @@ def create_mtg():
     
     return finalStr#jsonResp
 
-@app.route('/showallmtgs', methods=['POST'])
-def show_mtg():
-    #jsonResp = getUserFromEmail('cq7614@gmail.com')#getMtgsFromUserID(78851018678);
+@app.route('/data')
+def return_data():
     jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
-    #return jsonResp
-    #TODO how to make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
+    arrOfMtgs = []
+    #[{ "title": "Meeting",
+    #"start": "2014-09-12T10:30:00-05:00",
+    #"end": "2014-09-12T12:30:00-05:00"},{...}]
+    
+    mtgList = jsonResp.get("meetings")
+    print(jsonResp)
+    finalStr = ""
+    for item in mtgList:
+        time = str(item.get("start_time"))
+        time = time[:-1]
+        end_time = ((int(time[11:13])+1)%24)
+        strend = time[:11]+str(end_time)+time[13:]
+        mtgObj = {"title":str(item.get("topic")), "start": time, "end":strend}
+        arrOfMtgs.append(mtgObj)
+    with open('appts.json', 'w') as outfile:
+        json.dump(arrOfMtgs, outfile)
+    with open('appts.json', "r") as input_data:
+        return input_data.read()    
+
+#TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
+    #even the time creation is wrong but it is still seeing the time zone as EST so ??????
+    
+
+#*****************************************************************************************
+@app.route('/showallmtgs', methods=['POST'])
+def show_mtg():     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
+    return render_template("calendar.html")
+    #TODO --- eventually we are going to need to get the userID from WHO IS LOGGED IN
+    jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
+    
+    #TODO --- how to make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
     
     arrOfMtgs = []
     mtgList = jsonResp.get("meetings")
