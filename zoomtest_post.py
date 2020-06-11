@@ -11,6 +11,7 @@ headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdW
 
 def addParticipant(mtgID, firstName, lastName, email):
     #conn = http.client.HTTPSConnection("api.zoom.us", context = ssl._create_unverified_context())
+    conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     payload = {
         "email":str(email),
         "first_name":str(firstName),
@@ -25,10 +26,12 @@ def addParticipant(mtgID, firstName, lastName, email):
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
+    conn.close()
     return data;
 
 #----post below
 def createMtg(topic, time, password):
+    conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     payload={
       "topic": topic,
       "type": 2,
@@ -54,35 +57,43 @@ def createMtg(topic, time, password):
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
+    conn.close()
     return data
 
 def deleteMtgFromID(mtgID):
+    conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     #if given a valid meeting ID, this crashes the display???
     conn.request("DELETE", "/v2/meetings/"+str(mtgID), headers=headers)
     #response is not JSON like the rest
 
 def getMtgsFromUserID(userID):
+    conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     conn.request("GET", "/v2/users/"+str(userID)+"/meetings?page_number=1&page_size=30&type=upcoming", headers=headers)
 #this request gets ALL past meetings as well, not as useful, a lot of bogged down info
     #conn.request("GET", "/v2/users/"+str(userID)+"/meetings", headers=headers)#78851018678
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
+    conn.close()
     return data;
 
 #gets info about a meeting --------------------------------
 def getMtgFromMtgID(info):
+    conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     conn.request("GET", "/v2/meetings/"+str(info), headers=headers)
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
+    conn.close()
     return data
 
 def getUserFromEmail(email):
+    conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     conn.request("GET", "/v2/users/"+str(email), headers=headers)
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
+    conn.close()
     return data
 
 def mtgInfoToJSON():

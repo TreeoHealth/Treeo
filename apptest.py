@@ -97,67 +97,87 @@ def create_mtg():
     finalStr+=strTmp
     finalStr = finalStr+"<a href='/'>Home</a><br>"
     
-    return finalStr#jsonResp
+    return finalStr
 
 @app.route('/data')
 def return_data():
+#TODO --- eventually we are going to need to get the userID from WHO IS LOGGED IN
     jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
     arrOfMtgs = []
     #[{ "title": "Meeting",
     #"start": "2014-09-12T10:30:00-05:00",
-    #"end": "2014-09-12T12:30:00-05:00"},{...}]
+    #"end": "2014-09-12T12:30:00-05:00",
+    #"url":"absolute or relative?"},{...}]
     
     mtgList = jsonResp.get("meetings")
     print(jsonResp)
     finalStr = ""
     for item in mtgList:
         time = str(item.get("start_time"))
+        mtgid = str(item.get("id"))
         time = time[:-1]
         end_time = ((int(time[11:13])+1)%24)
         strend = time[:11]+str(end_time)+time[13:]
-        mtgObj = {"title":str(item.get("topic")), "start": time, "end":strend}
+        mtgObj = {"title":str(item.get("topic")), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
         arrOfMtgs.append(mtgObj)
     with open('appts.json', 'w') as outfile:
         json.dump(arrOfMtgs, outfile)
     with open('appts.json', "r") as input_data:
         return input_data.read()    
 
+
+#
+@app.route('/showmtgdetail/<mtgid>', methods=['POST','GET'])
+def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
+    jsonResp = getMtgFromMtgID(str(mtgid))
+    finalStr = ""
+    strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
+    finalStr+=strTmp
+    strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
+    finalStr+=strTmp
+    strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
+    finalStr+=strTmp
+    strTmp = "Meeting ID: "+mtgid+" <br>"
+    finalStr+=strTmp
+    finalStr = finalStr+"<a href='/deleterender/"+mtgid+"'>Delete</a><br><a href='/'>Home</a><br><br>"
+
+    return finalStr
+
+
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
-    
-
+#TODO -- make a link in each entry to an EDITABLE/EXTENDED appt description
+    #in this area, make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
 #*****************************************************************************************
 @app.route('/showallmtgs', methods=['POST'])
 def show_mtg():     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
     return render_template("calendar.html")
-    #TODO --- eventually we are going to need to get the userID from WHO IS LOGGED IN
-    jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
-    
-    #TODO --- how to make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
-    
-    arrOfMtgs = []
-    mtgList = jsonResp.get("meetings")
-    finalStr = ""
-    for item in mtgList:
-        temp = []
-        strTmp = "Meeting Title: "+str(item.get("topic"))+" <br>"
-        temp.append(strTmp)
-        finalStr+=strTmp
-        strTmp = "Meeting Time: "+str(item.get("start_time"))+" <br>"
-        temp.append(strTmp)
-        finalStr+=strTmp
-        strTmp = "Join URL: "+str(item.get("join_url"))+" <br>"
-        temp.append(strTmp)
-        finalStr+=strTmp
-        strTmp = "Meeting ID: "+str(item.get("id"))+" <br>"
-        temp.append(strTmp)
-        finalStr+=strTmp
-        arrOfMtgs.append(temp)
-        finalStr = finalStr+"<a href='/deleterender/"+str(item.get("id"))+"'>Delete</a><br><a href='/'>Home</a><br><br>"
-        
-        #HOW TO MAKE THIS CALL SEND MTG ID???
-    #for each mtg, make an array of strs with host name, join URL, date and mtgID
-    return finalStr #tuple(arrOfMtgs) --> wrong format (not sure how to format it to display but it can't be a list)
+
+###xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+##    jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
+##    arrOfMtgs = []
+##    mtgList = jsonResp.get("meetings")
+##    finalStr = ""
+##    for item in mtgList:
+##        temp = []
+##        strTmp = "Meeting Title: "+str(item.get("topic"))+" <br>"
+##        temp.append(strTmp)
+##        finalStr+=strTmp
+##        strTmp = "Meeting Time: "+str(item.get("start_time"))+" <br>"
+##        temp.append(strTmp)
+##        finalStr+=strTmp
+##        strTmp = "Join URL: "+str(item.get("join_url"))+" <br>"
+##        temp.append(strTmp)
+##        finalStr+=strTmp
+##        strTmp = "Meeting ID: "+str(item.get("id"))+" <br>"
+##        temp.append(strTmp)
+##        finalStr+=strTmp
+##        arrOfMtgs.append(temp)
+##        finalStr = finalStr+"<a href='/deleterender/"+str(item.get("id"))+"'>Delete</a><br><a href='/'>Home</a><br><br>"
+##        
+##        #HOW TO MAKE THIS CALL SEND MTG ID???
+##    #for each mtg, make an array of strs with host name, join URL, date and mtgID
+##    return finalStr #tuple(arrOfMtgs) --> wrong format (not sure how to format it to display but it can't be a list)
 
 #This is what is needed to be able to link to this page
 #make a get method a part of the route
