@@ -3,6 +3,14 @@
 #overwrite a txt that hold the key every week (timer tracks weeks/checks if key is valid)
 #at the start of the code, read in the txt and sent it as a param to each function
 
+
+##TO CREATE A TABLE:::
+#aws dynamodb create-table --table-name tableName --attribute-definitions AttributeName=___,AttributeType=S AttributeName=____,AttributeType=S --key-schema AttributeName=____,KeyType=___ AttributeName=___,KeyType=___ --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+#AttributeType S
+#KeyType RANGE, HASH (pk)
+
+
+
 import http.client
 import json
 from OpenSSL import SSL
@@ -22,12 +30,39 @@ def addParticipant(mtgID, firstName, lastName, email):
         'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg"
         }
 
-    conn.request("POST", "/v2/meetings/"+str(mtgID)+"/registrants", payload, headers)
+    conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
+#https://api.zoom.us/v2/meetings/{meetingId}/registrants
+    conn.request("POST", "/v2/meetings/"+str(mtgID)+"registrants", json.dumps(payload), headers)
+    res = conn.getresponse()
+    raw_data = res.read()
+    #data = json.loads(raw_data.decode("utf-8"))
+    conn.close()
+    #return data
+
+
+def createUser(email, firstName, lastName):
+    payload = {
+        'action':'create',
+        'user_info':{
+            'email':email,
+            'type':1,
+            'first_name':firstName,
+            'last_name':lastName
+            }
+        }
+
+    headers = {
+        'content-type': "application/json",
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg"
+        }
+
+    conn.request("POST", "/v2/users", json.dumps(payload), headers)
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     conn.close()
-    return data;
+    return data
+
 
 #----post below
 def createMtg(topic, time, password):
@@ -60,10 +95,38 @@ def createMtg(topic, time, password):
     conn.close()
     return data
 
+def updateMtg(mtgid, topic, time, password):
+    payload={
+      "topic": topic,
+      "type": 2,
+      "start_time": time,
+      "duration": 40,
+      "timezone": "Eastern Time (US and Canada)",
+      "password": password,
+      "settings": {
+        "host_video": 'true',
+        "mute_upon_entry": 'true',
+        "approval_type": 0,
+        "enforce_login": 'true'
+      }
+    }
+    headers = {
+        'content-type': "application/json",
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg"
+        }
+
+    conn.request("PATCH", "/v2/meetings/"+str(mtgid), json.dumps(payload), headers)
+    res = conn.getresponse()
+    raw_data = res.read()
+    data = json.loads(raw_data.decode("utf-8"))
+    conn.close()
+    return data
+
 def deleteMtgFromID(mtgID):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
-    #if given a valid meeting ID, this crashes the display???
     conn.request("DELETE", "/v2/meetings/"+str(mtgID), headers=headers)
+    res = conn.getresponse()
+    raw_data = res.read()
     conn.close()
     #response is not JSON like the rest
 
@@ -90,7 +153,8 @@ def getMtgFromMtgID(info):
 
 def getUserFromEmail(email):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
-    conn.request("GET", "/v2/users/"+str(email), headers=headers)
+    conn.request("GET", "/v2/users?page_number=1&page_size=30&status=active", headers=headers)
+    #conn.request("GET", "/v2/users/"+str(email), headers=headers)
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
@@ -114,3 +178,12 @@ def mtgInfoToJSON():
         mtgObj = {"title":str(item.get("topic")), "start": time, "end":strend}
         arrOfMtgs.append(mtgObj)
 
+
+
+
+##addParticipant(72261254435,'isha', 'naik', 'inaik4000@gmail.com')
+jsonResp = getMtgFromMtgID(72261254435)
+time = jsonResp.get("start_time")
+print(time[:10])
+print(time[11:-1])
+##print(createUser('inaik4000@gmail.com','isha', 'naik'))

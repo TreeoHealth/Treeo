@@ -7,7 +7,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import aws_controller
 from botocore.exceptions import ClientError
-from zoomtest_post import createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
+from zoomtest_post import updateMtg,createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
 
 app = Flask(__name__)
 
@@ -22,7 +22,7 @@ def home():
     if not (session.get('logged_in') or session.get('logged_in_a')):
         return render_template('login.html')
     elif session.get('logged_in'):
-        return 'Hello Boss! <a href="/logout">Logout</a>'
+        return 'Hello '+str(session['zoomID'])+' '+str(session['username'])+'<br><a href="/showallmtgs">Calendar</a><br> <a href="/logout">Logout</a> '
     else:
         return 'Hello Boss!  <a href="/get-items">Get table</a> <a href="/logout">Logout</a>'
 
@@ -47,21 +47,22 @@ def check_login():
         print('wrong password admin!')
     
     try:
-        print('before')
         response = dynamo_client.get_item(TableName= 'YourTestTable',
             Key={
                 'username': {"S":request.form['username']},
                 'password': {"S":request.form['password']}
             }
         )
-        print('after')
+        formEmail = response.get('Item').get('email').get('S')
         session['logged_in'] = True
+        session['username'] = request.form['username']
+        session['zoomID'] = getUserFromEmail(str(formEmail)).get('id')
         session['logged_in_a'] = False
     except ClientError as e:
         print(e.response['Error']['Message'])
     return home()
 
-@app.route('/registerrender', methods=['POST'])
+@app.route('/registerrender', methods=['POST','GET'])
 def regPg():
     return render_template('register.html')
 
@@ -72,10 +73,43 @@ def new_register():
     response = dynamo_client.put_item(TableName= 'YourTestTable',
        Item={
             'username': {"S":request.form['username']},
-            'password': {"S":request.form['password']}
+            'password': {"S":request.form['password']},
+            'email': {"S":request.form['email']},
+            'name':{"S":request.form['name']}
         }
        )
+    #TODO figure out how to display an error message while they're entering the form data
+    try:
+        formEmail = request.form['email']
+        emailAdd = getUserFromEmail(str(formEmail)).get('id')
+        if(emailAdd==None):
+            raise
+        session['zoomID']=emailAdd
+        session['logged_in'] = True
+        session['username'] = request.form['username']
+    except:
+        print("invalid zoom email!")
+        return regPg()
     return home()
+
+#things to implement
+###session constant of username and zoom-affiliated email
+###validation of zoom acct on creation
+###change all of this to the info of the logged in user, not hard coded userid
+###add a nav bar
+###make calendar, and meeting create/delete behind the login wall
+###once the user logs in, make a home page
+###form integration
+###meeting -- update
+
+###how to invite a user to the meeting who doesn't own it
+###how to make sub users under the main admin acct -- are they in the secret/encrypted in the JWT key??
+#####will the same key have the ability to query all of the sub users+CRUD their meetings?
+###TODO -- how to get the meetings that the patients have been invited to without them being owners of the JWT app/not being encrypted in the key?
+
+##TODO -- radio buttons for recurring meetings (how to line up recurring mtgs)
+##how to fill in a form with already existing mtg info for meeting info to be updated
+
 
 @app.route('/createrender', methods=['POST'])
 def createPg():
@@ -139,10 +173,48 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
     finalStr+=strTmp
     strTmp = "Meeting ID: "+mtgid+" <br>"
     finalStr+=strTmp
-    finalStr = finalStr+"<a href='/deleterender/"+mtgid+"'>Delete</a><br><a href='/'>Home</a><br><br>"
+    finalStr = finalStr+"<a href='/deleterender/"+mtgid+"'>Delete</a><br><a href='/'>Home</a><br><a href='/editrender/"+mtgid+"'>Edit</a><br><br>"
 
     return finalStr
 
+@app.route("/editrender/<mtgid>", methods=['POST','GET'])
+def editPgFromID(mtgid):
+    jsonResp = getMtgFromMtgID(str(mtgid))
+    #mtgname, pword, mtgtime, mtgdate
+    time=str(jsonResp.get("start_time"))
+    #split and display
+    date=time[:10]
+    
+    return render_template('edit.html',
+                           mtgnum=mtgid,
+                           mtgname=str(jsonResp.get("topic")),
+                           pword=str(jsonResp.get("password")),
+                           mtgtime=str(time[11:-1]),
+                           mtgdate=str(date))
+
+@app.route("/editmtg", methods=['POST','GET'])
+def editSubmit():
+    time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
+    jsonResp = updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
+
+    finalStr = "UPDATED MTG "+str(request.form['mtgnum'])+"<br>"
+    strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
+    finalStr+=strTmp
+    strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
+    finalStr+=strTmp
+    strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
+    finalStr+=strTmp
+    strTmp = "Meeting ID: "+str(jsonResp.get("id"))+" <br>"
+    finalStr+=strTmp
+    finalStr = finalStr+"<a href='/'>Home</a><br>"
+    
+    return finalStr
+
+    
+
+
+
+    
 #TODO ---> delete is a little unreliable?
     #It said it was deleted but it was still on the schedule??
 
@@ -175,9 +247,7 @@ def deletePgFromID(mtgid):
 #TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid?? ALL deletions are not working??
 #     -- fix the "blank" render (no 'placeholder' in the box)
 
-#TODOOOOOO (again) the delete goes through and removes the meeting correctly
-#BUT it has an incorrect JSON response (regardless of wherther the data from the delete function is returned to the flask page or not.
-#Need to figure out how to catch that, the below try except is not enough
+#TODOOOOOO (again) the delete goes through? but doesn't go through?
 @app.route("/deletemtg", methods=['POST'])
 def deleteMtg():
     jsonResp = getMtgFromMtgID(str(request.form['mtgID']))

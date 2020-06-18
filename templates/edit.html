@@ -1,0 +1,33 @@
+<link rel="stylesheet" href="/static/style.css" type="text/css">
+<!--&#123;% block body %&#125;-->
+
+
+<form action="/editmtg" method="POST">
+<div class="login">
+<div class="login-screen">
+<div class="app-title">
+<h1>Edit Meeting</h1>
+</div>
+<div class="login-form">
+<div class="control-group">
+	<input type="text" class="login-field" value={{mtgnum}} placeholder="mtg id" name="mtgnum">
+<label class="login-field-icon fui-user" for="login-name"></label></div>
+<div class="control-group">
+	<input type="text" class="login-field" value={{mtgname}} placeholder="name of mtg" name="mtgname">
+<label class="login-field-icon fui-user" for="login-name"></label></div>
+<div class="control-group">
+				<input type="password" class="login-field" value={{pword}} placeholder="password" name="password">
+<label class="login-field-icon fui-lock" for="login-pass"></label></div>
+<div class="control-group">
+				<input type="time" class="login-field" value={{mtgtime}} placeholder="time" name="time">
+<label class="login-field-icon fui-lock" for="login-name"></label></div>
+<div class="control-group">
+				<input type="date" class="login-field" value={{mtgdate}} placeholder="day" name="day">
+<label class="login-field-icon fui-lock" for="login-name"></label></div>
+<!--make a dropdown with time zones-->
+<input type="submit" value="Schedule" class="btn btn-primary btn-large btn-block">
+
+</div>
+</div>
+</div>
+</form>
