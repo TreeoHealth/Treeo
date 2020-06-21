@@ -19,33 +19,27 @@ def get_items():
 
 @app.route('/')
 def home():
-    if not (session.get('logged_in') or session.get('logged_in_a')):
+    if not (session.get('logged_in_p') or session.get('logged_in_d')):
         return render_template('login.html')
-    elif session.get('logged_in'):
-        return 'Hello '+str(session['zoomID'])+' '+str(session['username'])+'<br><a href="/showallmtgs">Calendar</a><br> <a href="/logout">Logout</a> '
     else:
-        return 'Hello Boss!  <a href="/get-items">Get table</a> <a href="/logout">Logout</a>'
+        return displayLoggedInHome()
 
-@app.route('/loginadmin', methods=['POST'])
-def do_admin_login():
-    if request.form['password'] == 'password' and request.form['username'] == 'admin':
-        session['logged_in_a'] = True
+@app.route('/homepage')
+def displayLoggedInHome():
+    if(session.get('logged_in_d')):
+        docStatus = 'doctor'
     else:
-        print('wrong password admin!')
-    return home()
+        docStatus = 'patient'
+    return render_template('homePage.html',docStat = docStatus,name=session['name'])
+        #name of logged in person printed
+        #doctor/patient
 
 @app.route('/login', methods=['POST'])
 def check_login():
     dynamodb = boto3.resource("dynamodb", region_name='us-east-1', endpoint_url="http://localhost:4000")
 
     table = dynamodb.Table('YourTestTable')
-    if request.form['password'] == 'password' and request.form['username'] == 'admin':
-        session['logged_in_a'] = True
-        session['logged_in'] = False
-        return home()
-    else:
-        print('wrong password admin!')
-    
+
     try:
         response = dynamo_client.get_item(TableName= 'YourTestTable',
             Key={
@@ -54,10 +48,15 @@ def check_login():
             }
         )
         formEmail = response.get('Item').get('email').get('S')
-        session['logged_in'] = True
+        docStatus = str(response.get('Item').get('docStatus').get('S'))
+        if(docStatus=='doctor'):
+            session['logged_in_d']=True
+            session['logged_in_p']=False
+        else:
+            session['logged_in_p'] = True
+            session['logged_in_d']=False
         session['username'] = request.form['username']
-        session['zoomID'] = getUserFromEmail(str(formEmail)).get('id')
-        session['logged_in_a'] = False
+        session['name'] = str(response.get('Item').get('name').get('S'))
     except ClientError as e:
         print(e.response['Error']['Message'])
     return home()
@@ -75,22 +74,25 @@ def new_register():
             'username': {"S":request.form['username']},
             'password': {"S":request.form['password']},
             'email': {"S":request.form['email']},
-            'name':{"S":request.form['name']}
+            'name':{"S":request.form['name']},
+            'docStatus':{"S":request.form['docStatus']}
         }
        )
     #TODO figure out how to display an error message while they're entering the form data
     try:
         formEmail = request.form['email']
-        emailAdd = getUserFromEmail(str(formEmail)).get('id')
-        if(emailAdd==None):
-            raise
-        session['zoomID']=emailAdd
-        session['logged_in'] = True
+        if(request.form['docStatus']=='doctor'):
+            session['logged_in_d']=True
+            session['logged_in_p']=False
+        else:
+            session['logged_in_p'] = True
+            session['logged_in_d']=False
         session['username'] = request.form['username']
+        session['name'] = request.form['name']
     except:
         print("invalid zoom email!")
         return regPg()
-    return home()
+    return displayLoggedInHome()
 
 #things to implement
 ###session constant of username and zoom-affiliated email
@@ -117,7 +119,7 @@ def createPg():
 
 @app.route('/createmtg', methods=['POST'])
 def create_mtg():
-    time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
+    time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
     jsonResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']))
 
     finalStr = ""
@@ -192,9 +194,11 @@ def editPgFromID(mtgid):
                            mtgtime=str(time[11:-1]),
                            mtgdate=str(date))
 
+#TODO ---->>>> WHY IS THIS NOT UPDATING????
 @app.route("/editmtg", methods=['POST','GET'])
 def editSubmit():
-    time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
+    time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
+    print(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
     jsonResp = updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
 
     finalStr = "UPDATED MTG "+str(request.form['mtgnum'])+"<br>"
@@ -206,12 +210,27 @@ def editSubmit():
     finalStr+=strTmp
     strTmp = "Meeting ID: "+str(jsonResp.get("id"))+" <br>"
     finalStr+=strTmp
-    finalStr = finalStr+"<a href='/'>Home</a><br>"
+    finalStr = finalStr+"<a href='/'>Home</a><br><a href='/showallmtgs'>Calendar</a>"
     
     return finalStr
 
     
-
+##TODO --> store appt info in aws away from zoom api
+#####implement doctor/patient accts
+    #MAKE THE CREATE MEETING ONLY OPEN TO DOCTOR USERS
+    #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS
+    #MAKE THE CALENDAR ONLY DISPLAY THE APPTS THE USER OWNS/HAS BEEN ADDED TO
+        #query the database for the appts those users are in on
+        #make an "add user to appt" function that updates the appt database item (max 1 patient)
+        #make an option to add a patient on creation of the appt
+    #(eventually) make doctor users only able to be created after approval by admins
+    #(eventually) validate acct (through email) - confirmation
+    #(eventually) forgot password/recover acct
+    #let doctor/admin users invite the patient to a meeting
+    #inviting user via id (add appt to that user's calendar and give them the join url)
+    #make a search functionality for when the doctor is adding patients to the appt
+    #store appt info in aws database for the user
+        #(for the appt, have a doctor user id field and patient user id field, date, time, join url)
 
 
     
@@ -260,10 +279,10 @@ def deleteMtg():
         return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender/"+str(request.form['mtgID'])+"'>Delete</a>"
         
 
-@app.route("/logout")
+@app.route("/logout", methods=['POST'])
 def logout():
-    session['logged_in'] = False
-    session['logged_in_a'] = False
+    session['logged_in_p'] = False
+    session['logged_in_d'] = False
     return home()
 
 if __name__ == "__main__":

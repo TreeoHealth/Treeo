@@ -115,12 +115,14 @@ def updateMtg(mtgid, topic, time, password):
         'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg"
         }
 
-    conn.request("PATCH", "/v2/meetings/"+str(mtgid), json.dumps(payload), headers)
-    res = conn.getresponse()
-    raw_data = res.read()
-    data = json.loads(raw_data.decode("utf-8"))
+##    conn.request("PATCH", "/v2/meetings/"+str(mtgid), json.dumps(payload), headers)
+##    res = conn.getresponse()
+##    raw_data = res.read()
+##    print(raw_data)
+##    data = json.loads(raw_data.decode("utf-8"))
+##    print(data)
     conn.close()
-    return data
+    return getMtgFromMtgID(mtgid)
 
 def deleteMtgFromID(mtgID):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
@@ -166,7 +168,7 @@ def mtgInfoToJSON():
     arrOfMtgs = []
     #[{ "title": "Meeting",
     #"start": "2014-09-12T10:30:00-05:00",
-    #"end": "2014-09-12T12:30:00-05:00"},{...}]
+    #"end": "2014-09-12T12:30:00-05:00Z"},{...}]
     
     mtgList = jsonResp.get("meetings")
     finalStr = ""
@@ -182,8 +184,7 @@ def mtgInfoToJSON():
 
 
 ##addParticipant(72261254435,'isha', 'naik', 'inaik4000@gmail.com')
-jsonResp = getMtgFromMtgID(72261254435)
-time = jsonResp.get("start_time")
-print(time[:10])
-print(time[11:-1])
+#jsonResp = getMtgFromMtgID(72261254435)
+#jsonResp = updateMtg(72892071916, "Updated", "2020-06-30T12:30:00Z", "newp")
+#print(jsonResp)
 ##print(createUser('inaik4000@gmail.com','isha', 'naik'))
