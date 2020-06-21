@@ -113,6 +113,7 @@ def new_register():
 ##how to fill in a form with already existing mtg info for meeting info to be updated
 
 
+
 @app.route('/createrender', methods=['POST'])
 def createPg():
     return render_template('create_mtg.html')
@@ -137,7 +138,12 @@ def create_mtg():
 
 @app.route('/data')
 def return_data():
+    #***********************
 #TODO --- eventually we are going to need to get the userID from WHO IS LOGGED IN
+        #---MAKE FUNCTIONS IN .PY THAT QUERY AWS FOR THE USER INFO (NO ZOOM API CALL)
+        #---those functions only return the mtgid then the jsonResp can come from zoom_post.py
+
+
     jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
     arrOfMtgs = []
     #[{ "title": "Meeting",
@@ -194,6 +200,7 @@ def editPgFromID(mtgid):
                            mtgtime=str(time[11:-1]),
                            mtgdate=str(date))
 
+    #***********************
 #TODO ---->>>> WHY IS THIS NOT UPDATING????
 @app.route("/editmtg", methods=['POST','GET'])
 def editSubmit():
@@ -217,12 +224,14 @@ def editSubmit():
     
 ##TODO --> store appt info in aws away from zoom api
 #####implement doctor/patient accts
+        #*****************
     #MAKE THE CREATE MEETING ONLY OPEN TO DOCTOR USERS
     #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS
     #MAKE THE CALENDAR ONLY DISPLAY THE APPTS THE USER OWNS/HAS BEEN ADDED TO
         #query the database for the appts those users are in on
         #make an "add user to appt" function that updates the appt database item (max 1 patient)
         #make an option to add a patient on creation of the appt
+
     #(eventually) make doctor users only able to be created after approval by admins
     #(eventually) validate acct (through email) - confirmation
     #(eventually) forgot password/recover acct
@@ -233,15 +242,11 @@ def editSubmit():
         #(for the appt, have a doctor user id field and patient user id field, date, time, join url)
 
 
-    
-#TODO ---> delete is a little unreliable?
-    #It said it was deleted but it was still on the schedule??
-
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
-#TODO -- make a link in each entry to an EDITABLE/EXTENDED appt description
-    #in this area, make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
-#*****************************************************************************************
+#####TODO -- make a link in each entry to an EDITABLE/EXTENDED appt description
+    #####in this area, make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
+
 @app.route('/showallmtgs', methods=['POST','GET'])
 def show_mtg():     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
     return render_template("calendar.html")
@@ -250,10 +255,6 @@ def show_mtg():     # TODO ---(make this calendar) Or when the calendar is click
 #make a get method a part of the route
 @app.route("/deleterender", methods=['POST','GET'])
 def deletePg():
-    #if ???:
-    #(if it came from the showallmtgs list instead of the home page, expect a mtg # along with it)
-        #return render_template('delete.html', mtg=str(???))
-    #else:
     return render_template('delete.html', mtg="")
 
 #This will render the delete with the mtgID in the box filled in already
@@ -262,11 +263,11 @@ def deletePg():
 def deletePgFromID(mtgid):
     return render_template('delete.html', mtg=str(mtgid))
 
-#TODO -- make a function+page that allows you to view/edit specific mtg details?
-#TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid?? ALL deletions are not working??
+#####TODO -- make a function+page that allows you to view/edit specific mtg details?
+#####TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid?? ALL deletions are not working??
 #     -- fix the "blank" render (no 'placeholder' in the box)
 
-#TODOOOOOO (again) the delete goes through? but doesn't go through?
+#####TODOOOOOO (again) the delete goes through? but doesn't go through?
 @app.route("/deletemtg", methods=['POST'])
 def deleteMtg():
     jsonResp = getMtgFromMtgID(str(request.form['mtgID']))
