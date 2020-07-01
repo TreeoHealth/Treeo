@@ -7,6 +7,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import aws_controller
 from botocore.exceptions import ClientError
+from aws_appt import getAllApptsFromUsername
 from zoomtest_post import updateMtg,createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
 
 app = Flask(__name__)
@@ -28,9 +29,11 @@ def home():
 def displayLoggedInHome():
     if(session.get('logged_in_d')):
         docStatus = 'doctor'
+        return render_template('homePageDr.html',docStat = docStatus,name=session['name'])
     else:
         docStatus = 'patient'
-    return render_template('homePage.html',docStat = docStatus,name=session['name'])
+        return render_template('homePage.html',docStat = docStatus,name=session['name'])
+
         #name of logged in person printed
         #doctor/patient
 
@@ -41,12 +44,14 @@ def check_login():
     table = dynamodb.Table('YourTestTable')
 
     try:
-        response = dynamo_client.get_item(TableName= 'YourTestTable',
+        response = dynamo_client.get_item(TableName= 'users',
             Key={
-                'username': {"S":request.form['username']},
-                'password': {"S":request.form['password']}
+                'username': {"S":request.form['username']}                
             }
         )
+        if response.get('Item').get('password').get('S')!= request.form['password']:
+            print("WRONG PASSWORD")
+            return home()
         formEmail = response.get('Item').get('email').get('S')
         docStatus = str(response.get('Item').get('docStatus').get('S'))
         if(docStatus=='doctor'):
@@ -69,7 +74,7 @@ def regPg():
 def new_register():
     
 #register new user
-    response = dynamo_client.put_item(TableName= 'YourTestTable',
+    response = dynamo_client.put_item(TableName= 'users',
        Item={
             'username': {"S":request.form['username']},
             'password': {"S":request.form['password']},
@@ -93,6 +98,9 @@ def new_register():
         print("invalid zoom email!")
         return regPg()
     return displayLoggedInHome()
+
+#TODO MAKE PATIENTS UNABLE TO CRUD
+
 
 #things to implement
 ###session constant of username and zoom-affiliated email
@@ -121,18 +129,23 @@ def createPg():
 @app.route('/createmtg', methods=['POST'])
 def create_mtg():
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
-    jsonResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']))
-
+    jsonResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
+    print(jsonResp)
+#ADD PATIENT FIELD
+#ADD "creator"/doctor param to createMtg
+    
     finalStr = ""
     strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
     finalStr+=strTmp
     strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
     finalStr+=strTmp
+    strTmp = "Patient Username: "+str(request.form['patientUser'])+" <br>"
+    finalStr+=strTmp
     strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
     finalStr+=strTmp
     strTmp = "Meeting ID: "+str(jsonResp.get("id"))+" <br>"
     finalStr+=strTmp
-    finalStr = finalStr+"<a href='/'>Home</a><br>"
+    finalStr = finalStr+"<a href='/'>Home</a><br><a href='/showallmtgs'>Calendar</a>"
     
     return finalStr
 
@@ -144,26 +157,26 @@ def return_data():
         #---those functions only return the mtgid then the jsonResp can come from zoom_post.py
 
 
-    jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
-    arrOfMtgs = []
+    #jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
+    arrOfMtgs =getAllApptsFromUsername(session['username'])
     #[{ "title": "Meeting",
     #"start": "2014-09-12T10:30:00-05:00",
     #"end": "2014-09-12T12:30:00-05:00",
     #"url":"absolute or relative?"},{...}]
     
-    mtgList = jsonResp.get("meetings")
+    mtgList = []#mtgList = jsonResp.get("meetings")
     finalStr = ""
-    for item in mtgList:
+    for item in arrOfMtgs:
         time = str(item.get("start_time"))
-        mtgid = str(item.get("id"))
+        mtgid = str(item.get("mtgid"))
         time = time[:-1]
-        end_time = ((int(time[11:13])+1)%24)
+        end_time = int(float(time[11:13]))+1
         strend = time[:11]+str(end_time)+time[13:]
-        mtgObj = {"title":str(item.get("topic")), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
-        arrOfMtgs.append(mtgObj)
+        mtgObj = {"title":str(item.get("mtgName")), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
+        mtgList.append(mtgObj)
     #BADDDD (change this)
     with open('appts.json', 'w') as outfile:
-        json.dump(arrOfMtgs, outfile)
+        json.dump(mtgList, outfile)
     with open('appts.json', "r") as input_data:
         return input_data.read()    
 

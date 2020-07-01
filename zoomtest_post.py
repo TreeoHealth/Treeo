@@ -9,13 +9,14 @@
 #AttributeType S
 #KeyType RANGE, HASH (pk)
 
-
+#eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48
 
 import http.client
 import json
 from OpenSSL import SSL
+from aws_appt import getAllApptsFromUsername,createApptAWS
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
-headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg" }
+headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48" }
 
 def addParticipant(mtgID, firstName, lastName, email):
     #conn = http.client.HTTPSConnection("api.zoom.us", context = ssl._create_unverified_context())
@@ -27,7 +28,7 @@ def addParticipant(mtgID, firstName, lastName, email):
         }
     headers = { #post needs this different headers definition, get doesn't
         'content-type': "application/json",
-        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg"
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48"
         }
 
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
@@ -53,7 +54,7 @@ def createUser(email, firstName, lastName):
 
     headers = {
         'content-type': "application/json",
-        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg"
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48"
         }
 
     conn.request("POST", "/v2/users", json.dumps(payload), headers)
@@ -65,7 +66,7 @@ def createUser(email, firstName, lastName):
 
 
 #----post below
-def createMtg(topic, time, password):
+def createMtg(topic, time, password, doctor, patient):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     payload={
       "topic": topic,
@@ -81,17 +82,22 @@ def createMtg(topic, time, password):
         "enforce_login": 'true'
       }
     }
-
+#CALL createMtg  in aws_appt -> pass dr and patient
+    #getAllApptsFromUsername,
+    
+    
     headers = {
         'content-type': "application/json",
-        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg"
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48"
         }
 
     conn.request("POST", "/v2/users/HE1A37EjRIiGjh_wekf90A/meetings", json.dumps(payload), headers)##HE1A37EjRIiGjh_wekf90A
     ##urllib.request.urlopen({api_url}, data=bytes(json.dumps(headers), encoding="utf-8"))
+
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
+    print(createApptAWS(topic, str(data.get("id")), doctor, patient, str(data.get("start_time")), str(data.get("join_url"))))
     conn.close()
     return data
 
@@ -112,10 +118,10 @@ def updateMtg(mtgid, topic, time, password):
     }
     headers = {
         'content-type': "application/json",
-        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTM1MzI3NDAsImlhdCI6MTU5MTU4ODM1MX0.fC3ewzx3rvy-Fex6_zKX6mryW-d83WjTSILdHm-dMdg"
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48"
         }
 
-##    conn.request("PATCH", "/v2/meetings/"+str(mtgid), json.dumps(payload), headers)
+    conn.request("PATCH", "/v2/meetings/"+str(mtgid), json.dumps(payload), headers)
 ##    res = conn.getresponse()
 ##    raw_data = res.read()
 ##    print(raw_data)

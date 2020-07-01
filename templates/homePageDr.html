@@ -8,6 +8,15 @@
 <h1>Welcome {{name}}</h1>
 <h2>{{docStat}}</h2>
 
+
+<form action='/createrender' method = "POST">
+<input type="submit" value="Create Meeting" class="btn btn-primary btn-large btn-block">
+</form>
+
+<form action='/deleterender' method = "POST">
+<input type="submit" value="Delete Meeting" class="btn btn-primary btn-large btn-block">
+</form>
+
 <form action='/showallmtgs' method = "POST">
 <input type="submit" value="Show Meetings" class="btn btn-primary btn-large btn-block">
 </form>
