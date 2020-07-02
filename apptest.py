@@ -21,7 +21,7 @@ def get_items():
 @app.route('/')
 def home():
     if not (session.get('logged_in_p') or session.get('logged_in_d')):
-        return render_template('login.html')
+        return render_template('login.html', errorMsg="")
     else:
         return displayLoggedInHome()
 
@@ -49,9 +49,15 @@ def check_login():
                 'username': {"S":request.form['username']}                
             }
         )
+        print(response)
+        try:
+            test = response.get('Item').get('password')
+        except:
+            return render_template('login.html', errorMsg="Incorrect username or password.")
         if response.get('Item').get('password').get('S')!= request.form['password']:
             print("WRONG PASSWORD")
-            return home()
+            return render_template('login.html', errorMsg="Incorrect username or password.")
+            #return home()
         formEmail = response.get('Item').get('email').get('S')
         docStatus = str(response.get('Item').get('docStatus').get('S'))
         if(docStatus=='doctor'):
@@ -83,6 +89,7 @@ def new_register():
             'docStatus':{"S":request.form['docStatus']}
         }
        )
+    #TODO make sure username+email aren't used by other users (errormsg)
     #TODO figure out how to display an error message while they're entering the form data
     try:
         formEmail = request.form['email']
@@ -103,16 +110,16 @@ def new_register():
 
 
 #things to implement
-###session constant of username and zoom-affiliated email
-###validation of zoom acct on creation
-###change all of this to the info of the logged in user, not hard coded userid
+##x#session constant of username and zoom-affiliated email
+###validation of zoom acct on creation???
+#x##change all of this to the info of the logged in user, not hard coded userid
 ###add a nav bar
-###make calendar, and meeting create/delete behind the login wall
-###once the user logs in, make a home page
+##x#make calendar, and meeting create/delete behind the login wall
+##x#once the user logs in, make a home page
 ###form integration
-###meeting -- update
+##x#meeting -- update
 
-###how to invite a user to the meeting who doesn't own it
+##x#how to invite a user to the meeting who doesn't own it
 ###how to make sub users under the main admin acct -- are they in the secret/encrypted in the JWT key??
 #####will the same key have the ability to query all of the sub users+CRUD their meetings?
 ###TODO -- how to get the meetings that the patients have been invited to without them being owners of the JWT app/not being encrypted in the key?
@@ -132,7 +139,7 @@ def create_mtg():
     jsonResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
     print(jsonResp)
 #ADD PATIENT FIELD
-#ADD "creator"/doctor param to createMtg
+#TODO ADD "creator"/doctor param to createMtg
     
     finalStr = ""
     strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
@@ -152,9 +159,9 @@ def create_mtg():
 @app.route('/data')
 def return_data():
     #***********************
-#TODO --- eventually we are going to need to get the userID from WHO IS LOGGED IN
-        #---MAKE FUNCTIONS IN .PY THAT QUERY AWS FOR THE USER INFO (NO ZOOM API CALL)
-        #---those functions only return the mtgid then the jsonResp can come from zoom_post.py
+#xTODO --- eventually we are going to need to get the userID from WHO IS LOGGED IN
+        #x---MAKE FUNCTIONS IN .PY THAT QUERY AWS FOR THE USER INFO (NO ZOOM API CALL)
+        #x---those functions only return the mtgid then the jsonResp can come from zoom_post.py
 
 
     #jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
@@ -205,7 +212,8 @@ def editPgFromID(mtgid):
     time=str(jsonResp.get("start_time"))
     #split and display
     date=time[:10]
-    
+
+    #TODO -- make an entry for changing the patient
     return render_template('edit.html',
                            mtgnum=mtgid,
                            mtgname=str(jsonResp.get("topic")),
@@ -238,9 +246,9 @@ def editSubmit():
 ##TODO --> store appt info in aws away from zoom api
 #####implement doctor/patient accts
         #*****************
-    #MAKE THE CREATE MEETING ONLY OPEN TO DOCTOR USERS
+    #xMAKE THE CREATE MEETING ONLY OPEN TO DOCTOR USERS
     #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS
-    #MAKE THE CALENDAR ONLY DISPLAY THE APPTS THE USER OWNS/HAS BEEN ADDED TO
+    #xMAKE THE CALENDAR ONLY DISPLAY THE APPTS THE USER OWNS/HAS BEEN ADDED TO
         #query the database for the appts those users are in on
         #make an "add user to appt" function that updates the appt database item (max 1 patient)
         #make an option to add a patient on creation of the appt
