@@ -13,7 +13,7 @@
 
 import http.client
 import json
-from OpenSSL import SSL
+#from OpenSSL import SSL
 from aws_appt import getAllApptsFromUsername,createApptAWS
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
 headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48" }

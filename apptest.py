@@ -106,7 +106,26 @@ def new_register():
         return regPg()
     return displayLoggedInHome()
 
-#TODO MAKE PATIENTS UNABLE TO CRUD
+#TODO MAKE PATIENTS UNABLE TO CRUD <--------------- PRIORITY LIST
+##if the patient is invalid, make an error
+##if the person creating is a patient, error
+##email validation? (valid domain at least)
+##check unique username
+##enforce higher lvl passwords
+##remove edit links for patients
+##change inline code (edit/delete) to buttons that are sent the mtgid link but are a button
+##block patients from using the doctor CRUD pages via links/urls
+##make confirmation messages better (flash?)
+
+#new features********************************************
+##acct page (be able to update acct info)
+##nav bar (home/calendar/acct/logout - patient, home/calendar/create/users/acct/logout)
+
+##make the doctor able to view a list of patients **
+##  --make a button next to patient userID able to be clicked (create appt)
+##  -> autofills a create form with that userID (like clicking delete)
+
+##look into dynamic text boxes (react to user input AS THEY TYPE -- do not need to submit)
 
 
 #things to implement
@@ -127,14 +146,19 @@ def new_register():
 ##TODO -- radio buttons for recurring meetings (how to line up recurring mtgs)
 ##how to fill in a form with already existing mtg info for meeting info to be updated
 
-
+def accessDenied():
+    return render_template('accessDenied.html')
 
 @app.route('/createrender', methods=['POST'])
 def createPg():
+    if session['logged_in_p']:
+        return accessDenied()
     return render_template('create_mtg.html')
 
 @app.route('/createmtg', methods=['POST'])
 def create_mtg():
+    if session['logged_in_p']:
+        return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
     jsonResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
     print(jsonResp)
@@ -207,6 +231,8 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
 
 @app.route("/editrender/<mtgid>", methods=['POST','GET'])
 def editPgFromID(mtgid):
+    if session['logged_in_p']:
+        return accessDenied()
     jsonResp = getMtgFromMtgID(str(mtgid))
     #mtgname, pword, mtgtime, mtgdate
     time=str(jsonResp.get("start_time"))
@@ -225,6 +251,8 @@ def editPgFromID(mtgid):
 #TODO ---->>>> WHY IS THIS NOT UPDATING????
 @app.route("/editmtg", methods=['POST','GET'])
 def editSubmit():
+    if session['logged_in_p']:
+        return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
     print(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
     jsonResp = updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
@@ -276,12 +304,16 @@ def show_mtg():     # TODO ---(make this calendar) Or when the calendar is click
 #make a get method a part of the route
 @app.route("/deleterender", methods=['POST','GET'])
 def deletePg():
+    if session['logged_in_p']:
+        return accessDenied()
     return render_template('delete.html', mtg="")
 
 #This will render the delete with the mtgID in the box filled in already
 #doesn't work currently
 @app.route("/deleterender/<mtgid>", methods=['POST','GET'])
 def deletePgFromID(mtgid):
+    if session['logged_in_p']:
+        return accessDenied()
     return render_template('delete.html', mtg=str(mtgid))
 
 #####TODO -- make a function+page that allows you to view/edit specific mtg details?
@@ -291,6 +323,8 @@ def deletePgFromID(mtgid):
 #####TODOOOOOO (again) the delete goes through? but doesn't go through?
 @app.route("/deletemtg", methods=['POST'])
 def deleteMtg():
+    if session['logged_in_p']:
+        return accessDenied()
     jsonResp = getMtgFromMtgID(str(request.form['mtgID']))
     try:
         x=jsonResp.get("start_time")
