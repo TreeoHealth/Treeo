@@ -97,9 +97,11 @@ def createMtg(topic, time, password, doctor, patient):
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
-    print(createApptAWS(topic, str(data.get("id")), doctor, patient, str(data.get("start_time")), str(data.get("join_url"))))
+    
+    result = createApptAWS(topic, str(data.get("id")), doctor, patient, str(data.get("start_time")), str(data.get("join_url")))
+    
     conn.close()
-    return data
+    return data, result
 
 def updateMtg(mtgid, topic, time, password):
     payload={

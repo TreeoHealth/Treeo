@@ -35,9 +35,8 @@ margin-bottom: 10px;
 .error{
 color: red;
 text-align: center;
-font-size: 100px;
-font-weight:700;
-padding-bottom: 20px;
+font-size: 10px;
+font-weight:70;
 }
 
 input {

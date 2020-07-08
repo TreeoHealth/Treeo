@@ -24,7 +24,6 @@ def getAllApptsFromUsername(username):
             apptList.append(i)
     return apptList
 
-    return nameList
 dynamo_client = boto3.client('dynamodb')
 def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
 
@@ -48,17 +47,19 @@ def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
                 'username': {"S":patient}
             }
         )
-        isPat=response.get('Item').get('docStatus').get('S')
-        if isPat!="patient":
+        try:
+            isPat=response.get('Item').get('docStatus').get('S')
+        except:
             return "The patient username sent was not a patient account."
         pError = False
     except ClientError as e:
         print(e.response['Error']['Message'])
         if dError:
             print("INVALID DOCTOR NAME.")
+            return "You are not valid to create a meeting."
         else:
             print("INVALID PATIENT NAME.")
-        return "Error retrieving the account information for patient or doctor account."
+            return "Error retrieving the account information for patient account."
     #if the doctor and patient are both valid
     
     response = dynamo_client.put_item(TableName= 'apptsTable',
@@ -71,7 +72,7 @@ def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
             'joinurl':{"S":joinURL}
         }
        )
-    return "successfully inserted the appt into the database."
+    return "Successfully inserted the appt into the database."
     
 ##print(createApptAWS('test','72261254435',"doc","pat", "2020-06-30T12:30:00Z",'https://us04web.zoom.us/j/72892071916?pwd=V2hHcUphUlBlZG5iQlN1YmQ4R3BZUT09'))
 ##print(getAllApptsFromUsername("doc"))

@@ -10,6 +10,7 @@
 </div>
 <div class="login-form">
 <div class="error">{{errorMsg}}</div>
+<!--<a href="{{ url_for('createPg') }}">Home</a>--> <!--name of function (needs to be a 'GET' method)-->
 <div class="control-group">
 				<input type="text" class="login-field" value="" placeholder="username" name="username">
 <label class="login-field-icon fui-user" for="login-name"></label></div>
@@ -21,9 +22,7 @@
 
 </form>
 <br>
-<form action='/registerrender' method = "POST">
-<input type="submit" value="Register" class="btn btn-primary btn-large btn-block">
-</form>
+<a href="{{ url_for('regPg') }}" class="btn btn-primary btn-large btn-block">Register</a>
 </div>
 </div>
 </div>

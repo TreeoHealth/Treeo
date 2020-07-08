@@ -37,7 +37,7 @@ def displayLoggedInHome():
         #name of logged in person printed
         #doctor/patient
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST','GET'])
 def check_login():
     dynamodb = boto3.resource("dynamodb", region_name='us-east-1', endpoint_url="http://localhost:4000")
 
@@ -76,45 +76,53 @@ def check_login():
 def regPg():
     return render_template('register.html')
 
-@app.route('/register', methods=['POST'])
+@app.route('/register', methods=['POST','GET'])
 def new_register():
-    
-#register new user
-    response = dynamo_client.put_item(TableName= 'users',
-       Item={
-            'username': {"S":request.form['username']},
-            'password': {"S":request.form['password']},
-            'email': {"S":request.form['email']},
-            'name':{"S":request.form['name']},
-            'docStatus':{"S":request.form['docStatus']}
+    response = dynamo_client.get_item(TableName= 'users',
+        Key={
+            'username': {"S":request.form['username']}                
         }
-       )
-    #TODO make sure username+email aren't used by other users (errormsg)
-    #TODO figure out how to display an error message while they're entering the form data
+    )
     try:
-        formEmail = request.form['email']
-        if(request.form['docStatus']=='doctor'):
-            session['logged_in_d']=True
-            session['logged_in_p']=False
-        else:
-            session['logged_in_p'] = True
-            session['logged_in_d']=False
-        session['username'] = request.form['username']
-        session['name'] = request.form['name']
+        test = response.get('Item').get('password')
+        return render_template('register.html', errorMsg="Username is already taken. Please use a different one.")
     except:
-        print("invalid zoom email!")
-        return regPg()
-    return displayLoggedInHome()
+#register new user
+        response = dynamo_client.put_item(TableName= 'users',
+           Item={
+                'username': {"S":request.form['username']},
+                'password': {"S":request.form['password']},
+                'email': {"S":request.form['email']},
+                'name':{"S":request.form['name']},
+                'docStatus':{"S":request.form['docStatus']}
+            }
+           )
+        #TODO make sure username+email aren't used by other users (errormsg)
+        #TODO figure out how to display an error message while they're entering the form data
+        try:
+            formEmail = request.form['email']
+            if(request.form['docStatus']=='doctor'):
+                session['logged_in_d']=True
+                session['logged_in_p']=False
+            else:
+                session['logged_in_p'] = True
+                session['logged_in_d']=False
+            session['username'] = request.form['username']
+            session['name'] = request.form['name']
+        except:
+            print("invalid zoom email!")
+            return regPg()
+        return displayLoggedInHome()
 
 #TODO MAKE PATIENTS UNABLE TO CRUD <--------------- PRIORITY LIST
-##if the patient is invalid, make an error
-##if the person creating is a patient, error
+#x#if the patient is invalid, make an error
+#x#if the person creating is a patient, error
 ##email validation? (valid domain at least)
-##check unique username
+#x#check unique username 
 ##enforce higher lvl passwords
 ##remove edit links for patients
-##change inline code (edit/delete) to buttons that are sent the mtgid link but are a button
-##block patients from using the doctor CRUD pages via links/urls
+##change inline code (edit/delete) to buttons that are sent the mtgid link but are a button <-------------
+#x--#block patients from using the doctor CRUD pages via links/urls
 ##make confirmation messages better (flash?)
 
 #new features********************************************
@@ -127,6 +135,7 @@ def new_register():
 
 ##look into dynamic text boxes (react to user input AS THEY TYPE -- do not need to submit)
 
+#note: relad page appears to wipe session values???
 
 #things to implement
 ##x#session constant of username and zoom-affiliated email
@@ -149,34 +158,36 @@ def new_register():
 def accessDenied():
     return render_template('accessDenied.html')
 
-@app.route('/createrender', methods=['POST'])
+@app.route('/createrender', methods=['POST','GET'])
 def createPg():
-    if session['logged_in_p']:
-        return accessDenied()
+##    if session['logged_in_p']:
+##        return accessDenied()
     return render_template('create_mtg.html')
 
-@app.route('/createmtg', methods=['POST'])
+@app.route('/createmtg', methods=['POST','GET'])
 def create_mtg():
     if session['logged_in_p']:
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
-    jsonResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
-    print(jsonResp)
+    jsonResp, awsResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
+
+    finalStr = ""
+    if awsResp!="Successfully inserted the appt into the database.":
+        finalStr="ERROR CREATING APPOINTMENT. "+awsResp
 #ADD PATIENT FIELD
 #TODO ADD "creator"/doctor param to createMtg
-    
-    finalStr = ""
-    strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
-    finalStr+=strTmp
-    strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
-    finalStr+=strTmp
-    strTmp = "Patient Username: "+str(request.form['patientUser'])+" <br>"
-    finalStr+=strTmp
-    strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
-    finalStr+=strTmp
-    strTmp = "Meeting ID: "+str(jsonResp.get("id"))+" <br>"
-    finalStr+=strTmp
-    finalStr = finalStr+"<a href='/'>Home</a><br><a href='/showallmtgs'>Calendar</a>"
+    else:
+        strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
+        finalStr+=strTmp
+        strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
+        finalStr+=strTmp
+        strTmp = "Patient Username: "+str(request.form['patientUser'])+" <br>"
+        finalStr+=strTmp
+        strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
+        finalStr+=strTmp
+        strTmp = "Meeting ID: "+str(jsonResp.get("id"))+" <br>"
+        finalStr+=strTmp
+        finalStr = finalStr+"<a href="+"'{{ url_for("+"show_mtg"+"') }}'"+" class='btn btn-primary btn-large btn-block'>Calendar</a><br><a href='"+"{{ url_for('"+"home') }}'"+">Home</a>"
     
     return finalStr
 
@@ -225,7 +236,7 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
     finalStr+=strTmp
     strTmp = "Meeting ID: "+mtgid+" <br>"
     finalStr+=strTmp
-    finalStr = finalStr+"<a href='/deleterender/"+mtgid+"'>Delete</a><br><a href='/'>Home</a><br><a href='/editrender/"+mtgid+"'>Edit</a><br><br>"
+    finalStr = finalStr+"<a href='/deleterender/"+mtgid+"'>Delete</a><br><a href='"+"{{ url_for('"+"home') }}'"+"class='btn btn-primary btn-large btn-block'>Home</a><br><a href='/editrender/"+mtgid+"'>Edit</a><br><br>"
 
     return finalStr
 
@@ -321,7 +332,7 @@ def deletePgFromID(mtgid):
 #     -- fix the "blank" render (no 'placeholder' in the box)
 
 #####TODOOOOOO (again) the delete goes through? but doesn't go through?
-@app.route("/deletemtg", methods=['POST'])
+@app.route("/deletemtg", methods=['POST','GET'])
 def deleteMtg():
     if session['logged_in_p']:
         return accessDenied()
@@ -335,7 +346,7 @@ def deleteMtg():
         return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender/"+str(request.form['mtgID'])+"'>Delete</a>"
         
 
-@app.route("/logout", methods=['POST'])
+@app.route("/logout", methods=['POST','GET'])
 def logout():
     session['logged_in_p'] = False
     session['logged_in_d'] = False

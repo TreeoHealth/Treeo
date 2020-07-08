@@ -7,12 +7,9 @@
 <div class="app-title">
 <h1>Access Denied to This User Level</h1>
 </div>
-	<form action='/' method = "POST">
-	<input type="submit" value="Home" class="btn btn-primary btn-large btn-block">
-	</form>	
-	<form action='/showallmtgs' method = "POST">
-	<input type="submit" value="Show Meetings" class="btn btn-primary btn-large btn-block">
-	</form>
+<a href="{{ url_for('show_mtg') }}" class="btn btn-primary btn-large btn-block">Calendar</a>
+<br>
+<a href="{{ url_for('logout') }}" class="btn btn-primary btn-large btn-block">Logout</a>
 </div>
 </div>
 </div>
