@@ -1,9 +1,12 @@
 TODOS
 	This week
 #TODO MAKE PATIENTS UNABLE TO CRUD
+#MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS
 ##enforce higher lvl passwords
+#fix the "blank" render (no 'placeholder' in the box)
 ##remove edit links for patients
 ##change inline code (edit/delete) to buttons that are sent the mtgid link but are a button <-------------
+	
 	This month
 ##acct page (be able to update acct info)
 ##nav bar (home/calendar/acct/logout - patient, home/calendar/create/users/acct/logout)
@@ -11,7 +14,14 @@ TODOS
 ##make the doctor able to view a list of patients **
 ##  --make a button next to patient userID able to be clicked (create appt)
 ##  -> autofills a create form with that userID (like clicking delete)
+#TODO figure out how to display an error message while they're entering the form data
+#make an "add user to appt" function that updates the appt database item (max 1 patient)
+#make a search functionality for when the doctor is adding patients to the appt
+#TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
+    #even the time creation is wrong but it is still seeing the time zone as EST so ??????
+	
 	Eventually
+Make a notification system (notify patients when a dr invites them to an appt)
 ##email validation? (valid domain at least)
 ##look into dynamic text boxes (react to user input AS THEY TYPE -- do not need to submit)
 ###validation of zoom acct on creation??? Not possible
@@ -20,8 +30,12 @@ TODOS
 ###how to make Zoom doctor sub users under the main admin acct -- are they in the secret/encrypted in the JWT key??
 	#####will the same key have the ability to query all of the sub users+CRUD their meetings?
 	###-- how to get the meetings that the patients have been invited to without them being owners of the JWT app/not being encrypted in the key?
-
-Finished (untested)
+#(eventually) make doctor users only able to be created after approval by admins
+#(eventually) validate acct (through email) - confirmation
+#(eventually) forgot password/recover acct
+	
+	
+	Finished (untested)
 #x#if the patient is invalid, make an error
 #x#if the person creating is a patient, error
 #x#check unique username 
@@ -35,45 +49,25 @@ Finished (untested)
 #TODO ADD "creator"/doctor param to createMtg
 #DONE cannot link to any page that has a [POST] method, not sure how to make them able to be navigated to ? Nav bar?
 #TODO -- make an entry for changing the patient
-
-
-ORGANIZE THESE
-        #TODO make sure username+email aren't used by other users (errormsg)
-        #TODO figure out how to display an error message while they're entering the form data
-		#xTODO --- eventually we are going to need to get the userID from WHO IS LOGGED IN
-        #x---MAKE FUNCTIONS IN .PY THAT QUERY AWS FOR THE USER INFO (NO ZOOM API CALL)
-        #x---those functions only return the mtgid then the jsonResp can come from zoom_post.py
-
-	    
+#TODO make sure username+email aren't used by other users (errormsg)
+#x---those functions only return the mtgid then the jsonResp can come from zoom_post.py
+#x---MAKE FUNCTIONS IN .PY THAT QUERY AWS FOR THE USER INFO (NO ZOOM API CALL)
 ##TODO --> store appt info in aws away from zoom api
 #####implement doctor/patient accts
         #*****************
     #xMAKE THE CREATE MEETING ONLY OPEN TO DOCTOR USERS
-    #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS
     #xMAKE THE CALENDAR ONLY DISPLAY THE APPTS THE USER OWNS/HAS BEEN ADDED TO
         #query the database for the appts those users are in on
-        #make an "add user to appt" function that updates the appt database item (max 1 patient)
         #make an option to add a patient on creation of the appt
-
-    #(eventually) make doctor users only able to be created after approval by admins
-    #(eventually) validate acct (through email) - confirmation
-    #(eventually) forgot password/recover acct
-    #let doctor/admin users invite the patient to a meeting
-    #inviting user via id (add appt to that user's calendar and give them the join url)
-    #make a search functionality for when the doctor is adding patients to the appt
-    #store appt info in aws database for the user
-        #(for the appt, have a doctor user id field and patient user id field, date, time, join url)
-
-
-#TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
-    #even the time creation is wrong but it is still seeing the time zone as EST so ??????
+#let doctor/admin users invite the patient to a meeting
+#inviting user via id (add appt to that user's calendar and give them the join url)
+#store appt info in aws database for the user
+    #(for the appt, have a doctor user id field and patient user id field, date, time, join url)
 #####TODO -- make a link in each entry to an EDITABLE/EXTENDED appt description
-    #####in this area, make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
+#####in this area, make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
 # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
 #####TODO -- make a function+page that allows you to view/edit specific mtg details?
 #####TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid?? ALL deletions are not working??
-#     -- fix the "blank" render (no 'placeholder' in the box)
 
-#####TODOOOOOO (again) the delete goes through? but doesn't go through?
 
 
