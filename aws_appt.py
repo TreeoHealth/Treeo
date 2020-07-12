@@ -11,12 +11,26 @@ from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 import json
 
+def returnAllPatients():
+    #dynamodb = boto3.resource("dynamodb", region_name='us-east-1', endpoint_url="http://localhost:4000")
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('users')
+    response = table.scan()
+    #print( response)
+
+    patientList = []
+    for i in response['Items']:
+        if i['docStatus']=="patient":
+            patientList.append(i['username'])
+    
+    return patientList    
+
 #TODO improve this implementation (increase efficiency)
 def getAllApptsFromUsername(username):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('apptsTable')
     response = table.scan()
-    print(response)
+    #print(response)
 
     apptList = []
     for i in response['Items']:
@@ -76,3 +90,4 @@ def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
     
 ##print(createApptAWS('test','72261254435',"doc","pat", "2020-06-30T12:30:00Z",'https://us04web.zoom.us/j/72892071916?pwd=V2hHcUphUlBlZG5iQlN1YmQ4R3BZUT09'))
 ##print(getAllApptsFromUsername("doc"))
+returnAllPatients()

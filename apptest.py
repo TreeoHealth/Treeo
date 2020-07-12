@@ -7,7 +7,7 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import aws_controller
 from botocore.exceptions import ClientError
-from aws_appt import getAllApptsFromUsername
+from aws_appt import getAllApptsFromUsername, returnAllPatients
 from zoomtest_post import updateMtg,createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
 
 app = Flask(__name__)
@@ -245,6 +245,14 @@ def editSubmit():
 @app.route('/acctdetails', methods=['POST','GET'])
 def acct_details():     
     return "Account Details"
+
+@app.route('/patients', methods=['POST','GET'])
+def list_patients():
+    listStr = returnAllPatients()
+    x=""
+    for i in listStr:
+        x = x+i+"<br>"
+    return x
 
 @app.route('/showallmtgs', methods=['POST','GET'])
 def show_mtg():     

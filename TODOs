@@ -3,13 +3,14 @@ TODOS
 #TODO MAKE PATIENTS UNABLE TO CRUD
 #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS
 ##make the doctor able to view a list of patients ******<--------------
+##MAKE acct details page (not editable yet)
 ##enforce higher lvl passwords
 #fix the "blank" render (no 'placeholder' in the box)
 ##remove edit links for patients
 ##change inline code (edit/delete) to buttons that are sent the mtgid link but are a button **********<-------------
 	
 	This month
-##acct page (be able to update acct info)
+##acct page (be able to update acct info) <<---
 ##nav bar (home/calendar/acct/logout - patient, home/calendar/create/users/acct/logout)
 ##make confirmation messages better (flash?)
 ##  --make a button next to patient userID able to be clicked (create appt)
