@@ -2,16 +2,16 @@ TODOS
 	This week
 #TODO MAKE PATIENTS UNABLE TO CRUD
 #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS
+##make the doctor able to view a list of patients ******<--------------
 ##enforce higher lvl passwords
 #fix the "blank" render (no 'placeholder' in the box)
 ##remove edit links for patients
-##change inline code (edit/delete) to buttons that are sent the mtgid link but are a button <-------------
+##change inline code (edit/delete) to buttons that are sent the mtgid link but are a button **********<-------------
 	
 	This month
 ##acct page (be able to update acct info)
 ##nav bar (home/calendar/acct/logout - patient, home/calendar/create/users/acct/logout)
 ##make confirmation messages better (flash?)
-##make the doctor able to view a list of patients **
 ##  --make a button next to patient userID able to be clicked (create appt)
 ##  -> autofills a create form with that userID (like clicking delete)
 #TODO figure out how to display an error message while they're entering the form data
@@ -68,6 +68,7 @@ Make a notification system (notify patients when a dr invites them to an appt)
 # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
 #####TODO -- make a function+page that allows you to view/edit specific mtg details?
 #####TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid?? ALL deletions are not working??
+#make a page to hold the appt details (don't just return the plain text) + nav bar *************<-------------
 
 
 

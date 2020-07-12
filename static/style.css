@@ -35,8 +35,7 @@ margin-bottom: 10px;
 .error{
 color: red;
 text-align: center;
-font-size: 10px;
-font-weight:70;
+font-size: 12px;
 }
 
 input {
@@ -54,6 +53,48 @@ transition: border .5s;
 input:focus {
 border: 2px solid #3498DB;
 box-shadow: none;
+}
+
+#navwrapper nav a
+{
+	text-decoration:none;
+	/*border:2px solid #C5C6C7;*/
+	padding:3px;
+	color:white;
+	
+}
+
+#navwrapper nav a:hover
+{
+	color:white;
+}
+
+#navwrapper nav a:visited
+{
+	color:#45A29E;
+}
+
+#navwrapper
+{
+	border:2px solid #C5C6C7;
+	padding:3px;
+	background-color:#0B0C10;
+	background-image:none;
+}
+
+#wrapper
+{
+	border:1px solid white;
+	min-width:700px;
+	max-width:1024px;
+	box-shadow: 5px 5px #828282;
+	background-image:none;
+	background-color:#7fdaeb;
+	width: 50%;
+	margin-right: auto;
+	margin-left: auto;
+	margin-bottom: 300px;
+	padding-bottom:25px;
 }
 
 .btn {

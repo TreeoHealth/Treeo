@@ -1,0 +1,41 @@
+<link rel="stylesheet" href="/static/style.css" type="text/css">
+<!--&#123;% block body %&#125;-->
+<div id="wrapper">
+<div id = "navwrapper">
+<nav> 
+	&nbsp;<a href="{{ url_for('home') }}">Home</a>
+	<a href="{{ url_for('show_mtg') }}">Calendar</a>
+	<a href="{{ url_for('acct_details') }}">Account Details</a>
+	<a href="{{ url_for('logout') }}">Logout</a>
+</nav>
+</div>
+<div class="login">
+<div class="login-screen">
+<div class="app-title">
+<h1>Meeting Specifics</h1>
+</div>
+<div class="login-form">
+<div class="control-group">
+	<label class="login-field-icon fui-user" for="login-name">Meeting Number</label>
+	<input readonly type="text" class="login-field" value={{mtgnum}} name="mtgnum">
+</div>
+<div class="control-group">
+	<label class="login-field-icon fui-user" for="login-name">Meeting Name</label>
+	<input readonly type="text" class="login-field" value={{mtgname}} name="mtgname">
+</div>
+<div class="control-group">
+	<label class="login-field-icon fui-user" for="login-name">Meeting Time</label>
+	<input readonly type="time" class="login-field" value={{mtgtime}} name="time">
+</div>
+<div class="control-group">
+	<label class="login-field-icon fui-user" for="login-name">Meeting Date</label>
+	<input readonly type="date" class="login-field" value={{mtgdate}} name="day">
+</div>
+<!--make a dropdown with time zones-->
+
+</div>
+</div>
+</div>
+</div>
+
+</div>

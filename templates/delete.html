@@ -3,6 +3,15 @@
 
 
 <form action="/deletemtg" method="POST">
+<div id="wrapper">
+<div id = "navwrapper">
+<nav> 
+	&nbsp;<a href="{{ url_for('home') }}">Home</a>
+	<a href="{{ url_for('show_mtg') }}">Calendar</a>
+	<a href="{{ url_for('acct_details') }}">Account Details</a>
+	<a href="{{ url_for('logout') }}">Logout</a>
+</nav>
+</div>
 <div class="login">
 <div class="login-screen">
 <div class="app-title">
@@ -14,6 +23,7 @@
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <input type="submit" value="Delete Meeting" class="btn btn-primary btn-large btn-block">
 
+</div>
 </div>
 </div>
 </div>

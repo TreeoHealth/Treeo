@@ -182,18 +182,25 @@ def return_data():
 @app.route('/showmtgdetail/<mtgid>', methods=['POST','GET'])
 def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
     jsonResp = getMtgFromMtgID(str(mtgid))
-    finalStr = ""
-    strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
-    finalStr+=strTmp
-    strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
-    finalStr+=strTmp
-    strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
-    finalStr+=strTmp
-    strTmp = "Meeting ID: "+mtgid+" <br>"
-    finalStr+=strTmp
-    finalStr = finalStr+"<a href='/deleterender/"+mtgid+"'>Delete</a><br><a href='"+"{{ url_for('"+"home') }}'"+"class='btn btn-primary btn-large btn-block'>Home</a><br><a href='/editrender/"+mtgid+"'>Edit</a><br><br>"
-
-    return finalStr
+##    finalStr = ""
+##    strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
+##    finalStr+=strTmp
+##    strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
+##    finalStr+=strTmp
+##    strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
+##    finalStr+=strTmp
+##    strTmp = "Meeting ID: "+mtgid+" <br>"
+##    finalStr+=strTmp
+    #finalStr = finalStr+"<a href='/deleterender/"+mtgid+"'>Delete</a><br><a href='"+"{{ url_for('"+"home') }}'"+"class='btn btn-primary btn-large btn-block'>Home</a><br><a href='/editrender/"+mtgid+"'>Edit</a><br><br>"
+    time=str(jsonResp.get("start_time"))
+    #split and display
+    date=time[:10]
+    return render_template('apptDetail.html',
+                           mtgnum=mtgid,
+                           mtgname=str(jsonResp.get("topic")),
+                           mtgtime=str(time[11:-1]),
+                           mtgdate=str(date))
+    #return finalStr
 
 @app.route("/editrender/<mtgid>", methods=['POST','GET'])
 def editPgFromID(mtgid):
@@ -235,7 +242,9 @@ def editSubmit():
     
     return finalStr
 
-
+@app.route('/acctdetails', methods=['POST','GET'])
+def acct_details():     
+    return "Account Details"
 
 @app.route('/showallmtgs', methods=['POST','GET'])
 def show_mtg():     
