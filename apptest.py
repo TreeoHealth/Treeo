@@ -195,15 +195,23 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
     time=str(jsonResp.get("start_time"))
     #split and display
     date=time[:10]
-    return render_template('apptDetail.html',
-                           mtgnum=mtgid,
-                           mtgname=str(jsonResp.get("topic")),
-                           mtgtime=str(time[11:-1]),
-                           mtgdate=str(date))
+    if(session.get('logged_in_p')):
+        return render_template('apptDetail.html',
+                               mtgnum=mtgid,
+                               mtgname=str(jsonResp.get("topic")),
+                               mtgtime=str(time[11:-1]),
+                               mtgdate=str(date))
+    elif(session.get('logged_in_d')):
+        return render_template('apptDetailDrOptions.html',
+                       mtgnum=mtgid,
+                       mtgname=str(jsonResp.get("topic")),
+                       mtgtime=str(time[11:-1]),
+                       mtgdate=str(date))
     #return finalStr
 
-@app.route("/editrender/<mtgid>", methods=['POST','GET'])
-def editPgFromID(mtgid):
+@app.route("/editrender/", methods=['POST','GET'])
+def editPgFromID():
+    mtgid = str(request.form['mtgnum'])
     if session['logged_in_p']:
         return accessDenied()
     jsonResp = getMtgFromMtgID(str(mtgid))
@@ -212,13 +220,30 @@ def editPgFromID(mtgid):
     #split and display
     date=time[:10]
 
-
     return render_template('edit.html',
                            mtgnum=mtgid,
                            mtgname=str(jsonResp.get("topic")),
                            pword=str(jsonResp.get("password")),
                            mtgtime=str(time[11:-1]),
                            mtgdate=str(date))
+
+##@app.route("/editrender/<mtgid>", methods=['POST','GET'])
+##def editPgFromID(mtgid):
+##    if session['logged_in_p']:
+##        return accessDenied()
+##    jsonResp = getMtgFromMtgID(str(mtgid))
+##    #mtgname, pword, mtgtime, mtgdate
+##    time=str(jsonResp.get("start_time"))
+##    #split and display
+##    date=time[:10]
+##
+##
+##    return render_template('edit.html',
+##                           mtgnum=mtgid,
+##                           mtgname=str(jsonResp.get("topic")),
+##                           pword=str(jsonResp.get("password")),
+##                           mtgtime=str(time[11:-1]),
+##                           mtgdate=str(date))
 
 
 @app.route("/editmtg", methods=['POST','GET'])
