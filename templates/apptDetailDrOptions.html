@@ -33,6 +33,17 @@
 </div>
 <!--make a button for edit+delete but only for doctors (link to render funcs?)-->
 <!--make 2 different pages for detail??-->
+<!--HOW TO SEND MTG ID TO FUNCTION-->
+<!--HOW TO DO ABSOLUTE ROUTING? (don't do showmtg/edit/mtg)-->
+<!--maybe hardcode the edit render passing data from here? Figure out how to make a string? make a direct a link?-->
+<!--make a plain edit render page, send the mtgid in the form behind the scenes?-->
+
+<form action='/editrender/' method = "POST">
+<input type="hidden" value={{mtgnum}} name="mtgnum">
+<input type="submit" value="Edit" class="btn btn-primary btn-large btn-block">
+<br>
+<form action='/deleterender/'+{{mtgnum}} method = "POST">
+<input type="submit" value="Delete" class="btn btn-primary btn-large btn-block">
 </div>
 </div>
 </div>

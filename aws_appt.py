@@ -39,6 +39,7 @@ def getAllApptsFromUsername(username):
     return apptList
 
 dynamo_client = boto3.client('dynamodb')
+
 def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
 
     dynamodb = boto3.resource("dynamodb", region_name='us-east-1', endpoint_url="http://localhost:4000")
@@ -87,7 +88,28 @@ def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
         }
        )
     return "Successfully inserted the appt into the database."
+
+def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not change
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('apptsTable')
+    try:
+        response = table.update_item(
+            Key={
+                'mtgid': mtgid
+            },
+            UpdateExpression="set info.mtgName=:m, info.start_time=:s",
+            ExpressionAttributeValues={
+                ':m': mtgName,
+                ':s': start_time
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+        return "Successfully updated the appt in the database."
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+        return "ERROR. Could not update the meeting."
     
+
 ##print(createApptAWS('test','72261254435',"doc","pat", "2020-06-30T12:30:00Z",'https://us04web.zoom.us/j/72892071916?pwd=V2hHcUphUlBlZG5iQlN1YmQ4R3BZUT09'))
 ##print(getAllApptsFromUsername("doc"))
 returnAllPatients()
