@@ -14,12 +14,9 @@
 import http.client
 import json
 #from OpenSSL import SSL
-from aws_appt import getAllApptsFromUsername,createApptAWS,updateApptAWS
+from aws_appt import getAllApptsFromUsername,createApptAWS
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
-
-headerKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48'
-
-headers = { 'authorization': "Bearer "+headerKey }
+headers = { 'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48" }
 
 def addParticipant(mtgID, firstName, lastName, email):
     #conn = http.client.HTTPSConnection("api.zoom.us", context = ssl._create_unverified_context())
@@ -31,7 +28,7 @@ def addParticipant(mtgID, firstName, lastName, email):
         }
     headers = { #post needs this different headers definition, get doesn't
         'content-type': "application/json",
-        'authorization': "Bearer "+headerKey
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48"
         }
 
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
@@ -57,7 +54,7 @@ def createUser(email, firstName, lastName):
 
     headers = {
         'content-type': "application/json",
-        'authorization': "Bearer "+headerKey
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48"
         }
 
     conn.request("POST", "/v2/users", json.dumps(payload), headers)
@@ -91,7 +88,7 @@ def createMtg(topic, time, password, doctor, patient):
     
     headers = {
         'content-type': "application/json",
-        'authorization': "Bearer "+headerKey
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48"
         }
 
     conn.request("POST", "/v2/users/HE1A37EjRIiGjh_wekf90A/meetings", json.dumps(payload), headers)##HE1A37EjRIiGjh_wekf90A
@@ -123,15 +120,15 @@ def updateMtg(mtgid, topic, time, password):
     }
     headers = {
         'content-type': "application/json",
-        'authorization': "Bearer "+headerKey
+        'authorization': "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48"
         }
 
     conn.request("PATCH", "/v2/meetings/"+str(mtgid), json.dumps(payload), headers)
-    updateApptAWS(topic, mtgid,time)
-    res = conn.getresponse()
-    raw_data = res.read()
-    print(raw_data)
-
+##    res = conn.getresponse()
+##    raw_data = res.read()
+##    print(raw_data)
+##    data = json.loads(raw_data.decode("utf-8"))
+##    print(data)
     conn.close()
     return getMtgFromMtgID(mtgid)
 
@@ -196,6 +193,6 @@ def mtgInfoToJSON():
 
 ##addParticipant(72261254435,'isha', 'naik', 'inaik4000@gmail.com')
 #jsonResp = getMtgFromMtgID(72261254435)
-jsonResp = updateMtg(77588267056, "Updated", "2020-07-30T12:30:00Z", "newp")
+#jsonResp = updateMtg(72892071916, "Updated", "2020-06-30T12:30:00Z", "newp")
 #print(jsonResp)
 ##print(createUser('inaik4000@gmail.com','isha', 'naik'))
