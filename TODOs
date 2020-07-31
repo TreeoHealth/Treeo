@@ -1,8 +1,9 @@
 TODOS
 	This week
+##Make a patient and doctor field <-----------------------------------0
+##make a joinURL field on this AND the mtg detail page <------------------0
 #TODO MAKE PATIENTS UNABLE TO CRUD<------------0
 #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS<----------0
-#FOR DETAILS PAGE --> EDIT HOW THE "delete"/"edit" buttons look (NOT JUST LINKS) <--------0
 #Make the calendar start on the current month (highlight current day?)
 ##MAKE acct details page (not editable yet)<-------------4
 #mkae the patient list page an actual page and format/print nicely <-------2
@@ -74,6 +75,7 @@ Make a notification system (notify patients when a dr invites them to an appt)
 #####TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid?? ALL deletions are not working??
 #make a page to hold the appt details (don't just return the plain text) + nav bar *************<-------------
 ##make the doctor able to view a list of patients ******<--------------
+#FOR DETAILS PAGE --> EDIT HOW THE "delete"/"edit" buttons look (NOT JUST LINKS) <--------0
 
 
 

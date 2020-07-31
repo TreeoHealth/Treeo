@@ -129,26 +129,33 @@ def create_mtg():
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
     jsonResp, awsResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
-
+    date=time[:10]
     finalStr = ""
     if awsResp!="Successfully inserted the appt into the database.":
         finalStr="ERROR CREATING APPOINTMENT. "+awsResp
 #ADD PATIENT FIELD
-
-    else:
-        strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
-        finalStr+=strTmp
-        strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
-        finalStr+=strTmp
-        strTmp = "Patient Username: "+str(request.form['patientUser'])+" <br>"
-        finalStr+=strTmp
-        strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
-        finalStr+=strTmp
-        strTmp = "Meeting ID: "+str(jsonResp.get("id"))+" <br>"
-        finalStr+=strTmp
-        finalStr = finalStr+"<a href="+"'{{ url_for("+"show_mtg"+"') }}'"+" class='btn btn-primary btn-large btn-block'>Calendar</a><br><a href='"+"{{ url_for('"+"home') }}'"+">Home</a>"
     
-    return finalStr
+    else:
+        return render_template('apptDetail.html',
+                               mtgnum=str(jsonResp.get("id")),
+                               mtgname=str(jsonResp.get("topic")),
+                               mtgtime=str(time[11:-1]),
+                               mtgdate=str(date))
+    ##Make a patient and doctor field *********
+    ##make a joinURL field on this AND the mtg detail page
+##        strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
+##        finalStr+=strTmp
+##        strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
+##        finalStr+=strTmp
+##        strTmp = "Patient Username: "+str(request.form['patientUser'])+" <br>"
+##        finalStr+=strTmp
+##        strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
+##        finalStr+=strTmp
+##        strTmp = "Meeting ID: "+str(jsonResp.get("id"))+" <br>"
+##        finalStr+=strTmp
+##        finalStr = finalStr+"<a href="+"'{{ url_for("+"show_mtg"+"') }}'"+" class='btn btn-primary btn-large btn-block'>Calendar</a><br><a href='"+"{{ url_for('"+"home') }}'"+">Home</a>"
+##    
+##    return finalStr
 
 @app.route('/data')
 def return_data():
