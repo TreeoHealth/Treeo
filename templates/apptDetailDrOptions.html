@@ -41,9 +41,12 @@
 <form action='/editrender/' method = "POST">
 <input type="hidden" value={{mtgnum}} name="mtgnum">
 <input type="submit" value="Edit" class="btn btn-primary btn-large btn-block">
+</form>
 <br>
-<form action='/deleterender/'+{{mtgnum}} method = "POST">
+<form action='/deleteRenderNum/' method = "POST">
+<input type="hidden" value={{mtgnum}} name="mtgnum">
 <input type="submit" value="Delete" class="btn btn-primary btn-large btn-block">
+</form>
 </div>
 </div>
 </div>

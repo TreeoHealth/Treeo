@@ -14,7 +14,7 @@
 import http.client
 import json
 #from OpenSSL import SSL
-from aws_appt import getAllApptsFromUsername,createApptAWS,updateApptAWS
+from aws_appt import getAllApptsFromUsername,createApptAWS,updateApptAWS, deleteApptAWS
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
 
 headerKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48'
@@ -139,6 +139,7 @@ def deleteMtgFromID(mtgID):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     conn.request("DELETE", "/v2/meetings/"+str(mtgID), headers=headers)
     res = conn.getresponse()
+    deleteApptAWS(mtgID)
     raw_data = res.read()
     conn.close()
     #response is not JSON like the rest

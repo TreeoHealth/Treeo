@@ -89,6 +89,21 @@ def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
        )
     return "Successfully inserted the appt into the database."
 
+def deleteApptAWS(mtgid):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('apptsTable')
+    mtgID = str(mtgid)
+    try:
+        response = table.delete_item(TableName= 'apptsTable',
+            Key={
+                'mtgid': mtgID
+            }
+            )
+        return "Successfully deleted the meeting."
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+        return "ERROR. Could not delete the meeting."
+
 def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not change
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('apptsTable')
@@ -112,4 +127,5 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not chan
 
 ##print(createApptAWS('test','72261254435',"doc","pat", "2020-06-30T12:30:00Z",'https://us04web.zoom.us/j/72892071916?pwd=V2hHcUphUlBlZG5iQlN1YmQ4R3BZUT09'))
 ##print(getAllApptsFromUsername("doc"))
-returnAllPatients()
+##returnAllPatients()
+##print(deleteApptAWS(79347554325))

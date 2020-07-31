@@ -291,13 +291,12 @@ def deletePg():
         return accessDenied()
     return render_template('delete.html', mtg="")
 
-#This will render the delete with the mtgID in the box filled in already
-#doesn't work currently
-@app.route("/deleterender/<mtgid>", methods=['POST','GET'])
-def deletePgFromID(mtgid):
+@app.route("/deleteRenderNum/", methods=['POST','GET'])
+def deletePgNum():
     if session['logged_in_p']:
         return accessDenied()
-    return render_template('delete.html', mtg=str(mtgid))
+    mtgid = str(request.form['mtgnum'])
+    return render_template('delete.html', mtg=mtgid)
 
 
 @app.route("/deletemtg", methods=['POST','GET'])
@@ -309,9 +308,8 @@ def deleteMtg():
         x=jsonResp.get("start_time")
         print(deleteMtgFromID(str(request.form['mtgID'])))
         return "Successfully deleted meeting "+str(request.form['mtgID'])+"<br><a href='/showallmtgs'>Calendar</a>"
-
     except:
-        return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender/"+str(request.form['mtgID'])+"'>Delete</a>"
+        return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender'>Delete</a>"
         
 
 @app.route("/logout", methods=['POST','GET'])
