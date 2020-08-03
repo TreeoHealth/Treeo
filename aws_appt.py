@@ -40,6 +40,19 @@ def getAllApptsFromUsername(username):
 
 dynamo_client = boto3.client('dynamodb')
 
+def getApptFromMtgId(mtgid):
+    mtgid=str(mtgid)
+    try:
+        response = dynamo_client.get_item(TableName= 'apptsTable',
+            Key={
+                'mtgid': {"S":mtgid}
+            }
+        )
+        return response
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+
+
 def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
 
     dynamodb = boto3.resource("dynamodb", region_name='us-east-1', endpoint_url="http://localhost:4000")
@@ -129,3 +142,4 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not chan
 ##print(getAllApptsFromUsername("doc"))
 ##returnAllPatients()
 ##print(deleteApptAWS(79347554325))
+##print(getApptFromMtgId(74286081472))

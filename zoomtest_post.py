@@ -14,7 +14,7 @@
 import http.client
 import json
 #from OpenSSL import SSL
-from aws_appt import getAllApptsFromUsername,createApptAWS,updateApptAWS, deleteApptAWS
+from aws_appt import getAllApptsFromUsername,createApptAWS,updateApptAWS, deleteApptAWS,getApptFromMtgId
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
 
 headerKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48'
@@ -163,7 +163,7 @@ def getMtgFromMtgID(info):
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     conn.close()
-    return data
+    return data,getApptFromMtgId(str(info))
 
 def getUserFromEmail(email):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())

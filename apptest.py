@@ -138,6 +138,8 @@ def create_mtg():
     else:
         return render_template('apptDetail.html',
                                mtgnum=str(jsonResp.get("id")),
+                               doctor =session['username'],
+                               patient = request.form['patientUser'],
                                mtgname=str(jsonResp.get("topic")),
                                mtgtime=str(time[11:-1]),
                                mtgdate=str(date))
@@ -188,7 +190,7 @@ def return_data():
 #
 @app.route('/showmtgdetail/<mtgid>', methods=['POST','GET'])
 def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
-    jsonResp = getMtgFromMtgID(str(mtgid))
+    jsonResp,awsResp = getMtgFromMtgID(str(mtgid))
 ##    finalStr = ""
 ##    strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
 ##    finalStr+=strTmp
@@ -202,15 +204,21 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
     time=str(jsonResp.get("start_time"))
     #split and display
     date=time[:10]
+    docUser = awsResp.get('Item').get('doctor').get('S')
+    patUser = awsResp.get('Item').get('patient').get('S')
     if(session.get('logged_in_p')):
         return render_template('apptDetail.html',
                                mtgnum=mtgid,
+                               doctor=docUser,
+                               patient = session['username'],
                                mtgname=str(jsonResp.get("topic")),
                                mtgtime=str(time[11:-1]),
                                mtgdate=str(date))
     elif(session.get('logged_in_d')):
         return render_template('apptDetailDrOptions.html',
                        mtgnum=mtgid,
+                       doctor =docUser,#session['username'],
+                       patient = patUser,#request.form['patientUser'],
                        mtgname=str(jsonResp.get("topic")),
                        mtgtime=str(time[11:-1]),
                        mtgdate=str(date))
