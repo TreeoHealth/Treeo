@@ -17,7 +17,8 @@
 </nav>
 </div>
 <script>
-
+var today = new Date();
+var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
 	$(document).ready(function() {
 
 		$('#calendar').fullCalendar({
@@ -26,7 +27,7 @@
 				center: 'title',
 				right: 'month,agendaWeek,agendaDay'
 			},
-			defaultDate: '2020-06-01',
+			defaultDate: date,
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
 			events: {

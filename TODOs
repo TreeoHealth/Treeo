@@ -11,7 +11,6 @@ TODOS
 ##enforce higher lvl passwords
 #fix the "blank" render (no 'placeholder' in the box)
 ##remove edit links for patients<----------0
-##change inline code (edit/delete) to buttons that are sent the mtgid link but are a button **********<-------------1
 	
 	This month
 ##acct page (be able to update acct info) <<---
@@ -76,6 +75,7 @@ Make a notification system (notify patients when a dr invites them to an appt)
 #make a page to hold the appt details (don't just return the plain text) + nav bar *************<-------------
 ##make the doctor able to view a list of patients ******<--------------
 #FOR DETAILS PAGE --> EDIT HOW THE "delete"/"edit" buttons look (NOT JUST LINKS) <--------0
+##change inline code (edit/delete) to buttons that are sent the mtgid link but are a button **********<-------------1
 
 
 
