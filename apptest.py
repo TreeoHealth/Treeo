@@ -20,6 +20,8 @@ def get_items():
 
 @app.route('/')
 def home():
+    #opItem = [{'name':'a'}, {'name':'b'},{'name':'c'},{'name':'d'}]
+    #return render_template('picture.html', options=opItem)
     if not (session.get('logged_in_p') or session.get('logged_in_d')):
         return render_template('login.html', errorMsg="")
     else:
@@ -288,7 +290,10 @@ def acct_details():
 
 @app.route('/patients', methods=['POST','GET'])
 def list_patients():
+    #opItem = [{'name':'a'}, {'name':'b'},{'name':'c'},{'name':'d'}]
     listStr = returnAllPatients()
+    return render_template('picture.html', options=listStr)
+    
     x=""
     for i in listStr:
         x = x+i+"<br>"

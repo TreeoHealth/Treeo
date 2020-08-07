@@ -1,9 +1,15 @@
 TODOS
+NOTE --> reload CSS = ctrl+f5 ***
+
+
 	This week
-##Make a patient and doctor field <-----------------------------------0
 ##make a joinURL field on this AND the mtg detail page <------------------0
 ##MAKE acct details page (not editable yet)<-------------4
-#mkae the patient list page an actual page and format/print nicely <-------2
+#mkae the patient list page an actual page and format/print nicely <-------2 ***
+	#have a generic patient profile pictures/usernames	
+	#make it a link (clickable)
+	#make it able to link to a page with acct details
+	#make it an array of pictures/usernames (variable)
 #make the patients a "link" from dr list (let drs see the details when clicking) <-----------3
 ##enforce higher lvl passwords
 #fix the "blank" render (no 'placeholder' in the box)
@@ -22,6 +28,8 @@ TODOS
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
 	
 	Eventually
+#page out the patient print out
+#alphebetize the patient list
 Make a notification system (notify patients when a dr invites them to an appt)
 ##email validation? (valid domain at least)
 ##look into dynamic text boxes (react to user input AS THEY TYPE -- do not need to submit)
@@ -76,5 +84,6 @@ Make a notification system (notify patients when a dr invites them to an appt)
 #Make the calendar start on the current month (highlight current day?)
 #TODO MAKE PATIENTS UNABLE TO CRUD<------------0
 #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS<----------0
+##Make a patient and doctor field <-----------------------------------0
 
 
