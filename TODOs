@@ -5,15 +5,14 @@ NOTE --> reload CSS = ctrl+f5 ***
 ##make a joinURL field on this AND the mtg detail page <------------------0
 #SOLVE LATENCY AND INCORRECT SCHEMA ***
 ##enforce higher lvl passwords
-#fix the "blank" render (no 'placeholder' in the box)
+##enforce minimum name length
+#do not allow blanks on account creation
 #FIX edit
-#alphebetize ptient list
-#make proper delet confirmation page
+#make proper delete confirmation page
+##update nav bar (home/calendar/acct/logout - patient, home/calendar/create/users/acct/logout)
 	
 	This month
-#Decrease latency of connection to tables (don't import?)
 ##acct page (be able to update acct info) <<---
-##nav bar (home/calendar/acct/logout - patient, home/calendar/create/users/acct/logout)
 ##make confirmation messages better (flash?)
 ##  --make a button next to patient userID able to be clicked (create appt)
 ##  -> autofills a create form with that userID (like clicking delete)
@@ -22,7 +21,7 @@ NOTE --> reload CSS = ctrl+f5 ***
 #make a search functionality for when the doctor is adding patients to the appt
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
-	
+
 	Eventually
 #page out the patient print out
 Make a notification system (notify patients when a dr invites them to an appt)
@@ -89,4 +88,7 @@ Make a notification system (notify patients when a dr invites them to an appt)
 	#make it able to link to a page with acct details
 #make the patients a "link" from dr list (let drs see the details when clicking) <-----------0
 ##MAKE acct details page (not editable yet)<-------------2
+#fix the "blank" render (no 'placeholder' in the box)
+#Decrease latency of connection to tables (don't import?)
+#alphebetize ptient list
 

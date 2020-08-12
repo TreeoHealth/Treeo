@@ -304,12 +304,8 @@ def patientAcct(username):
 def list_patients():
     #opItem = [{'name':'a'}, {'name':'b'},{'name':'c'},{'name':'d'}]
     listStr = aws_appt.returnAllPatients()
+    listStr.sort()
     return render_template('picture.html', options=listStr)
-    
-    x=""
-    for i in listStr:
-        x = x+i+"<br>"
-    return x
 
 @app.route('/showallmtgs', methods=['POST','GET'])
 def show_mtg():     
