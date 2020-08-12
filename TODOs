@@ -1,21 +1,20 @@
 TODOS
 NOTE --> reload CSS = ctrl+f5 ***
 
-
 	This week
 ##make a joinURL field on this AND the mtg detail page <------------------0
-##MAKE acct details page (not editable yet)<-------------4
-#mkae the patient list page an actual page and format/print nicely <-------2 ***
-	#have a generic patient profile pictures/usernames	
+##MAKE acct details page (not editable yet)<-------------2
+#SOLVE LATENCY AND INCORRECT SCHEMA ***
+#patient list
 	#make it a link (clickable)
 	#make it able to link to a page with acct details
-	#make it an array of pictures/usernames (variable)
-#make the patients a "link" from dr list (let drs see the details when clicking) <-----------3
+#make the patients a "link" from dr list (let drs see the details when clicking) <-----------0
 ##enforce higher lvl passwords
 #fix the "blank" render (no 'placeholder' in the box)
-##remove edit links for patients<----------0
+
 	
 	This month
+#Decrease latency of connection to tables
 ##acct page (be able to update acct info) <<---
 ##nav bar (home/calendar/acct/logout - patient, home/calendar/create/users/acct/logout)
 ##make confirmation messages better (flash?)
@@ -85,5 +84,9 @@ Make a notification system (notify patients when a dr invites them to an appt)
 #TODO MAKE PATIENTS UNABLE TO CRUD<------------0
 #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS<----------0
 ##Make a patient and doctor field <-----------------------------------0
+#mkae the patient list page an actual page and format/print nicely <-------2 ***
+	#have a generic patient profile pictures/usernames	
+	#make it an array of pictures/usernames (variable)
+##remove edit links for patients<----------0
 
 

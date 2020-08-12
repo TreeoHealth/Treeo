@@ -14,7 +14,7 @@
 import http.client
 import json
 #from OpenSSL import SSL
-from aws_appt import getAllApptsFromUsername,createApptAWS,updateApptAWS, deleteApptAWS,getApptFromMtgId
+from aws_appt import getAllApptsFromUsername,createApptAWS, deleteApptAWS,getApptFromMtgId #updateApptAWS,
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
 
 headerKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48'
@@ -127,7 +127,7 @@ def updateMtg(mtgid, topic, time, password):
         }
 
     conn.request("PATCH", "/v2/meetings/"+str(mtgid), json.dumps(payload), headers)
-    updateApptAWS(topic, mtgid,time)
+    #updateApptAWS(topic, mtgid,time)
     res = conn.getresponse()
     raw_data = res.read()
     print(raw_data)

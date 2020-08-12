@@ -25,6 +25,19 @@ def returnAllPatients():
     
     return patientList    
 
+def getAcctFromUsername(username):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('apptsTable')
+    response = table.scan()
+    #print(response)
+    response = dynamo_client.get_item(TableName= 'users',
+            Key={
+                'username': {"S":username}
+            }
+        )
+    return response
+
+
 #TODO improve this implementation (increase efficiency)
 def getAllApptsFromUsername(username):
     dynamodb = boto3.resource('dynamodb')
@@ -143,3 +156,4 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not chan
 ##returnAllPatients()
 ##print(deleteApptAWS(79347554325))
 ##print(getApptFromMtgId(74286081472))
+##print(getAcctFromUsername('patient1'))

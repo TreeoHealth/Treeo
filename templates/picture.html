@@ -1,7 +1,5 @@
 <!--<img src={{ url_for('static', filename='profile.png') }}>-->
-<!--need to make the picture into a link???-->
-<!--need to put the text next to picture-->
-<!--need to put the other styling on this page-->
+<!--need to make the picture into a link??? want to avoid making a form for each patient (x200?? - not good)-->
 <link rel="stylesheet" href="/static/style.css" type="text/css">
 <!--&#123;% block body %&#125;-->
 <div id="wrapper">
@@ -19,8 +17,12 @@
 <div class="profile-box">
 {% for item in options %}
 <div class='testWrapAbt'>
-	<img class = "profile-pic" src='/static/profile.png' alt="My Pic" height ="50" width = "50" >
-  <p class="profile-username">{{item}}</p><br>
+    <script> 
+        var val = {{item}}; 
+    </script> 
+	<img class = "profile-pic" src='/static/profile.png' alt="My Pic" height ="50" width = "50" ></img>
+  <p class="profile-username"><a href="/patients/{{item}}">{{item}}</a></p><br>
+  
   </div>
   {% endfor %}
 </div>
