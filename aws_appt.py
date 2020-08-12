@@ -28,7 +28,6 @@ def returnAllPatients():
 def getAcctFromUsername(username):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('apptsTable')
-    response = table.scan()
     #print(response)
     response = dynamo_client.get_item(TableName= 'users',
             Key={
@@ -150,10 +149,3 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not chan
         print(e.response['Error']['Message'])
         return "ERROR. Could not update the meeting."
     
-
-##print(createApptAWS('test','72261254435',"doc","pat", "2020-06-30T12:30:00Z",'https://us04web.zoom.us/j/72892071916?pwd=V2hHcUphUlBlZG5iQlN1YmQ4R3BZUT09'))
-##print(getAllApptsFromUsername("doc"))
-##returnAllPatients()
-##print(deleteApptAWS(79347554325))
-##print(getApptFromMtgId(74286081472))
-##print(getAcctFromUsername('patient1'))

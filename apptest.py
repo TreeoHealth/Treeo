@@ -7,8 +7,10 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import aws_controller
 from botocore.exceptions import ClientError
-from aws_appt import getAllApptsFromUsername, returnAllPatients, getAcctFromUsername
-from zoomtest_post import updateMtg,createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
+import aws_appt
+import zoomtest_post
+#from aws_appt import getAllApptsFromUsername, returnAllPatients, getAcctFromUsername
+#from zoomtest_post import updateMtg,createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
 
 app = Flask(__name__)
 
@@ -51,7 +53,7 @@ def check_login():
                 'username': {"S":request.form['username']}                
             }
         )
-        print(response)
+        #print(response)
         try:
             test = response.get('Item').get('password')
         except:
@@ -130,7 +132,7 @@ def create_mtg():
     if session['logged_in_p']:
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
-    jsonResp, awsResp = createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
+    jsonResp, awsResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
     date=time[:10]
     finalStr = ""
     if awsResp!="Successfully inserted the appt into the database.":
@@ -166,7 +168,7 @@ def return_data():
     #***********************
 
     #jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
-    arrOfMtgs =getAllApptsFromUsername(session['username'])
+    arrOfMtgs =aws_appt.getAllApptsFromUsername(session['username'])
     #[{ "title": "Meeting",
     #"start": "2014-09-12T10:30:00-05:00",
     #"end": "2014-09-12T12:30:00-05:00",
@@ -192,7 +194,7 @@ def return_data():
 #
 @app.route('/showmtgdetail/<mtgid>', methods=['POST','GET'])
 def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
-    jsonResp,awsResp = getMtgFromMtgID(str(mtgid))
+    jsonResp,awsResp = zoomtest_post.getMtgFromMtgID(str(mtgid))
 ##    finalStr = ""
 ##    strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
 ##    finalStr+=strTmp
@@ -231,7 +233,7 @@ def editPgFromID():
     mtgid = str(request.form['mtgnum'])
     if session['logged_in_p']:
         return accessDenied()
-    jsonResp = getMtgFromMtgID(str(mtgid))
+    jsonResp = zoomtest_post.getMtgFromMtgID(str(mtgid))
     #mtgname, pword, mtgtime, mtgdate
     time=str(jsonResp.get("start_time"))
     #split and display
@@ -269,7 +271,7 @@ def editSubmit():
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
     print(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
-    jsonResp = updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
+    jsonResp = zoomtest_post.updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
 
     finalStr = "UPDATED MTG "+str(request.form['mtgnum'])+"<br>"
     strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
@@ -290,7 +292,7 @@ def acct_details():
 
 @app.route('/patients/<username>', methods=['POST','GET'])
 def patientAcct(username):
-    response = getAcctFromUsername(str(username))
+    response = aws_appt.getAcctFromUsername(str(username))
     return render_template('patientAcctDetails.html', 
                            username=username,
                            docstatus=response.get('Item').get('docStatus').get('S'),
@@ -301,7 +303,7 @@ def patientAcct(username):
 @app.route('/patients', methods=['POST','GET'])
 def list_patients():
     #opItem = [{'name':'a'}, {'name':'b'},{'name':'c'},{'name':'d'}]
-    listStr = returnAllPatients()
+    listStr = aws_appt.returnAllPatients()
     return render_template('picture.html', options=listStr)
     
     x=""
@@ -333,10 +335,10 @@ def deletePgNum():
 def deleteMtg():
     if session['logged_in_p']:
         return accessDenied()
-    jsonResp = getMtgFromMtgID(str(request.form['mtgID']))
+    jsonResp = zoomtest_post.getMtgFromMtgID(str(request.form['mtgID']))
     try:
         x=jsonResp.get("start_time")
-        print(deleteMtgFromID(str(request.form['mtgID'])))
+        print(zoomtest_post.deleteMtgFromID(str(request.form['mtgID'])))
         return "Successfully deleted meeting "+str(request.form['mtgID'])+"<br><a href='/showallmtgs'>Calendar</a>"
     except:
         return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender'>Delete</a>"

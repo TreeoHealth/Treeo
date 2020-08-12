@@ -14,7 +14,8 @@
 import http.client
 import json
 #from OpenSSL import SSL
-from aws_appt import getAllApptsFromUsername,createApptAWS, deleteApptAWS,getApptFromMtgId #updateApptAWS,
+import aws_appt
+#from aws_appt import getAllApptsFromUsername,createApptAWS, deleteApptAWS,getApptFromMtgId #updateApptAWS,
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
 
 headerKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48'
@@ -101,7 +102,7 @@ def createMtg(topic, time, password, doctor, patient):
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     
-    result = createApptAWS(topic, str(data.get("id")), doctor, patient, str(data.get("start_time")), str(data.get("join_url")))
+    result = aws_appt.createApptAWS(topic, str(data.get("id")), doctor, patient, str(data.get("start_time")), str(data.get("join_url")))
     
     conn.close()
     return data, result
@@ -139,7 +140,7 @@ def deleteMtgFromID(mtgID):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     conn.request("DELETE", "/v2/meetings/"+str(mtgID), headers=headers)
     res = conn.getresponse()
-    deleteApptAWS(mtgID)
+    aws_appt.deleteApptAWS(mtgID)
     raw_data = res.read()
     conn.close()
     #response is not JSON like the rest
@@ -163,7 +164,7 @@ def getMtgFromMtgID(info):
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     conn.close()
-    return data,getApptFromMtgId(str(info))
+    return data,aws_appt.getApptFromMtgId(str(info))
 
 def getUserFromEmail(email):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
@@ -197,6 +198,6 @@ def mtgInfoToJSON():
 
 ##addParticipant(72261254435,'isha', 'naik', 'inaik4000@gmail.com')
 #jsonResp = getMtgFromMtgID(72261254435)
-jsonResp = updateMtg(77588267056, "Updated", "2020-07-30T12:30:00Z", "newp")
+#jsonResp = updateMtg(77588267056, "Updated", "2020-07-30T12:30:00Z", "newp")
 #print(jsonResp)
 ##print(createUser('inaik4000@gmail.com','isha', 'naik'))
