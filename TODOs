@@ -2,20 +2,20 @@ TODOS
 NOTE --> reload CSS = ctrl+f5 ***
 
 	This week
-##make a joinURL field on this AND the mtg detail page <------------------0
-#SOLVE LATENCY AND INCORRECT SCHEMA ***
-##enforce higher lvl passwords
-##enforce minimum name length
-#do not allow blanks on account creation
+##make a joinURL field on createpg AND the mtg detail page <------------------0
+##enforce higher lvl passwords <---0
 #FIX edit
 #make proper delete confirmation page
 ##update nav bar (home/calendar/acct/logout - patient, home/calendar/create/users/acct/logout)
+#revise the url_for() uses in the nav bar (why is it bad??)
+#now that you know how to do variable links, update how the delete and edit buttons work
 	
 	This month
 ##acct page (be able to update acct info) <<---
 ##make confirmation messages better (flash?)
 ##  --make a button next to patient userID able to be clicked (create appt)
 ##  -> autofills a create form with that userID (like clicking delete)
+#SOLVE LATENCY AND INCORRECT SCHEMA ***
 #TODO figure out how to display an error message while they're entering the form data
 #make an "add user to appt" function that updates the appt database item (max 1 patient)
 #make a search functionality for when the doctor is adding patients to the appt
@@ -91,4 +91,6 @@ Make a notification system (notify patients when a dr invites them to an appt)
 #fix the "blank" render (no 'placeholder' in the box)
 #Decrease latency of connection to tables (don't import?)
 #alphebetize ptient list
+#do not allow blanks on account creation <---0
+##enforce minimum name length <---0
 

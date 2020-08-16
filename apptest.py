@@ -71,7 +71,7 @@ def check_login():
             session['logged_in_p'] = True
             session['logged_in_d']=False
         session['username'] = request.form['username']
-        session['name'] = str(response.get('Item').get('name').get('S'))
+        session['name'] = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
     except ClientError as e:
         print(e.response['Error']['Message'])
     return home()
@@ -92,12 +92,27 @@ def new_register():
         return render_template('register.html', errorMsg="Username is already taken. Please use a different one.")
     except:
 #register new user
+    #TODO
+        #change form to have first name last name x
+        #change schema to have first name last name x
+        #remove all accts to prevent conflicts x
+        #change acct detail to combine the names x
+        #if the user doesn't choose doctor/patient radio -> default patient x
+        
+        if len(request.form['fname'])<2 or len(request.form['lname'])<2:
+            return render_template('register.html', errorMsg="First and last name must have at least 2 characters.")
+##PASSWORD STRENGTH
+        ##if len(request.form['fname'])<2 or len(request.form['lname'])<2:
+            ##return render_template('register.html', errorMsg="Password")
+
+        
         response = dynamo_client.put_item(TableName= 'users',
            Item={
                 'username': {"S":request.form['username']},
                 'password': {"S":request.form['password']},
                 'email': {"S":request.form['email']},
-                'name':{"S":request.form['name']},
+                'fname':{"S":request.form['fname']},
+                'lname':{"S":request.form['lname']},
                 'docStatus':{"S":request.form['docStatus']}
             }
            )
@@ -111,7 +126,7 @@ def new_register():
                 session['logged_in_p'] = True
                 session['logged_in_d']=False
             session['username'] = request.form['username']
-            session['name'] = request.form['name']
+            session['name'] = request.form['fname']+" "+request.form['lname']
         except:
             print("invalid zoom email!")
             return regPg()
@@ -137,6 +152,7 @@ def create_mtg():
     finalStr = ""
     if awsResp!="Successfully inserted the appt into the database.":
         finalStr="ERROR CREATING APPOINTMENT. "+awsResp
+        return finalStr
 #ADD PATIENT FIELD
     
     else:
@@ -288,15 +304,24 @@ def editSubmit():
 
 @app.route('/acctdetails', methods=['POST','GET'])
 def acct_details():     
-    return "Account Details"
+    #return "Account Details"
+    response = aws_appt.getAcctFromUsername(str(session['username']))
+    name = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
+    return render_template('patientAcctDetails.html', 
+                           username=session['username'],
+                           docstatus=response.get('Item').get('docStatus').get('S'),
+                           nm=name,
+                           email=response.get('Item').get('email').get('S')
+                           )
 
 @app.route('/patients/<username>', methods=['POST','GET'])
 def patientAcct(username):
     response = aws_appt.getAcctFromUsername(str(username))
+    name = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
     return render_template('patientAcctDetails.html', 
                            username=username,
                            docstatus=response.get('Item').get('docStatus').get('S'),
-                           nm=response.get('Item').get('name').get('S'),
+                           nm=name,
                            email=response.get('Item').get('email').get('S')
                            )
 
