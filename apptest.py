@@ -9,6 +9,7 @@ import aws_controller
 from botocore.exceptions import ClientError
 import aws_appt
 import zoomtest_post
+from password_strength import PasswordPolicy
 #from aws_appt import getAllApptsFromUsername, returnAllPatients, getAcctFromUsername
 #from zoomtest_post import updateMtg,createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
 
@@ -98,10 +99,17 @@ def new_register():
         #remove all accts to prevent conflicts x
         #change acct detail to combine the names x
         #if the user doesn't choose doctor/patient radio -> default patient x
-        
+        policy = PasswordPolicy.from_names(
+            length=8,  # min length: 8
+            uppercase=1,  # need min. 2 uppercase letters
+            numbers=1  # need min. 2 digits
+            )
         if len(request.form['fname'])<2 or len(request.form['lname'])<2:
             return render_template('register.html', errorMsg="First and last name must have at least 2 characters.")
 ##PASSWORD STRENGTH
+        isEnough = policy.test(str(request.form['password']))
+        if len(isEnough):
+            return render_template('register.html', errorMsg="Password must be min length 8, 1 upper case, and 1 number.")
         ##if len(request.form['fname'])<2 or len(request.form['lname'])<2:
             ##return render_template('register.html', errorMsg="Password")
 
