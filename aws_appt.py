@@ -119,7 +119,7 @@ def deleteApptAWS(mtgid):
     table = dynamodb.Table('apptsTable')
     mtgID = str(mtgid)
     try:
-        response = table.delete_item(TableName= 'apptsTable',
+        response = dynamo_client.delete_item(TableName= 'apptsTable',
             Key={
                 'mtgid': mtgID
             }

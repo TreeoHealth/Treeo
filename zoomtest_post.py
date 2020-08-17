@@ -142,6 +142,7 @@ def deleteMtgFromID(mtgID):
     res = conn.getresponse()
     aws_appt.deleteApptAWS(mtgID)
     raw_data = res.read()
+    print(raw_data)
     conn.close()
     #response is not JSON like the rest
 

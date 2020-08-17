@@ -90,7 +90,14 @@ def new_register():
     )
     try:
         test = response.get('Item').get('password')
-        return render_template('register.html', errorMsg="Username is already taken. Please use a different one.")
+        return render_template('register.html',
+                               errorMsg="Username is already taken. Please use a different one.",
+                               username = request.form['username'],
+                               password = request.form['password'],
+                               email = request.form['email'],
+                               fname = request.form['fname'],
+                               lname = request.form['lname']
+                               )
     except:
 #register new user
     #TODO
@@ -105,11 +112,25 @@ def new_register():
             numbers=1  # need min. 2 digits
             )
         if len(request.form['fname'])<2 or len(request.form['lname'])<2:
-            return render_template('register.html', errorMsg="First and last name must have at least 2 characters.")
+            return render_template('register.html',
+                                   errorMsg="First and last name must have at least 2 characters.",
+                                    username = request.form['username'],
+                                   password = request.form['password'],
+                                   email = request.form['email'],
+                                   fname = request.form['fname'],
+                                   lname = request.form['lname']
+                                   )
 ##PASSWORD STRENGTH
         isEnough = policy.test(str(request.form['password']))
         if len(isEnough):
-            return render_template('register.html', errorMsg="Password must be min length 8, 1 upper case, and 1 number.")
+            return render_template('register.html',
+                                   errorMsg="Password must be min length 8, 1 upper case, and 1 number.",
+                                    username = request.form['username'],
+                                   password = request.form['password'],
+                                   email = request.form['email'],
+                                   fname = request.form['fname'],
+                                   lname = request.form['lname']
+                                   )
         ##if len(request.form['fname'])<2 or len(request.form['lname'])<2:
             ##return render_template('register.html', errorMsg="Password")
 
@@ -367,10 +388,10 @@ def deleteMtg():
     jsonResp = zoomtest_post.getMtgFromMtgID(str(request.form['mtgID']))
     try:
         x=jsonResp.get("start_time")
-        print(zoomtest_post.deleteMtgFromID(str(request.form['mtgID'])))
-        return "Successfully deleted meeting "+str(request.form['mtgID'])+"<br><a href='/showallmtgs'>Calendar</a>"
+        zoomtest_post.deleteMtgFromID(str(request.form['mtgID']))
+        return render_template('deleteConfirm.html', mtgnum=str(request.form['mtgID']))
     except:
-        return "That is a bad meeting ID, please go back and try again<br><a href='/deleterender'>Delete</a>"
+        return "NO That is a bad meeting ID, please go back and try again<br><a href='/deleterender'>Delete</a>"
         
 
 @app.route("/logout", methods=['POST','GET'])
