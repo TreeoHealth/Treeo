@@ -160,4 +160,4 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not chan
         print(e.response['Error']['Message'])
         return "ERROR. Could not update the meeting."
 
-print(getAllApptsFromUsername('doctor1'))
+##print(getAllApptsFromUsername('doctor1'))

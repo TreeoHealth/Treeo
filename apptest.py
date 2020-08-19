@@ -385,10 +385,12 @@ def deletePgNum():
 def deleteMtg():
     if session['logged_in_p']:
         return accessDenied()
-    jsonResp = zoomtest_post.getMtgFromMtgID(str(request.form['mtgID']))
+    #jsonResp = zoomtest_post.getMtgFromMtgID(str(request.form['mtgID']))
+    awsResp = aws_appt.getApptFromMtgId(str(request.form['mtgID']))
     try:
-        x=jsonResp.get("start_time")
-        zoomtest_post.deleteMtgFromID(str(request.form['mtgID']))
+        #x=jsonResp.get("Item").get("start_time")
+        if len(awsResp)>=1:
+            zoomtest_post.deleteMtgFromID(str(request.form['mtgID']))
         return render_template('deleteConfirm.html', mtgnum=str(request.form['mtgID']))
     except:
         return "NO That is a bad meeting ID, please go back and try again<br><a href='/deleterender'>Delete</a>"

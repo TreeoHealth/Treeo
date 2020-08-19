@@ -4,14 +4,13 @@ NOTE --> reload CSS = ctrl+f5 ***
 	This week
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
 #FIX edit
-#Delete isn't working? (FIX)
 #make proper delete confirmation page
+##acct page (be able to update acct info) <<---
 #revise the url_for() uses in the nav bar (why is it bad??)
 #now that you know how to do variable links, update how the delete and edit buttons work
-
 	
 	This month
-##acct page (be able to update acct info) <<---
+
 ##make confirmation messages better (flash?)
 ##  --make a button next to patient userID able to be clicked (create appt)
 ##  -> autofills a create form with that userID (like clicking delete)
@@ -96,3 +95,4 @@ Make a notification system (notify patients when a dr invites them to an appt)
 ##enforce higher lvl passwords <---0
 ##update nav bar (home/calendar/acct/logout - patient, home/calendar/create/users/acct/logout)
 make mtgs only for the FUTURE
+#Delete isn't working? (FIX)
