@@ -10,6 +10,9 @@ import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 import json
+import datetime
+
+dynamo_client = boto3.client('dynamodb')
 
 def returnAllPatients():
     #dynamodb = boto3.resource("dynamodb", region_name='us-east-1', endpoint_url="http://localhost:4000")
@@ -43,14 +46,22 @@ def getAllApptsFromUsername(username):
     table = dynamodb.Table('apptsTable')
     response = table.scan()
     #print(response)
+    date_time_str = str(datetime.datetime.now())
+    date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S.%f')
 
+    todayDate= str(date_time_obj.date())
     apptList = []
     for i in response['Items']:
         if i['doctor'] == username or i['patient']==username:
-            apptList.append(i)
+            ##check that the appts happen after the current day (only chack day, not time)
+            ##if it's not, delete it (so it doesn't come back up)
+            if(todayDate<=i['start_time'][:10]):
+                apptList.append(i)
+            else:
+                deleteApptAWS(i['mtgid'])
     return apptList
 
-dynamo_client = boto3.client('dynamodb')
+
 
 def getApptFromMtgId(mtgid):
     mtgid=str(mtgid)
@@ -121,7 +132,7 @@ def deleteApptAWS(mtgid):
     try:
         response = dynamo_client.delete_item(TableName= 'apptsTable',
             Key={
-                'mtgid': mtgID
+                'mtgid':{'S':str(mtgid)}
             }
             )
         return "Successfully deleted the meeting."
@@ -148,4 +159,5 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not chan
     except ClientError as e:
         print(e.response['Error']['Message'])
         return "ERROR. Could not update the meeting."
-    
+
+print(getAllApptsFromUsername('doctor1'))
