@@ -22,7 +22,11 @@
 	<input type="text" class="login-field" value="" placeholder="name of mtg" name="mtgname">
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
-	<input type="text" class="login-field" value="" placeholder="name of patient" name="patientUser">
+<select name="patientUser" >
+{% for item in options %}
+  <option type="text" value = {{item}}>{{item}}</option><br>
+  {% endfor %}
+</select>
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
 				<input type="password" class="login-field" value="" placeholder="password" name="password">

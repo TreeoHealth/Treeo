@@ -18,7 +18,7 @@ import aws_appt
 #from aws_appt import getAllApptsFromUsername,createApptAWS, deleteApptAWS,getApptFromMtgId #updateApptAWS,
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
 
-headerKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE1OTg5MzI3NDAsImlhdCI6MTU5MzU2OTYzMn0.kDAekzXUdjRsAiD9Aarmll_8FKozf9NLCWpQkzmyp48'
+headerKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE2MDk0MzM5NDAsImlhdCI6MTU5OTA5NzQ5MX0.bcpybYtMqLNBfPrw5uBDPOnUA8U5CXUAhwxrnYqC1NI'
 
 headers = { 'authorization': "Bearer "+headerKey }
 

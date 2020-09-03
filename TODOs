@@ -1,5 +1,6 @@
 TODOS
 NOTE --> reload CSS = ctrl+f5 ***
+UPDATE -- Google doc with ideal hire/what we need
 
 	This week
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
@@ -8,9 +9,12 @@ NOTE --> reload CSS = ctrl+f5 ***
 ##acct page (be able to update acct info) <<---
 #revise the url_for() uses in the nav bar (why is it bad??)
 #now that you know how to do variable links, update how the delete and edit buttons work
+#TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
+    #even the time creation is wrong but it is still seeing the time zone as EST so ??????
+meeting creation errors -> [error messages] + back to create page (with filled in form)
+Make patient select in appt create -> drop down menu
 	
 	This month
-
 ##make confirmation messages better (flash?)
 ##  --make a button next to patient userID able to be clicked (create appt)
 ##  -> autofills a create form with that userID (like clicking delete)
@@ -18,8 +22,8 @@ NOTE --> reload CSS = ctrl+f5 ***
 #TODO figure out how to display an error message while they're entering the form data
 #make an "add user to appt" function that updates the appt database item (max 1 patient)
 #make a search functionality for when the doctor is adding patients to the appt
-#TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
-    #even the time creation is wrong but it is still seeing the time zone as EST so ??????
+#SEND THE USER AN EMAIL (not confirmation, just notification of being added to an appt/delete and acct udated) 
+	#NOT MARKED AS SPAMMMM
 
 	Eventually
 #page out the patient print out

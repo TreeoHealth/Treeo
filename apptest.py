@@ -169,14 +169,19 @@ def accessDenied():
 def createPg():
 ##    if session['logged_in_p']:
 ##        return accessDenied()
-    return render_template('create_mtg.html')
+    listStr = aws_appt.returnAllPatients()
+    listStr.sort()
+    return render_template('create_mtg.html', options=listStr)
 
 @app.route('/createmtg', methods=['POST','GET'])
 def create_mtg():
-    if session['logged_in_p']:
-        return accessDenied()
+    #if session['logged_in_p']:
+        #return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
+    #return request.form['patientUser']
+#put session['username'] back for doctor
     jsonResp, awsResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
+    #return jsonResp
     date=time[:10]
     finalStr = ""
     if awsResp!="Successfully inserted the appt into the database.":

@@ -77,7 +77,9 @@ def getApptFromMtgId(mtgid):
 
 
 def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
-
+    mtgid=str(mtgid)
+    if(len(mtgid)!=11):
+        return "THE MTG NUMBER WAS INVALID"
     dynamodb = boto3.resource("dynamodb", region_name='us-east-1', endpoint_url="http://localhost:4000")
 
     table = dynamodb.Table('YourTestTable')
@@ -160,4 +162,5 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not chan
         print(e.response['Error']['Message'])
         return "ERROR. Could not update the meeting."
 
+print(createApptAWS('b', None, 'doctor1', 'ads', 'asdf', 'asdf'))
 ##print(getAllApptsFromUsername('doctor1'))
