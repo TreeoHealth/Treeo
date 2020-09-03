@@ -171,7 +171,9 @@ def createPg():
 ##        return accessDenied()
     listStr = aws_appt.returnAllPatients()
     listStr.sort()
-    return render_template('create_mtg.html', options=listStr)
+    return render_template('create_mtg.html',
+                           errorMsg = "",
+                           options=listStr)
 
 @app.route('/createmtg', methods=['POST','GET'])
 def create_mtg():
@@ -185,8 +187,11 @@ def create_mtg():
     date=time[:10]
     finalStr = ""
     if awsResp!="Successfully inserted the appt into the database.":
-        finalStr="ERROR CREATING APPOINTMENT. "+awsResp
-        return finalStr
+        listStr = aws_appt.returnAllPatients()
+        listStr.sort()
+        return render_template('create_mtg.html',
+                               errorMsg = awsResp,
+                               options=listStr)
 #ADD PATIENT FIELD
     
     else:

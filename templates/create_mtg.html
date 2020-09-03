@@ -18,24 +18,25 @@
 <h1>Create Meeting</h1>
 </div>
 <div class="login-form">
+<div class="error">{{errorMsg}}</div>
 <div class="control-group">
-	<input type="text" class="login-field" value="" placeholder="name of mtg" name="mtgname">
+	<input type="text" class="login-field" value="" placeholder="name of mtg" name="mtgname" required>
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
-<select name="patientUser" >
+<select name="patientUser" required>
 {% for item in options %}
   <option type="text" value = {{item}}>{{item}}</option><br>
   {% endfor %}
 </select>
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
-				<input type="password" class="login-field" value="" placeholder="password" name="password">
+				<input type="password" class="login-field" value="" placeholder="password" name="password" required>
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
 <div class="control-group">
-				<input type="time" class="login-field" value="" placeholder="time" name="time">
+				<input type="time" class="login-field" value="" placeholder="time" name="time" required>
 <label class="login-field-icon fui-lock" for="login-name"></label></div>
 <div class="control-group">
-				<input type="date" class="login-field" value="" placeholder="day" name="day">
+				<input type="date" class="login-field" value="" placeholder="day" name="day" required>
 <label class="login-field-icon fui-lock" for="login-name"></label></div>
 <!--make a dropdown with time zones-->
 <input type="submit" value="Schedule" class="btn btn-primary btn-large btn-block">
