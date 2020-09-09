@@ -13,8 +13,7 @@ UPDATE -- Google doc with ideal hire/what we need
 #TODO figure out how to display an error message while they're entering the form data
 	
 	This month
-##make confirmation messages better (flash?)
-##  --make a button next to patient userID able to be clicked (create appt)
+##--make a (+) button next to patient userID able to be clicked (create appt)
 ##  -> autofills a create form with that userID (like clicking delete)
 #SOLVE LATENCY AND INCORRECT SCHEMA ***
 #make an "add user to appt" function that updates the appt database item (max 1 patient)

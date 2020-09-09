@@ -142,19 +142,35 @@ def deleteApptAWS(mtgid):
         print(e.response['Error']['Message'])
         return "ERROR. Could not delete the meeting."
 
-def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not change
+def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl(?) will not change
+    mtgid=str(mtgid)
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('apptsTable')
     try:
-        response = table.update_item(
+        response = dynamo_client.update_item(TableName= 'apptsTable',
             Key={
-                'mtgid': mtgid
+                'mtgid':{'S':str(mtgid)}
             },
-            UpdateExpression="set info.mtgName=:m, info.start_time=:s",
-            ExpressionAttributeValues={
-                ':m': mtgName,
-                ':s': start_time
-            },
+        UpdateExpression="SET #mtgName = :m, #start_time=:s",
+##        ExpressionAttributeNames = {
+##            "#attrName" : "info"
+##        },
+##        ExpressionAttributeValues={
+##            ':m': {'S':mtgName},
+##            ':s': {'S':start_time}
+##        },
+        ExpressionAttributeNames= {
+        '#mtgName' : 'mtgName',
+        '#start_time' : 'start_time'
+    },
+    ExpressionAttributeValues= {':m' : {'S':mtgName}, 
+        ':s' : {'S':start_time}          
+    },
+##            UpdateExpression="set info.mtgName=:m, info.start_time=:s",
+##            ExpressionAttributeValues={
+##                ':m': {'S':mtgName},
+##                ':s': {'S':start_time}
+##            },
             ReturnValues="UPDATED_NEW"
         )
         return "Successfully updated the appt in the database."
@@ -162,5 +178,8 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl will not chan
         print(e.response['Error']['Message'])
         return "ERROR. Could not update the meeting."
 
+#print(getApptFromMtgId(75274348158))
+#print(updateApptAWS("NEWTEST", 77353368533, "........"))
+#print(getApptFromMtgId(77353368533))
 ##print(createApptAWS('b', None, 'doctor1', 'ads', 'asdf', 'asdf'))
 ##print(getAllApptsFromUsername('doctor1'))

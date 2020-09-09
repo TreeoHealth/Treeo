@@ -224,6 +224,7 @@ def return_data():
 
     #jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
     arrOfMtgs =aws_appt.getAllApptsFromUsername(session['username'])
+    print(arrOfMtgs)
     #[{ "title": "Meeting",
     #"start": "2014-09-12T10:30:00-05:00",
     #"end": "2014-09-12T12:30:00-05:00",
@@ -243,6 +244,7 @@ def return_data():
     with open('appts.json', 'w') as outfile:
         json.dump(mtgList, outfile)
     with open('appts.json', "r") as input_data:
+        #print(input_data.read())
         return input_data.read()    
 
 
@@ -288,7 +290,8 @@ def editPgFromID():
     mtgid = str(request.form['mtgnum'])
     if session['logged_in_p']:
         return accessDenied()
-    jsonResp = zoomtest_post.getMtgFromMtgID(str(mtgid))
+    jsonResp, awsResp = zoomtest_post.getMtgFromMtgID(request.form['mtgnum'])
+    #print(jsonResp)
     #mtgname, pword, mtgtime, mtgdate
     time=str(jsonResp.get("start_time"))
     #split and display
@@ -325,21 +328,23 @@ def editSubmit():
     if session['logged_in_p']:
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
-    print(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
+    #print(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
     jsonResp = zoomtest_post.updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
 
-    finalStr = "UPDATED MTG "+str(request.form['mtgnum'])+"<br>"
-    strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
-    finalStr+=strTmp
-    strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
-    finalStr+=strTmp
-    strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
-    finalStr+=strTmp
-    strTmp = "Meeting ID: "+str(jsonResp.get("id"))+" <br>"
-    finalStr+=strTmp
-    finalStr = finalStr+"<a href='/'>Home</a><br><a href='/showallmtgs'>Calendar</a>"
-    
-    return finalStr
+    jsonResp,awsResp = zoomtest_post.getMtgFromMtgID(str(request.form['mtgnum']))
+    #print(jsonResp)
+    time=str(jsonResp.get("start_time"))
+    #split and display
+    date=time[:10]
+    docUser = awsResp.get('Item').get('doctor').get('S')
+    patUser = awsResp.get('Item').get('patient').get('S')
+    return render_template('apptDetailDrOptions.html',
+                       mtgnum=str(request.form['mtgnum']),
+                       doctor =docUser,#session['username'],
+                       patient = patUser,#request.form['patientUser'],
+                       mtgname=str(jsonResp.get("topic")),
+                       mtgtime=str(time[11:-1]),
+                       mtgdate=str(date))
 
 @app.route('/acctdetails', methods=['POST','GET'])
 def acct_details():     

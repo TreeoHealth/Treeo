@@ -128,7 +128,7 @@ def updateMtg(mtgid, topic, time, password):
         }
 
     conn.request("PATCH", "/v2/meetings/"+str(mtgid), json.dumps(payload), headers)
-    #updateApptAWS(topic, mtgid,time)
+    aws_appt.updateApptAWS(topic, mtgid,time)
     res = conn.getresponse()
     raw_data = res.read()
     print(raw_data)
