@@ -178,8 +178,33 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl(?) will not c
         print(e.response['Error']['Message'])
         return "ERROR. Could not update the meeting."
 
+def testCal():
+    arrOfMtgs =getAllApptsFromUsername('doctor1')
+    #print(arrOfMtgs)
+    mtgList = []#mtgList = jsonResp.get("meetings")
+    finalStr = ""
+    for item in arrOfMtgs:
+        time = str(item.get("start_time"))
+        #mtgid = str(item.get("mtgid"))
+        time = time[:-1] #takes off the 'z'
+        if(len(time[11:].split(":"))>=4):
+            time = time[:19]
+        end_time = int(float(time[11:13]))+1
+        strend = time[:11]+str(end_time)+time[13:]
+        if(end_time<=9):
+            strend = time[:11]+"0"+str(end_time)+time[13:]
+        mtgObj = {"start": time, "end":strend}
+        mtgList.append(mtgObj)
+    #BADDDD (change this)
+    with open('appts.json', 'w') as outfile:
+        json.dump(mtgList, outfile)
+    with open('appts.json', "r") as input_data:
+        #print(input_data.read())
+        return input_data.read()
+
+
 #print(getApptFromMtgId(75274348158))
 #print(updateApptAWS("NEWTEST", 77353368533, "........"))
 #print(getApptFromMtgId(77353368533))
 ##print(createApptAWS('b', None, 'doctor1', 'ads', 'asdf', 'asdf'))
-##print(getAllApptsFromUsername('doctor1'))
+#print(testCal())

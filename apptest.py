@@ -232,7 +232,7 @@ def return_data():
     #***********************
     #jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
     arrOfMtgs =aws_appt.getAllApptsFromUsername(session['username'])
-    print(arrOfMtgs)
+    #print(arrOfMtgs)
     #[{ "title": "Meeting",
     #"start": "2014-09-12T10:30:00-05:00",
     #"end": "2014-09-12T12:30:00-05:00",
@@ -244,8 +244,13 @@ def return_data():
         time = str(item.get("start_time"))
         mtgid = str(item.get("mtgid"))
         time = time[:-1]
+        if(len(time[11:].split(":"))>=4): #catches any times with extra :00s
+            time = time[:19]
         end_time = int(float(time[11:13]))+1
         strend = time[:11]+str(end_time)+time[13:]
+        if(end_time<=9): #catches any times <9 that would be single digit
+            strend = time[:11]+"0"+str(end_time)+time[13:]
+        
         mtgObj = {"title":str(item.get("mtgName")), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
         mtgList.append(mtgObj)
     #BADDDD (change this)
