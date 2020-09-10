@@ -114,6 +114,13 @@ def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
             print("INVALID PATIENT NAME.")
             return "Error retrieving the account information for patient account."
     #if the doctor and patient are both valid
+
+        #error checking the date for extra :00s
+    time = str(start_time)
+    time = time[:-1] #takes off the 'z'
+    if(len(time[11:].split(":"))>=4):
+        time = time[:19]
+    start_time = time
     
     response = dynamo_client.put_item(TableName= 'apptsTable',
        Item={
@@ -143,7 +150,14 @@ def deleteApptAWS(mtgid):
         return "ERROR. Could not delete the meeting."
 
 def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl(?) will not change
+#error checking the date for extra :00s
     mtgid=str(mtgid)
+    time = str(start_time)
+    time = time[:-1] #takes off the 'z'
+    if(len(time[11:].split(":"))>=4):
+        time = time[:19]
+    start_time = time
+    
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('apptsTable')
     try:
