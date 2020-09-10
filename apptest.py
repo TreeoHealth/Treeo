@@ -218,12 +218,18 @@ def create_mtg():
 ##    
 ##    return finalStr
 
+##CALENDAR FAILS TO DISPLAY FOR THE FOLLOWING CONDITIONS:
+    #{"title": "HELP", "start": "2020-09-27T00:53:00", "end": "2020-09-27T1:53:00", "url": "/showmtgdetail/75274348158"}
+    #^^^^ END OR START TIME NOT HAVING 2 PLACES (NOT LEADING WITH A 0 WHEN 1 DIGIT TIME)
+    #{"title": "asl", "start": "2020-09-21T14:46:00:00", "end": "2020-09-21T15:46:00:00", "url": "/showmtgdetail/75141590110"}
+    #^^^^ HAVING AN EXTRA SET OF 00 AFTER THE TIME
+#DO ERROR CATCHING ********************************************
+    #edited meetings have the extra :00? -> just chop it off every time? or update it in the aws dtb?
+    #just tack on the 0 when it's missing
+
 @app.route('/data')
 def return_data():
     #***********************
-    with open('appts.json', "r") as input_data:
-        #print(input_data.read())
-        return input_data.read()
     #jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
     arrOfMtgs =aws_appt.getAllApptsFromUsername(session['username'])
     print(arrOfMtgs)
