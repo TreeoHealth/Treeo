@@ -221,7 +221,9 @@ def create_mtg():
 @app.route('/data')
 def return_data():
     #***********************
-
+    with open('appts.json', "r") as input_data:
+        #print(input_data.read())
+        return input_data.read()
     #jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
     arrOfMtgs =aws_appt.getAllApptsFromUsername(session['username'])
     print(arrOfMtgs)
@@ -377,7 +379,28 @@ def list_patients():
     return render_template('picture.html', options=listStr)
 
 @app.route('/showallmtgs', methods=['POST','GET'])
-def show_mtg():     
+def show_mtg():
+##    arrOfMtgs =aws_appt.getAllApptsFromUsername(session['username'])
+##    print(arrOfMtgs)
+##    #[{ "title": "Meeting",
+##    #"start": "2014-09-12T10:30:00-05:00",
+##    #"end": "2014-09-12T12:30:00-05:00",
+##    #"url":"absolute or relative?"},{...}]
+##    
+##    mtgList = []#mtgList = jsonResp.get("meetings")
+##    finalStr = ""
+##    for item in arrOfMtgs:
+##        time = str(item.get("start_time"))
+##        mtgid = str(item.get("mtgid"))
+##        time = time[:-1]
+##        end_time = int(float(time[11:13]))+1
+##        strend = time[:11]+str(end_time)+time[13:]
+##        mtgObj = {"title":str(item.get("mtgName")), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
+##        mtgList.append(mtgObj)
+##    #BADDDD (change this)
+##    with open('appts.json', 'w') as outfile:
+##        json.dump(mtgList, outfile)
+
     return render_template("calendar.html")
 
 #This is what is needed to be able to link to this page
