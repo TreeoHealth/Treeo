@@ -1,0 +1,57 @@
+<link rel="stylesheet" href="/static/style.css" type="text/css">
+<!--&#123;% block body %&#125;-->
+
+
+<form action="/editacct" method="POST">
+<div id="wrapper">
+<div id = "navwrapper">
+<nav> 
+	&nbsp;<a href="{{ url_for('home') }}">Home</a>
+	<a href="{{ url_for('show_mtg') }}">Calendar</a>
+	<a href="{{ url_for('acct_details') }}">Account Details</a>
+	<a href="{{ url_for('logout') }}">Logout</a>
+</nav>
+</div>
+<div class="login">
+<div class="login-screen">
+<div class="app-title">
+<h1>Edit Account Details</h1>
+</div>
+<div class="login-form">
+<div class="error">{{errorMsg}}</div>
+<div class="control-group">
+<label class="login-field-icon fui-user" for="login-name">Username</label>
+	<input type="text" class="login-field" value={{username}} readonly name="username">
+</div>
+<div class="control-group">
+<label class="login-field-icon fui-user" for="login-name">Old Password</label>
+				<input type="password" class="login-field" name="pword1" value={{pword1}} >
+</div>
+<div class="control-group">
+<label class="login-field-icon fui-user" for="login-name">New Password</label>
+				<input type="password" class="login-field" name="pwordNew1" value={{pwordNew1}} >
+</div>
+<div class="control-group">
+<label class="login-field-icon fui-user" for="login-name">Confirm New Password</label>
+				<input type="password" class="login-field"  name="pwordNew2"value={{pwordNew2}}>
+</div>
+<div class="control-group">
+	<label class="login-field-icon fui-user" for="login-name">Email</label>
+	<input type="text" class="login-field" value={{email}} name="email">
+</div>
+<div class="control-group">
+<label class="login-field-icon fui-user" for="login-name">First Name</label>
+				<input type="text" class="login-field" value={{fname}} name="fname">
+				</div>
+<div class="control-group">
+<label class="login-field-icon fui-user" for="login-name">Last Name</label>
+				<input type="text" class="login-field" value={{lname}} name="lname">
+</div>
+<!--make a dropdown with time zones-->
+<input type="submit" value="Update Details" class="btn btn-primary btn-large btn-block">
+
+</div>
+</div>
+</div>
+</div>
+</form>

@@ -3,16 +3,17 @@ NOTE --> reload CSS = ctrl+f5 ***
 UPDATE -- Google doc with ideal hire/what we need
 
 	This week
-#PREVENT THE EXTRA :00S IN THE DTB IN THE FIRST PLACE (the sigle digit thing happens in the calendar side on calculation so that is not a concern)
-#clean up the code again
 #revise the url_for() uses in the nav bar (why is it bad??)
 #now that you know how to do variable links, update how the delete and edit buttons work
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
 -----
-##acct page (be able to update acct info) <<---
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
 #TODO figure out how to display an error message while they're entering the form data
+#think of ways to reduce aws queries
+	-keep a list of patient on the backend (only query for it once on log in bc it won't change while the dr is logged in)
+	-make query for appts better/more efficient?
+	-keep list of current appts (like patients)? (how to deal with dr making an appt while patient is logged in?)
 	
 	This month
 ##--make a (+) button next to patient userID able to be clicked (create appt)
@@ -80,6 +81,13 @@ Make a notification system (notify patients when a dr invites them to an appt)
 #TODO MAKE PATIENTS UNABLE TO CRUD<------------0
 #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS<----------0
 ##Make a patient and doctor field <-----------------------------------0
+#register new user
+    #TODO
+        #change form to have first name last name x
+        #change schema to have first name last name x
+        #remove all accts to prevent conflicts x
+        #change acct detail to combine the names x
+        #if the user doesn't choose doctor/patient radio -> default patient x
 #mkae the patient list page an actual page and format/print nicely <-------2 ***
 	#have a generic patient profile pictures/usernames	
 	#make it an array of pictures/usernames (variable)
@@ -102,3 +110,6 @@ make mtgs only for the FUTURE
 meeting creation errors -> [error messages] + back to create page (with filled in form)
 Make patient select in appt create -> drop down menu
 #FIX edit
+#PREVENT THE EXTRA :00S IN THE DTB IN THE FIRST PLACE (the sigle digit thing happens in the calendar side on calculation so that is not a concern)
+#clean up the code again
+##acct page (be able to update acct info) <<---

@@ -30,7 +30,6 @@ def returnAllPatients():
 
 def getAcctFromUsername(username):
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('apptsTable')
     #print(response)
     response = dynamo_client.get_item(TableName= 'users',
             Key={
@@ -149,6 +148,35 @@ def deleteApptAWS(mtgid):
         print(e.response['Error']['Message'])
         return "ERROR. Could not delete the meeting."
 
+def updateUserAcct(username, email,fname, lname,password):
+    dynamodb = boto3.resource('dynamodb')
+    try:
+        response = dynamo_client.update_item(TableName= 'users',
+            Key={
+                'username': {"S":username}
+            },
+        UpdateExpression="SET #email = :e, #fname=:f, #lname=:l,#password=:p",
+        ExpressionAttributeNames= {
+        '#email' : 'email',
+        '#fname' : 'fname',
+        '#lname' : 'lname',
+        '#password' : 'password'
+    },
+    ExpressionAttributeValues= {
+        ':e' : {'S':email}, 
+        ':f' : {'S':fname},
+        ':l' : {'S':lname},
+        ':p' : {'S':password}
+    },
+            ReturnValues="UPDATED_NEW"
+        )
+        return "Successfully updated user details in the database."
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+        return "ERROR. Could not update the user account."
+    return "no"
+
+
 def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl(?) will not change
 #error checking the date for extra :00s
     mtgid=str(mtgid)
@@ -166,13 +194,6 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl(?) will not c
                 'mtgid':{'S':str(mtgid)}
             },
         UpdateExpression="SET #mtgName = :m, #start_time=:s",
-##        ExpressionAttributeNames = {
-##            "#attrName" : "info"
-##        },
-##        ExpressionAttributeValues={
-##            ':m': {'S':mtgName},
-##            ':s': {'S':start_time}
-##        },
         ExpressionAttributeNames= {
         '#mtgName' : 'mtgName',
         '#start_time' : 'start_time'
@@ -180,11 +201,6 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl(?) will not c
     ExpressionAttributeValues= {':m' : {'S':mtgName}, 
         ':s' : {'S':start_time}          
     },
-##            UpdateExpression="set info.mtgName=:m, info.start_time=:s",
-##            ExpressionAttributeValues={
-##                ':m': {'S':mtgName},
-##                ':s': {'S':start_time}
-##            },
             ReturnValues="UPDATED_NEW"
         )
         return "Successfully updated the appt in the database."
@@ -216,7 +232,9 @@ def testCal():
         #print(input_data.read())
         return input_data.read()
 
-
+#print(getAcctFromUsername('ads'))
+#print(updateUserAcct('doctor1', 'testu@gmail.ocm','fake', 'name','d1'))
+#print(getAcctFromUsername('doctor1'))
 #print(getApptFromMtgId(75274348158))
 #print(updateApptAWS("NEWTEST", 77353368533, "........"))
 #print(getApptFromMtgId(77353368533))

@@ -12,7 +12,7 @@
 <div class="login">
 <div class="login-screen">
 <div class="app-title">
-<h1>Profile</h1>
+<h1>Your Profile</h1>
 </div>
 <div class="login-form">
 <div class="control-group">
@@ -31,6 +31,10 @@
 	<label class="login-field-icon fui-user" for="login-name">Email</label>
 	<input readonly type="text" class="login-field" value={{email}} name="email">
 </div>
+<form action='/acctEditrender/' method = "POST">
+<input type="hidden" value={{username}} name="username">
+<input type="submit" value="Edit Account Details" class="btn btn-primary btn-large btn-block">
+</form>
 
 </div>
 </div>

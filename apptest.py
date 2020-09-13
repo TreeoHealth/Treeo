@@ -23,8 +23,6 @@ def get_items():
 
 @app.route('/')
 def home():
-    #opItem = [{'name':'a'}, {'name':'b'},{'name':'c'},{'name':'d'}]
-    #return render_template('picture.html', options=opItem)
     if not (session.get('logged_in_p') or session.get('logged_in_d')):
         return render_template('login.html', errorMsg="")
     else:
@@ -54,7 +52,6 @@ def check_login():
                 'username': {"S":request.form['username']}                
             }
         )
-        #print(response)
         try:
             test = response.get('Item').get('password')
         except:
@@ -99,13 +96,7 @@ def new_register():
                                lname = request.form['lname']
                                )
     except:
-#register new user
-    #TODO
-        #change form to have first name last name x
-        #change schema to have first name last name x
-        #remove all accts to prevent conflicts x
-        #change acct detail to combine the names x
-        #if the user doesn't choose doctor/patient radio -> default patient x
+
         policy = PasswordPolicy.from_names(
             length=8,  # min length: 8
             uppercase=1,  # need min. 2 uppercase letters
@@ -131,8 +122,6 @@ def new_register():
                                    fname = request.form['fname'],
                                    lname = request.form['lname']
                                    )
-        ##if len(request.form['fname'])<2 or len(request.form['lname'])<2:
-            ##return render_template('register.html', errorMsg="Password")
 
         
         response = dynamo_client.put_item(TableName= 'users',
@@ -160,15 +149,14 @@ def new_register():
             print("invalid zoom email!")
             return regPg()
         return displayLoggedInHome()
-#note: relad page appears to wipe session values???
 
 def accessDenied():
     return render_template('accessDenied.html')
 
 @app.route('/createrender', methods=['POST','GET'])
 def createPg():
-##    if session['logged_in_p']:
-##        return accessDenied()
+    if session['logged_in_p']:
+        return accessDenied()
     listStr = aws_appt.returnAllPatients()
     listStr.sort()
     return render_template('create_mtg.html',
@@ -177,13 +165,11 @@ def createPg():
 
 @app.route('/createmtg', methods=['POST','GET'])
 def create_mtg():
-    #if session['logged_in_p']:
-        #return accessDenied()
+    if session['logged_in_p']:
+        return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
-    #return request.form['patientUser']
-#put session['username'] back for doctor
+#session['username'] == doctor
     jsonResp, awsResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
-    #return jsonResp
     date=time[:10]
     finalStr = ""
     if awsResp!="Successfully inserted the appt into the database.":
@@ -202,21 +188,8 @@ def create_mtg():
                                mtgname=str(jsonResp.get("topic")),
                                mtgtime=str(time[11:-1]),
                                mtgdate=str(date))
-    ##Make a patient and doctor field *********
     ##make a joinURL field on this AND the mtg detail page
-##        strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
-##        finalStr+=strTmp
-##        strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
-##        finalStr+=strTmp
-##        strTmp = "Patient Username: "+str(request.form['patientUser'])+" <br>"
-##        finalStr+=strTmp
-##        strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
-##        finalStr+=strTmp
-##        strTmp = "Meeting ID: "+str(jsonResp.get("id"))+" <br>"
-##        finalStr+=strTmp
-##        finalStr = finalStr+"<a href="+"'{{ url_for("+"show_mtg"+"') }}'"+" class='btn btn-primary btn-large btn-block'>Calendar</a><br><a href='"+"{{ url_for('"+"home') }}'"+">Home</a>"
-##    
-##    return finalStr
+
 
 ##CALENDAR FAILS TO DISPLAY FOR THE FOLLOWING CONDITIONS:
     #{"title": "HELP", "start": "2020-09-27T00:53:00", "end": "2020-09-27T1:53:00", "url": "/showmtgdetail/75274348158"}
@@ -229,16 +202,13 @@ def create_mtg():
 
 @app.route('/data')
 def return_data():
-    #***********************
-    #jsonResp = getMtgsFromUserID('HE1A37EjRIiGjh_wekf90A');
     arrOfMtgs =aws_appt.getAllApptsFromUsername(session['username'])
-    #print(arrOfMtgs)
     #[{ "title": "Meeting",
     #"start": "2014-09-12T10:30:00-05:00",
     #"end": "2014-09-12T12:30:00-05:00",
     #"url":"absolute or relative?"},{...}]
     
-    mtgList = []#mtgList = jsonResp.get("meetings")
+    mtgList = []
     finalStr = ""
     for item in arrOfMtgs:
         time = str(item.get("start_time"))
@@ -260,21 +230,9 @@ def return_data():
         #print(input_data.read())
         return input_data.read()    
 
-
-#
 @app.route('/showmtgdetail/<mtgid>', methods=['POST','GET'])
 def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
     jsonResp,awsResp = zoomtest_post.getMtgFromMtgID(str(mtgid))
-##    finalStr = ""
-##    strTmp = "Meeting Title: "+str(jsonResp.get("topic"))+" <br>"
-##    finalStr+=strTmp
-##    strTmp = "Meeting Time: "+str(jsonResp.get("start_time"))+" <br>"
-##    finalStr+=strTmp
-##    strTmp = "Join URL: "+str(jsonResp.get("join_url"))+" <br>"
-##    finalStr+=strTmp
-##    strTmp = "Meeting ID: "+mtgid+" <br>"
-##    finalStr+=strTmp
-    #finalStr = finalStr+"<a href='/deleterender/"+mtgid+"'>Delete</a><br><a href='"+"{{ url_for('"+"home') }}'"+"class='btn btn-primary btn-large btn-block'>Home</a><br><a href='/editrender/"+mtgid+"'>Edit</a><br><br>"
     time=str(jsonResp.get("start_time"))
     #split and display
     date=time[:10]
@@ -291,12 +249,11 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
     elif(session.get('logged_in_d')):
         return render_template('apptDetailDrOptions.html',
                        mtgnum=mtgid,
-                       doctor =docUser,#session['username'],
-                       patient = patUser,#request.form['patientUser'],
+                       doctor =docUser,
+                       patient = patUser,
                        mtgname=str(jsonResp.get("topic")),
                        mtgtime=str(time[11:-1]),
                        mtgdate=str(date))
-    #return finalStr
 
 @app.route("/editrender/", methods=['POST','GET'])
 def editPgFromID():
@@ -304,7 +261,7 @@ def editPgFromID():
     if session['logged_in_p']:
         return accessDenied()
     jsonResp, awsResp = zoomtest_post.getMtgFromMtgID(request.form['mtgnum'])
-    #print(jsonResp)
+
     #mtgname, pword, mtgtime, mtgdate
     time=str(jsonResp.get("start_time"))
     #split and display
@@ -317,62 +274,143 @@ def editPgFromID():
                            mtgtime=str(time[11:-1]),
                            mtgdate=str(date))
 
-##@app.route("/editrender/<mtgid>", methods=['POST','GET'])
-##def editPgFromID(mtgid):
-##    if session['logged_in_p']:
-##        return accessDenied()
-##    jsonResp = getMtgFromMtgID(str(mtgid))
-##    #mtgname, pword, mtgtime, mtgdate
-##    time=str(jsonResp.get("start_time"))
-##    #split and display
-##    date=time[:10]
-##
-##
-##    return render_template('edit.html',
-##                           mtgnum=mtgid,
-##                           mtgname=str(jsonResp.get("topic")),
-##                           pword=str(jsonResp.get("password")),
-##                           mtgtime=str(time[11:-1]),
-##                           mtgdate=str(date))
-
 
 @app.route("/editmtg", methods=['POST','GET'])
 def editSubmit():
     if session['logged_in_p']:
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
-    #print(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
     jsonResp = zoomtest_post.updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
 
     jsonResp,awsResp = zoomtest_post.getMtgFromMtgID(str(request.form['mtgnum']))
-    #print(jsonResp)
     time=str(jsonResp.get("start_time"))
+
     #split and display
     date=time[:10]
     docUser = awsResp.get('Item').get('doctor').get('S')
     patUser = awsResp.get('Item').get('patient').get('S')
     return render_template('apptDetailDrOptions.html',
                        mtgnum=str(request.form['mtgnum']),
-                       doctor =docUser,#session['username'],
-                       patient = patUser,#request.form['patientUser'],
+                       doctor =docUser,
+                       patient = patUser,
                        mtgname=str(jsonResp.get("topic")),
                        mtgtime=str(time[11:-1]),
                        mtgdate=str(date))
 
 @app.route('/acctdetails', methods=['POST','GET'])
 def acct_details():     
-    #return "Account Details"
     response = aws_appt.getAcctFromUsername(str(session['username']))
     name = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
-    return render_template('patientAcctDetails.html', 
+    return render_template('ownAcctPg.html', 
                            username=session['username'],
                            docstatus=response.get('Item').get('docStatus').get('S'),
                            nm=name,
                            email=response.get('Item').get('email').get('S')
                            )
 
+@app.route('/acctEditrender/', methods=['POST','GET'])
+def editAcctRender():
+    awsResp = aws_appt.getAcctFromUsername(str(request.form['username']))
+    return render_template('editProfile.html',
+                           errorMsg="",
+                           username=session['username'],
+                           pword1="",
+                           pwordNew1="",
+                           pwordNew2="",
+                           email=awsResp.get('Item').get('email').get('S'),
+                           fname=awsResp.get('Item').get('fname').get('S'),
+                           lname=awsResp.get('Item').get('lname').get('S')
+                           )
+
+@app.route('/editacct', methods=['POST','GET'])
+def editAcctDetails():
+    oldPw = str(request.form['pword1'])
+    newPw1 = str(request.form['pwordNew1'])
+    newPw2 = str(request.form['pwordNew2'])
+    awsResp = aws_appt.getAcctFromUsername(str(request.form['username']))
+    pwUpdate = False
+    errMsg=""
+    errFlag=False
+    if(oldPw=="" and newPw1=="" and newPw2==""):
+        #no password change is happening
+        pwUpdate=False
+        print("NO PASSWORD UPDATE")
+    else:
+        policy = PasswordPolicy.from_names(
+            length=8,  # min length: 8
+            uppercase=1,  # need min. 2 uppercase letters
+            numbers=1  # need min. 2 digits
+            )
+        isEnough = policy.test(newPw1)
+        pwUpdate=True
+        errMsg=""
+        errFlag=False
+#FIRST NEED TO VALIDATE THAT THE OLD PASSWORD IS RIGHT!!!
+        oldPassw = awsResp.get('Item').get('password').get('S')
+        if oldPw!=oldPassw:
+            errFlag=True
+            errMsg="Password entered does not match the acct's password."
+        elif oldPw==newPw1 and newPw1==newPw2:
+            errFlag=True
+            errMsg="New password has to be different from old password."
+        elif newPw1!=newPw2:
+            errFlag=True
+            errMsg="New passwords did not match"
+        #if it gets here, we know the new pw != old pw and new pws match
+        elif len(isEnough):
+            errFlag=True
+            errMsg="New password must be min length 8, 1 upper case, and 1 number."
+
+    if(errFlag):
+        return render_template('editProfile.html',
+                           errorMsg=errMsg,
+                           username=session['username'],
+                           pword1="",
+                           pwordNew1="",
+                           pwordNew2="",
+                           email=awsResp.get('Item').get('email').get('S'),
+                           fname=awsResp.get('Item').get('fname').get('S'),
+                           lname=awsResp.get('Item').get('lname').get('S')
+                           )
+    #if the password is fine, check names and email formatting
+    if len(request.form['fname'])<2 or len(request.form['lname'])<2:
+        #awsResp = aws_appt.getAcctFromUsername(str(request.form['username']))
+        return render_template('editProfile.html',
+                           errorMsg="First and last name must have at least 2 characters.",
+                           username=session['username'],
+                           pword1="",
+                           pwordNew1="",
+                           pwordNew2="",
+                           email=awsResp.get('Item').get('email').get('S'),
+                           fname=awsResp.get('Item').get('fname').get('S'),
+                           lname=awsResp.get('Item').get('lname').get('S')
+                           )
+    emailAddr=str(request.form['email'])
+    if(len(emailAddr.split("@"))!=2):
+        return render_template('editProfile.html',
+                           errorMsg="Invalid email address format.",
+                           username=session['username'],
+                           pword1="",
+                           pwordNew1="",
+                           pwordNew2="",
+                           email=awsResp.get('Item').get('email').get('S'),
+                           fname=awsResp.get('Item').get('fname').get('S'),
+                           lname=awsResp.get('Item').get('lname').get('S')
+                           )
+    #if it's gotten past here, we know password is fine (or not being updated), email is fine, f and l name are fine
+    if(pwUpdate==False):
+        response = aws_appt.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], awsResp.get('Item').get('password').get('S'))
+    else:
+        response = aws_appt.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], newPw1)
+    session['name']=str(request.form['fname'])+" "+str(request.form['lname'])
+    return acct_details()
+
+
+
 @app.route('/patients/<username>', methods=['POST','GET'])
 def patientAcct(username):
+    ##dr will not be given the option to edit any details
+    ##this is where medical details will eventually be rendered
     response = aws_appt.getAcctFromUsername(str(username))
     name = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
     return render_template('patientAcctDetails.html', 
@@ -384,34 +422,12 @@ def patientAcct(username):
 
 @app.route('/patients', methods=['POST','GET'])
 def list_patients():
-    #opItem = [{'name':'a'}, {'name':'b'},{'name':'c'},{'name':'d'}]
     listStr = aws_appt.returnAllPatients()
     listStr.sort()
     return render_template('picture.html', options=listStr)
 
 @app.route('/showallmtgs', methods=['POST','GET'])
 def show_mtg():
-##    arrOfMtgs =aws_appt.getAllApptsFromUsername(session['username'])
-##    print(arrOfMtgs)
-##    #[{ "title": "Meeting",
-##    #"start": "2014-09-12T10:30:00-05:00",
-##    #"end": "2014-09-12T12:30:00-05:00",
-##    #"url":"absolute or relative?"},{...}]
-##    
-##    mtgList = []#mtgList = jsonResp.get("meetings")
-##    finalStr = ""
-##    for item in arrOfMtgs:
-##        time = str(item.get("start_time"))
-##        mtgid = str(item.get("mtgid"))
-##        time = time[:-1]
-##        end_time = int(float(time[11:13]))+1
-##        strend = time[:11]+str(end_time)+time[13:]
-##        mtgObj = {"title":str(item.get("mtgName")), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
-##        mtgList.append(mtgObj)
-##    #BADDDD (change this)
-##    with open('appts.json', 'w') as outfile:
-##        json.dump(mtgList, outfile)
-
     return render_template("calendar.html")
 
 #This is what is needed to be able to link to this page
@@ -434,10 +450,8 @@ def deletePgNum():
 def deleteMtg():
     if session['logged_in_p']:
         return accessDenied()
-    #jsonResp = zoomtest_post.getMtgFromMtgID(str(request.form['mtgID']))
     awsResp = aws_appt.getApptFromMtgId(str(request.form['mtgID']))
     try:
-        #x=jsonResp.get("Item").get("start_time")
         if len(awsResp)>=1:
             zoomtest_post.deleteMtgFromID(str(request.form['mtgID']))
         return render_template('deleteConfirm.html', mtgnum=str(request.form['mtgID']))

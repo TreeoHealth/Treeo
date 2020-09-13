@@ -16,14 +16,11 @@
 <div class="login-screen">
 <div class="profile-box">
 {% for item in options %}
+<!--make (+) that will auto fill a create mtg form-->
 <div class='testWrapAbt'>
-    <script> 
-        var val = {{item}}; 
-    </script> 
-	<img class = "profile-pic" src='/static/profile.png' alt="My Pic" height ="50" width = "50" ></img>
+  <img class = "profile-pic" src='/static/profile.png' alt="My Pic" height ="50" width = "50" ></img>
   <p class="profile-username"><a href="/patients/{{item}}">{{item}}</a></p><br>
-  
-  </div>
+</div>
   {% endfor %}
 </div>
 </div>
