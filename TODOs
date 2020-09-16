@@ -14,10 +14,9 @@ UPDATE -- Google doc with ideal hire/what we need
 	-keep a list of patient on the backend (only query for it once on log in bc it won't change while the dr is logged in)
 	-make query for appts better/more efficient?
 	-keep list of current appts (like patients)? (how to deal with dr making an appt while patient is logged in?)
+#encrypt - names and passwords
 	
 	This month
-##--make a (+) button next to patient userID able to be clicked (create appt)
-##  -> autofills a create form with that userID (like clicking delete)
 #SOLVE LATENCY AND INCORRECT SCHEMA ***
 #make an "add user to appt" function that updates the appt database item (max 1 patient)
 #make a search functionality for when the doctor is adding patients to the appt [NO? this is what the dropown was for]
@@ -113,3 +112,5 @@ Make patient select in appt create -> drop down menu
 #PREVENT THE EXTRA :00S IN THE DTB IN THE FIRST PLACE (the sigle digit thing happens in the calendar side on calculation so that is not a concern)
 #clean up the code again
 ##acct page (be able to update acct info) <<---
+##--make a (+) button next to patient userID able to be clicked (create appt)
+##  -> autofills a create form with that userID (like clicking delete)

@@ -32,12 +32,15 @@ color: #777;
 .profile-pic
 {
 	float:left;
+	border: 2px solid black;
 	
 }
 
 .profile-username {
 	padding:5px;
 	color: #777;
+	
+	width:200px;
 }
 
 .testWrapAbt p
@@ -136,6 +139,11 @@ margin: 0 auto;
 
 .btn:hover {
 background-color: #2980B9;
+}
+
+.apptbutton{
+	float:right;
+	width:100px;
 }
 
 .login-link {

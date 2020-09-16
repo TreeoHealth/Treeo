@@ -163,6 +163,16 @@ def createPg():
                            errorMsg = "",
                            options=listStr)
 
+@app.route('/createrender/<username>', methods=['POST','GET'])
+def createWithUsername(username):
+    if session['logged_in_p']:
+        return accessDenied()
+    listStr = []
+    listStr.append(username)
+    return render_template('create_mtg.html',
+                           errorMsg = "",
+                           options=listStr)
+
 @app.route('/createmtg', methods=['POST','GET'])
 def create_mtg():
     if session['logged_in_p']:
