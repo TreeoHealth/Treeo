@@ -1,30 +1,33 @@
 TODOS
 NOTE --> reload CSS = ctrl+f5 ***
 UPDATE -- Google doc with ideal hire/what we need
+       -- put in google doc about making the forum safe *NLP *what are the safety measures?
+	   --how to convert the med lingo into user friendly language with NLP?
 
 	This week
-#revise the url_for() uses in the nav bar (why is it bad??)
-#now that you know how to do variable links, update how the delete and edit buttons work
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
------
+#check how the usernames are made (no spaces/unicode --> regex?)
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
 #TODO figure out how to display an error message while they're entering the form data
-#think of ways to reduce aws queries
+#encrypt - names and passwords
+
+	
+	This month
+#page out the patient print out (20/pg)
+#make an autocomplete for patient appt create somehow (having 100+ usernames, a dropdown is not viable)
+	#make a search functionality for when the doctor is adding patients to the appt
+	#can use binary search bc we will have it sorted
+#SOLVE LATENCY ***
+	#think of ways to reduce aws queries
 	-keep a list of patient on the backend (only query for it once on log in bc it won't change while the dr is logged in)
 	-make query for appts better/more efficient?
 	-keep list of current appts (like patients)? (how to deal with dr making an appt while patient is logged in?)
-#encrypt - names and passwords
-	
-	This month
-#SOLVE LATENCY AND INCORRECT SCHEMA ***
-#make an "add user to appt" function that updates the appt database item (max 1 patient)
-#make a search functionality for when the doctor is adding patients to the appt [NO? this is what the dropown was for]
 #SEND THE USER AN EMAIL (not confirmation, just notification of being added to an appt/delete and acct udated) 
 	#NOT MARKED AS SPAMMMM
+#make week/day view version of the calendar
 
 	Eventually
-#page out the patient print out
 Make a notification system (notify patients when a dr invites them to an appt)
 ##email validation? (valid domain at least)
 ##look into dynamic text boxes (react to user input AS THEY TYPE -- do not need to submit)
@@ -114,3 +117,11 @@ Make patient select in appt create -> drop down menu
 ##acct page (be able to update acct info) <<---
 ##--make a (+) button next to patient userID able to be clicked (create appt)
 ##  -> autofills a create form with that userID (like clicking delete)
+
+
+
+
+~~~~[not done -- shhhhh!]~~~~
+#revise the url_for() uses in the nav bar (why is it bad??)
+#now that you know how to do variable links, update how the delete and edit buttons work
+#make an "add user to appt" function that updates the appt database item (max 1 patient)
