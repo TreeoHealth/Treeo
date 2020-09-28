@@ -16,6 +16,7 @@ from password_strength import PasswordPolicy
 app = Flask(__name__)
 
 dynamo_client = boto3.client('dynamodb')
+takenUsernames = aws_appt.returnAllPatients()
 
 @app.route('/get-items')
 def get_items():
@@ -149,6 +150,14 @@ def new_register():
             print("invalid zoom email!")
             return regPg()
         return displayLoggedInHome()
+
+@app.route('/usernamecheck')
+def usernamecheck():
+    text = request.args.get('jsdata')
+    if(text in takenUsernames):
+        text=""
+        return 'USERNAME TAKEN'
+    return ""
 
 def accessDenied():
     return render_template('accessDenied.html')

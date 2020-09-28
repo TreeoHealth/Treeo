@@ -1,16 +1,23 @@
 TODOS
 NOTE --> reload CSS = ctrl+f5 ***
+SUGGEST CHANGES TO THE PITCH DECK
+CHANGE GITHUB NAME x
 UPDATE -- Google doc with ideal hire/what we need
        -- put in google doc about making the forum safe *NLP *what are the safety measures?
 	   --how to convert the med lingo into user friendly language with NLP?
 
+
+
 	This week
+#password strength
+#username check simpilfy ajax code (no suggestions.hrml)
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
 #check how the usernames are made (no spaces/unicode --> regex?)
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
 #TODO figure out how to display an error message while they're entering the form data
 #encrypt - names and passwords
+#**disable the create acct button if there is an error on the form? (possible???)
 
 	
 	This month

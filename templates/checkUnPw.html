@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 
 <html>
-
+<link rel="stylesheet" href="/static/style.css" type="text/css">
 <head>
     <title>Suggestions</title>
 </head>
 
 <body>
 
+<div class="error">{{errorMsg}}</div>
 Search: <input type="text" id="search_form_input"></input>
 
 <div id="place_for_suggestions"></div>
@@ -24,10 +25,10 @@ $("#search_form_input").keyup(function(){
       data: {jsdata: text},
       success: function(response) {
         $("#place_for_suggestions").html(response);
-      },
-      error: function(xhr) {
+      }//,
+      //error: function(xhr) {
         //Do Something to handle error
-      }
+      //}
     });
 });
 </script>

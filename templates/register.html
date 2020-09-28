@@ -10,8 +10,9 @@
 </div>
 <div class="login-form">
 <div class="error">{{errorMsg}}</div>
+<div class="error" id="place_for_suggestions"></div>
 <div class="control-group">
-				<input type="text" class="login-field"  required placeholder="username" name="username" value={{username}} >
+				<input type="text" class="login-field" id="username_form_input" required placeholder="username" name="username" value={{username}} >
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
 				<input type="password" class="login-field" required placeholder="password" name="password" value={{password}}>
@@ -37,3 +38,23 @@
 </div>
 </div>
 </form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script>
+$("#username_form_input").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/usernamecheck",
+      type: "get",
+      data: {jsdata: text},
+      success: function(response) {
+        $("#place_for_suggestions").html(response);
+      }//,
+      //error: function(xhr) {
+        //Do Something to handle error
+      //}
+    });
+});
+</script>
