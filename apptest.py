@@ -9,6 +9,7 @@ import aws_controller
 from botocore.exceptions import ClientError
 import aws_appt
 import zoomtest_post
+import password_strength
 from password_strength import PasswordPolicy
 #from aws_appt import getAllApptsFromUsername, returnAllPatients, getAcctFromUsername
 #from zoomtest_post import updateMtg,createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
@@ -151,13 +152,55 @@ def new_register():
             return regPg()
         return displayLoggedInHome()
 
-@app.route('/usernamecheck')
+@app.route('/usernamecheck', methods=['POST','GET'])
 def usernamecheck():
+    #print("in UC", request)
     text = request.args.get('jsdata')
     if(text in takenUsernames):
         text=""
         return 'USERNAME TAKEN'
     return ""
+
+@app.route('/pwStrengthCheck')
+def pwStrCheck():
+    text = request.args.get('jsdata')
+    policy = PasswordPolicy.from_names(
+            length=8,  # min length: 8
+            uppercase=2,  # need min. 2 uppercase letters
+            numbers=2  # need min. 2 digits
+            )
+##PASSWORD STRENGTH
+    isEnough = policy.test(str(text))
+    text=""
+    if len(isEnough):
+        #print(type(isEnough[0]))
+        if len(isEnough)==1:
+            if type(isEnough[0])==password_strength.tests.Length:
+                return "<8 characters"
+            elif type(isEnough[0])==password_strength.tests.Uppercase:
+                return "<2 capital letters"
+            elif type(isEnough[0])==password_strength.tests.Numbers: 
+                return "<2 digits"
+        elif len(isEnough)==2: #any 2 combinationsS
+            if type(isEnough[0])==password_strength.tests.Length:
+                if type(isEnough[1])==password_strength.tests.Uppercase:
+                    return "<8 characters\n<2 capital letters"
+                elif type(isEnough[1])==password_strength.tests.Numbers: 
+                    return "<8 characters\n<2 digits"
+            elif type(isEnough[0])==password_strength.tests.Uppercase:
+                if type(isEnough[1])==password_strength.tests.Numbers: 
+                    return "<2 capital letters\n<2 digits"
+                elif type(isEnough[1])==password_strength.tests.Length: 
+                    return "<2 capital letters\n<8 characters"
+            elif type(isEnough[0])==password_strength.tests.Numbers: 
+                if type(isEnough[1])==password_strength.tests.Uppercase:
+                    return "<2 digits\n<2 capital letters"
+                elif type(isEnough[1])==password_strength.tests.Length: 
+                    return "<2 digits\n<8 characters"
+        else: #all 3
+            return "<8 characters\n<2 capital letters\n<2 digits"
+    else:
+        return ""
 
 def accessDenied():
     return render_template('accessDenied.html')

@@ -10,13 +10,14 @@
 </div>
 <div class="login-form">
 <div class="error">{{errorMsg}}</div>
-<div class="error" id="place_for_suggestions"></div>
+<div class="error" id="usernameCheckNotif"></div>
 <div class="control-group">
 				<input type="text" class="login-field" id="username_form_input" required placeholder="username" name="username" value={{username}} >
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
-				<input type="password" class="login-field" required placeholder="password" name="password" value={{password}}>
+				<input type="password" class="login-field" id="password_form_input" required placeholder="password" name="password" value={{password}}>
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
+<div class="error" id="passCheckNotif"></div>
 <div class="control-group">
 				<input type="text" class="login-field" required placeholder="email" name="email" value={{email}}>
 <label class="login-field-icon fui-lock" for="login-name"></label></div>
@@ -47,10 +48,26 @@ $("#username_form_input").keyup(function(){
 
     $.ajax({
       url: "/usernamecheck",
+      type: "get",//post
+      data: {jsdata: text},
+      success: function(response) {
+        $("#usernameCheckNotif").html(response);
+      }//,
+      //error: function(xhr) {
+        //Do Something to handle error
+      //}
+    });
+});
+
+$("#password_form_input").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/pwStrengthCheck",
       type: "get",
       data: {jsdata: text},
       success: function(response) {
-        $("#place_for_suggestions").html(response);
+        $("#passCheckNotif").html(response);
       }//,
       //error: function(xhr) {
         //Do Something to handle error
