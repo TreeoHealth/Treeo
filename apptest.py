@@ -18,6 +18,7 @@ app = Flask(__name__)
 
 dynamo_client = boto3.client('dynamodb')
 takenUsernames = aws_appt.returnAllPatients()
+patientList = aws_appt.searchPatientList()
 
 @app.route('/get-items')
 def get_items():
@@ -136,7 +137,7 @@ def new_register():
                 'docStatus':{"S":request.form['docStatus']}
             }
            )
-
+        takenUsernames.append(request.form['username'])
         try:
             formEmail = request.form['email']
             if(request.form['docStatus']=='doctor'):
@@ -489,6 +490,17 @@ def list_patients():
     listStr = aws_appt.returnAllPatients()
     listStr.sort()
     return render_template('picture.html', options=listStr)
+
+@app.route("/search/<string:box>")
+def process(box):
+    jsonSuggest = []
+    query = request.args.get('query')
+    listPatients=patientList
+    for username in listPatients:
+        if(query in username):
+            jsonSuggest.append({'value':username,'data':username})
+        #suggestions = [{'value': 'joe','data': 'joe'}, {'value': 'jim','data': 'jim'}]
+    return jsonify({"suggestions":jsonSuggest})
 
 @app.route('/showallmtgs', methods=['POST','GET'])
 def show_mtg():

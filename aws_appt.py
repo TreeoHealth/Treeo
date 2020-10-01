@@ -26,7 +26,27 @@ def returnAllPatients():
         if i['docStatus']=="patient":
             patientList.append(i['username'])
     
-    return patientList    
+    return patientList
+
+def searchPatientList():
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('users')
+    response = table.scan()
+    #print( response)
+
+    patientList = []
+    for i in response['Items']:
+        if i['docStatus']=="patient":
+            tmp = ""
+            tmp+=i['username']
+            tmp+=" - "
+            tmp+=i['lname']
+            tmp+=", "
+            tmp+=i['fname']
+            
+            patientList.append(tmp)
+    
+    return patientList
 
 def getAcctFromUsername(username):
     dynamodb = boto3.resource('dynamodb')
