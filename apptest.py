@@ -161,9 +161,11 @@ def usernamecheck():
         return 'USERNAME TAKEN'
     return ""
 
-@app.route('/pwStrengthCheck')
+@app.route('/pwStrengthCheck', methods=['POST','GET'])
 def pwStrCheck():
-    text = request.args.get('jsdata')
+    #print(request.form['jsdata'])
+    #print(request.args)
+    text = request.form.get('jsdata')
     policy = PasswordPolicy.from_names(
             length=8,  # min length: 8
             uppercase=2,  # need min. 2 uppercase letters

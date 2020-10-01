@@ -45,6 +45,6 @@ def usernamencheck():
             return "<8 characters\n<2 capital letters\n<2 digits"
 #CHANGE THE FORMAT of the message
             #[x]/[x]/[x]?
-#usernamecheck()
+usernamecheck()
 #if __name__ == "__main__":
  #   app.run(host='0.0.0.0', port=4000)

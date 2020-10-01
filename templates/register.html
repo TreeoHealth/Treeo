@@ -64,7 +64,7 @@ $("#password_form_input").keyup(function(){
 
     $.ajax({
       url: "/pwStrengthCheck",
-      type: "get",
+      type: "post",
       data: {jsdata: text},
       success: function(response) {
         $("#passCheckNotif").html(response);

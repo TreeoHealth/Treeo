@@ -12,14 +12,16 @@ def index():
     return render_template('checkUnPw.html',errorMsg="")
 
 
-@app.route('/suggestions')
+@app.route('/suggestions', methods=['POST','GET'])
 def suggestions():
-    text = request.args.get('jsdata')
+    print(request.form)
+    print(request.args)
+    text = request.form.get('jsdata')
     print(text)
     
     #suggestions_list=[]
     if(text in takenUn):
-        print(text)
+        #print(text)
         text=""
         print("USERNAME TAKEN")
         return '<div class="error">USERNAME TAKEN</div>'

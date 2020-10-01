@@ -9,8 +9,7 @@ UPDATE -- Google doc with ideal hire/what we need
 
 
 	This week
-#password strength
-#username check simpilfy ajax code (no suggestions.hrml)
+#don't send the password through get
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
 #check how the usernames are made (no spaces/unicode --> regex?)
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
@@ -124,7 +123,8 @@ Make patient select in appt create -> drop down menu
 ##acct page (be able to update acct info) <<---
 ##--make a (+) button next to patient userID able to be clicked (create appt)
 ##  -> autofills a create form with that userID (like clicking delete)
-
+#password strength
+#username check simpilfy ajax code (no suggestions.hrml)
 
 
 
