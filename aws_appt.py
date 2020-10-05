@@ -252,7 +252,7 @@ def testCal():
         #print(input_data.read())
         return input_data.read()
 
-#print(getAcctFromUsername('ads'))
+#print(len(getAcctFromUsername('aasdfasd')))
 #print(updateUserAcct('doctor1', 'testu@gmail.ocm','fake', 'name','d1'))
 #print(getAcctFromUsername('doctor1'))
 #print(getApptFromMtgId(75274348158))

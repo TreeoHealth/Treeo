@@ -1,9 +1,5 @@
 <!--<img src={{ url_for('static', filename='profile.png') }}>-->
 <!--need to make the picture into a link??? want to avoid making a form for each patient (x200?? - not good)-->
-<head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js"></script>
-</head>
 
 <link rel="stylesheet" href="/static/style.css" type="text/css">
 <!--&#123;% block body %&#125;-->
@@ -19,7 +15,7 @@
 
 <div class="login">
 <div class="login-screen">
-<input class="login-field" type="text" name="names" id="autocomplete1"/>
+<a href="{{ url_for('search_patients') }}" class="btn btn-primary btn-large btn-block">Search Patients</a>
 <div class="profile-box">
 {% for item in options %}
 <!--make (+) that will auto fill a create mtg form-->
@@ -35,17 +31,5 @@
 </div>
 </div>
 
-<body>
-  <script>
-  $('#autocomplete1').autocomplete({
-      serviceUrl: '/search/names',
-      dataType: 'json',
-      onSearchComplete: function (query, suggestions) {
-        console.log(query);
-      }
-  });
-
-  </script>
-</body>
 
 

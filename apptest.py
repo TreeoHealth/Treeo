@@ -476,6 +476,7 @@ def editAcctDetails():
 def patientAcct(username):
     ##dr will not be given the option to edit any details
     ##this is where medical details will eventually be rendered
+    print("PATIENT USER")
     response = aws_appt.getAcctFromUsername(str(username))
     name = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
     return render_template('patientAcctDetails.html', 
@@ -490,6 +491,42 @@ def list_patients():
     listStr = aws_appt.returnAllPatients()
     listStr.sort()
     return render_template('picture.html', options=listStr)
+
+@app.route('/searchpgrender', methods=['POST','GET'])
+def search_patients():
+    return render_template('searchPg.html')
+
+@app.route('/searchResult', methods=['POST','GET'])
+def search_page():
+    query = request.form['names']
+    if(query==""): #if the form is empty, return all of the usernames
+        listStr = aws_appt.returnAllPatients()
+        listStr.sort()
+        return render_template('picture.html', options=listStr)
+    
+    actualUsername = (query.split(" - "))[0] #username - last name, first name
+    response = aws_appt.getAcctFromUsername(actualUsername)
+    if(len(query.split(" - "))==2 and len(response)==2):
+            #if the username exists and the user used the autocomplete -> take them to the account page directly
+        name = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
+        return render_template('patientAcctDetails.html', 
+                           username=actualUsername,
+                           docstatus=response.get('Item').get('docStatus').get('S'),
+                           nm=name,
+                           email=response.get('Item').get('email').get('S')
+                           )
+    
+    jsonSuggest=[]
+    listStr=[]
+    listPatients=patientList
+    for username in listPatients:
+        if(query in username):
+            jsonSuggest.append({'value':username,'data':username})
+            actualUsername = (username.split(" - "))[0]
+            listStr.append(actualUsername)
+    listStr.sort()
+    return render_template('picture.html', options=listStr)
+
 
 @app.route("/search/<string:box>")
 def process(box):
