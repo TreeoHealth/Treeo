@@ -9,13 +9,14 @@ UPDATE -- Google doc with ideal hire/what we need
 
 
 	This week
-Make a seperate page for patient search(?)
-Fix drop down
-Make it that when you select from the drop down it takes you to that patient's account
-Make search result page (from drop down results) 
-	-- works the same way as the patient list page
+Fix drop down transparency 
+	--maybe try doing the register pg approach instead?
+	--maybe try a full list that updates as you type??
+Fix spacing/centering of search box/search button
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
-#check how the usernames are made (no spaces/unicode --> regex?)
+#check how the usernames are made (no spaces/unicode --> regex?) <--
+check usernames dynamically
+check name length dynamically
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
 #encrypt - names and passwords
@@ -130,8 +131,12 @@ Make patient select in appt create -> drop down menu
 #username check simpilfy ajax code (no suggestions.hrml)
 #don't send the password through get
 #TODO figure out how to display an error message while they're entering the form data
-
-
+Make a seperate page for patient search(?)
+Make it that when you select from the drop down it takes you to that patient's account
+Make search result page (from drop down results) 
+    -- works the same way as the patient list page
+	
+	
 ~~~~[not done -- shhhhh!]~~~~
 #revise the url_for() uses in the nav bar (why is it bad??)
 #now that you know how to do variable links, update how the delete and edit buttons work

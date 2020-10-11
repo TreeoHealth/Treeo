@@ -14,13 +14,22 @@ def index():
 
 @app.route('/suggestions', methods=['POST','GET'])
 def suggestions():
-    print(request.form)
-    print(request.args)
+    #print(request.form)
+    #print(request.args)
     text = request.form.get('jsdata')
-    print(text)
-    
-    #suggestions_list=[]
-    if(text in takenUn):
+    #print(text)
+    htmlTest='<select'
+   
+    suggestions_list=["alpha","beta","chi"]
+    htmlTest+=str(len(suggestions_list))
+    htmlTest+=">"
+    for item in suggestions_list:
+        htmlTest+="<option>"
+        htmlTest+=item
+        htmlTest+="</option>"
+    htmlTest+="</select>"
+    return htmlTest
+    if(text in suggestions_list):
         #print(text)
         text=""
         print("USERNAME TAKEN")

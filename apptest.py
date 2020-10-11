@@ -528,6 +528,20 @@ def search_page():
     return render_template('picture.html', options=listStr)
 
 
+@app.route("/search")
+def processSearch():
+    jsonSuggest = []
+    query = request.args.get('jsdata')
+    #query = request.args.get('query')
+    listPatients=patientList
+    num = 0
+    for username in listPatients:
+        if(query in username):
+            num+=1#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
+        #suggestions = [{'value': 'joe','data': 'joe'}, {'value': 'jim','data': 'jim'}]
+    print("HERRRRRRRRRE")
+    return '<div class="error">BLACH</div>'#'<textarea style="height:'+str(num*25)+'px;"></textarea>'
+
 @app.route("/search/<string:box>")
 def process(box):
     jsonSuggest = []
@@ -535,7 +549,7 @@ def process(box):
     listPatients=patientList
     for username in listPatients:
         if(query in username):
-            jsonSuggest.append({'value':username,'data':username})
+            jsonSuggest.append({'value':username,'data':username})#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
         #suggestions = [{'value': 'joe','data': 'joe'}, {'value': 'jim','data': 'jim'}]
     return jsonify({"suggestions":jsonSuggest})
 
@@ -551,7 +565,7 @@ def deletePg():
         return accessDenied()
     return render_template('delete.html', mtg="")
 
-@app.route("/deleteRenderNum/", methods=['POST','GET'])
+@app.route("/deleteRenderNum/", methods=['POST','GET']) 
 def deletePgNum():
     if session['logged_in_p']:
         return accessDenied()
