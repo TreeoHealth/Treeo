@@ -22,10 +22,11 @@
 				<input type="text" class="login-field" required placeholder="email" name="email" value={{email}}>
 <label class="login-field-icon fui-lock" for="login-name"></label></div>
 <div class="control-group">
-				<input type="text" class="login-field" required placeholder="first name" name="fname" value={{fname}}>
+				<input type="text" class="login-field" required id="fn_form_input" placeholder="first name" name="fname" value={{fname}}>
 <label class="login-field-icon fui-lock" for="login-name"></label></div>
+<div class="error" id="nameLengthCheck"></div>
 <div class="control-group">
-				<input type="text" class="login-field" required placeholder="last name" name="lname" value={{lname}}>
+				<input type="text" class="login-field" required id="ln_form_input" placeholder="last name" name="lname" value={{lname}}>
 <label class="login-field-icon fui-lock" for="login-name"></label></div>
 
 <input type="radio" name="docStatus" value="doctor">
@@ -68,6 +69,38 @@ $("#password_form_input").keyup(function(){
       data: {jsdata: text},
       success: function(response) {
         $("#passCheckNotif").html(response);
+      }//,
+      //error: function(xhr) {
+        //Do Something to handle error
+      //}
+    });
+});
+
+$("#fn_form_input").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/nameLengthCheck",
+      type: "get",//post
+      data: {jsdata: text},
+      success: function(response) {
+        $("#nameLengthCheck").html(response);
+      }//,
+      //error: function(xhr) {
+        //Do Something to handle error
+      //}
+    });
+});
+
+$("#ln_form_input").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/nameLengthCheck",
+      type: "get",//post
+      data: {jsdata: text},
+      success: function(response) {
+        $("#nameLengthCheck").html(response);
       }//,
       //error: function(xhr) {
         //Do Something to handle error

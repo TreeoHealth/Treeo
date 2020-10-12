@@ -3,6 +3,7 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 import os
 from flask import Flask, jsonify
 import json
+import re
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 import aws_controller
@@ -160,6 +161,24 @@ def usernamecheck():
     if(text in takenUsernames):
         text=""
         return 'USERNAME TAKEN'
+##    no _ or . at the end
+##    allowed characters = [a-zA-Z0-9._] (NOT /*$#@+=?><,;':%^&())
+##    no __ or _. or ._ or .. inside
+##    no _ or . at the beginning
+##    username is 5-20 characters long
+#
+    if not(re.match("^(?=.{5,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$", text)):
+        text=""
+        return "5-20 characters. No spaces. Cannot start/end with punctuation. Cannot contain /*$#@+=?><,;':%^&()"   
+    return ""
+
+@app.route('/nameLengthCheck', methods=['POST','GET'])
+def namecheck():
+    #print("in UC", request)
+    text = request.args.get('jsdata')
+    if(len(text)<2):
+        text=""
+        return 'First and last name need 2+ characters'
     return ""
 
 @app.route('/pwStrengthCheck', methods=['POST','GET'])
@@ -527,20 +546,20 @@ def search_page():
     listStr.sort()
     return render_template('picture.html', options=listStr)
 
-
-@app.route("/search")
-def processSearch():
-    jsonSuggest = []
-    query = request.args.get('jsdata')
-    #query = request.args.get('query')
-    listPatients=patientList
-    num = 0
-    for username in listPatients:
-        if(query in username):
-            num+=1#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
-        #suggestions = [{'value': 'joe','data': 'joe'}, {'value': 'jim','data': 'jim'}]
-    print("HERRRRRRRRRE")
-    return '<div class="error">BLACH</div>'#'<textarea style="height:'+str(num*25)+'px;"></textarea>'
+#UNUSED
+##@app.route("/search")
+##def processSearch():
+##    jsonSuggest = []
+##    query = request.args.get('jsdata')
+##    #query = request.args.get('query')
+##    listPatients=patientList
+##    num = 0
+##    for username in listPatients:
+##        if(query in username):
+##            num+=1#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
+##        #suggestions = [{'value': 'joe','data': 'joe'}, {'value': 'jim','data': 'jim'}]
+##    print("HERRRRRRRRRE")
+##    return '<div class="error">BLACH</div>'#'<textarea style="height:'+str(num*25)+'px;"></textarea>'
 
 @app.route("/search/<string:box>")
 def process(box):
