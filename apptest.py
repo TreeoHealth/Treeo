@@ -247,13 +247,29 @@ def createWithUsername(username):
                            errorMsg = "",
                            options=listStr)
 
+@app.route('/create_search', methods=['POST','GET'])
+def createUserSearch():
+    jsonSuggest = []
+    query = request.args.get('query')
+    listPatients=patientList#takenUsernames
+    for username in listPatients:
+        if(query in username):
+            jsonSuggest.append({'value':username,'data':username.split(" - ")[0]})#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
+        #suggestions = [{'value': 'joe','data': 'joe'}, {'value': 'jim','data': 'jim'}]
+    return jsonify({"suggestions":jsonSuggest})
+
 @app.route('/createmtg', methods=['POST','GET'])
 def create_mtg():
     if session['logged_in_p']:
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
+    #need to ensure that what is entered is either autocorrect, or valid
+    if len(request.form['patientUser'].split(" - "))>1:
+        username = request.form['patientUser'].split(" - ")[0]
+        jsonResp, awsResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], username)
 #session['username'] == doctor
-    jsonResp, awsResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
+    else:
+        jsonResp, awsResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
     date=time[:10]
     finalStr = ""
     if awsResp!="Successfully inserted the appt into the database.":
@@ -297,7 +313,8 @@ def return_data():
     for item in arrOfMtgs:
         time = str(item.get("start_time"))
         mtgid = str(item.get("mtgid"))
-        time = time[:-1]
+        if(time[-1]=='Z'):
+            time = time[:-1] #takes off the 'z'
         if(len(time[11:].split(":"))>=4): #catches any times with extra :00s
             time = time[:19]
         end_time = int(float(time[11:13]))+1

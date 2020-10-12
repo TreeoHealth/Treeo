@@ -1,6 +1,9 @@
 <link rel="stylesheet" href="/static/style.css" type="text/css">
 <!--&#123;% block body %&#125;-->
-
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js"></script>
+</head>
 
 <form action="/createmtg" method="POST">
 <div id="wrapper">
@@ -23,11 +26,7 @@
 	<input type="text" class="login-field" value="" placeholder="name of mtg" name="mtgname" required>
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
-<select name="patientUser" required>
-{% for item in options %}
-  <option type="text" value = {{item}}>{{item}}</option><br>
-  {% endfor %}
-</select>
+	<input class="login-field" type="text" placeholder="patient username" name="patientUser" id="autocomplete1"/>
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
 				<input type="password" class="login-field" value="" placeholder="password" name="password" required>
@@ -46,3 +45,16 @@
 </div>
 </div>
 </form>
+
+<body>
+  <script>
+  $('#autocomplete1').autocomplete({
+      serviceUrl: '/create_search',
+      dataType: 'json',
+      onSearchComplete: function (query, suggestions) {
+        console.log(query);
+      }
+  });
+
+  </script>
+</body>

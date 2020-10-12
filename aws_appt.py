@@ -236,7 +236,8 @@ def testCal():
     for item in arrOfMtgs:
         time = str(item.get("start_time"))
         #mtgid = str(item.get("mtgid"))
-        time = time[:-1] #takes off the 'z'
+        if(time[-1]=='Z'):
+            time = time[:-1] #takes off the 'z'
         if(len(time[11:].split(":"))>=4):
             time = time[:19]
         end_time = int(float(time[11:13]))+1

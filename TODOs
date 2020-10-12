@@ -14,12 +14,10 @@ Fix drop down transparency
 	--maybe try a full list that updates as you type??
 Fix spacing/centering of search box/search button
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
-#make an autocomplete for patient appt create somehow (having 100+ usernames, a dropdown is not viable)
+---DO ERROR CATCHING FOR THE USERNAME ENTERED INTO THE CREATE MEETING PAGE
+---------#make an autocomplete for patient appt create somehow (having 100+ usernames, a dropdown is not viable)
 	#make a search functionality for when the doctor is adding patients to the appt
 	#can use binary search bc we will have it sorted
----------#check how the usernames are made (no spaces/unicode --> regex?) <--
----------check usernames dynamically
----------check name length dynamically
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
 #encrypt - names and passwords
@@ -135,6 +133,9 @@ Make a seperate page for patient search(?)
 Make it that when you select from the drop down it takes you to that patient's account
 Make search result page (from drop down results) 
     -- works the same way as the patient list page
+---------#check how the usernames are made (no spaces/unicode --> regex?) <--
+---------check usernames dynamically
+---------check name length dynamically
 	
 	
 ~~~~[not done -- shhhhh!]~~~~
