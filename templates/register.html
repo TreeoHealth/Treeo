@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/static/style.css" type="text/css">
 <!--&#123;% block body %&#125;-->
-
+<html>
 
 <form action="/register" method="POST">
 <div class="login">
@@ -19,8 +19,9 @@
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
 <div class="error" id="passCheckNotif"></div>
 <div class="control-group">
-				<input type="text" class="login-field" required placeholder="email" name="email" value={{email}}>
+				<input type="text" class="login-field" required placeholder="email" name="email" id="email_input" value={{email}}>
 <label class="login-field-icon fui-lock" for="login-name"></label></div>
+<div class="error" id="emailCheck"></div>
 <div class="control-group">
 				<input type="text" class="login-field" required id="fn_form_input" placeholder="first name" name="fname" value={{fname}}>
 <label class="login-field-icon fui-lock" for="login-name"></label></div>
@@ -34,7 +35,7 @@
 <input type="radio" name="docStatus" value="patient">
 <label for="patient">Patient</label><br>
 
-<input type="submit" value="Register" class="btn btn-primary btn-large btn-block">
+<input type="submit" value="Register" id = "myBtn" class="btn btn-primary btn-large btn-block">
 
 </div>
 </div>
@@ -53,6 +54,15 @@ $("#username_form_input").keyup(function(){
       data: {jsdata: text},
       success: function(response) {
         $("#usernameCheckNotif").html(response);
+		document.getElementById("myBtn").disabled = true;
+		if(response=="")
+		{
+			document.getElementById("myBtn").disabled = false;
+		}
+		else
+		{
+			document.getElementById("myBtn").disabled = true;
+		}
       }//,
       //error: function(xhr) {
         //Do Something to handle error
@@ -107,4 +117,21 @@ $("#ln_form_input").keyup(function(){
       //}
     });
 });
+
+$("#email_input").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/emailCheck",
+      type: "get",//post
+      data: {jsdata: text},
+      success: function(response) {
+        $("#emailCheck").html(response);
+      }//,
+      //error: function(xhr) {
+        //Do Something to handle error
+      //}
+    });
+});
 </script>
+</html>

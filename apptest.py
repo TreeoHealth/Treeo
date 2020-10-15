@@ -11,6 +11,7 @@ from botocore.exceptions import ClientError
 import aws_appt
 import zoomtest_post
 import password_strength
+from email_validator import validate_email, EmailNotValidError
 from password_strength import PasswordPolicy
 #from aws_appt import getAllApptsFromUsername, returnAllPatients, getAcctFromUsername
 #from zoomtest_post import updateMtg,createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
@@ -141,17 +142,26 @@ def new_register():
         takenUsernames.append(request.form['username'])
         try:
             formEmail = request.form['email']
-            if(request.form['docStatus']=='doctor'):
-                session['logged_in_d']=True
-                session['logged_in_p']=False
-            else:
-                session['logged_in_p'] = True
-                session['logged_in_d']=False
-            session['username'] = request.form['username']
-            session['name'] = request.form['fname']+" "+request.form['lname']
+            valid = validate_email(formEmail)
         except:
-            print("invalid zoom email!")
-            return regPg()
+            return render_template('register.html',
+                                   errorMsg="Invalid email format or domain.",
+                                    username = request.form['username'],
+                                   password = request.form['password'],
+                                   email = request.form['email'],
+                                   fname = request.form['fname'],
+                                   lname = request.form['lname']
+                                   )    
+
+        if(request.form['docStatus']=='doctor'):
+            session['logged_in_d']=True
+            session['logged_in_p']=False
+        else:
+            session['logged_in_p'] = True
+            session['logged_in_d']=False
+        session['username'] = request.form['username']
+        session['name'] = request.form['fname']+" "+request.form['lname']
+        
         return displayLoggedInHome()
 
 @app.route('/usernamecheck', methods=['POST','GET'])
@@ -171,6 +181,17 @@ def usernamecheck():
         text=""
         return "5-20 characters. No spaces. Cannot start/end with punctuation. Cannot contain /*$#@+=?><,;':%^&()"   
     return ""
+
+@app.route('/emailCheck', methods=['POST','GET'])
+def emailcheck():
+    text = request.args.get('jsdata')
+    try:
+        valid = validate_email(text)
+        text = ""
+        return ""
+    except EmailNotValidError as e:
+        text=""
+        return str(e)
 
 @app.route('/nameLengthCheck', methods=['POST','GET'])
 def namecheck():
