@@ -30,24 +30,39 @@ def index():
     #FIGURE OUT - how to send the render template with array, prev/next pg nums
         #FROM THIS PAGE
     
-    return render_template('patientPaging.html',
+    return render_template('patPgn.html',
                            options=testMaster[currPg],
-                           ppgnum=currPg-1, #do more error catching relative to size
+                           #ppgnum=currPg-1, #do more error catching relative to size
                            npgnum=currPg+1)
 
 
 @app.route('/page', methods=['POST','GET'])
 def nextPg():
     try:
-        print(request.form['prev'])
+        #print(request.form['prev'])
         currPg = int(request.form['prev'])
     except:
-        print(request.form['next'])
+        #print(request.form['next'])
         currPg = int(request.form['next'])
-    return render_template('patientPaging.html',
+    if(len(testMaster)==1):
+        return render_template('patientPaging.html',
+                           options=testMaster[currPg])
+    elif(currPg==0):
+        return render_template('patPgn.html',
+                           options=testMaster[currPg],
+                           #ppgnum=currPg-1, #do more error catching relative to size
+                           npgnum=currPg+1)
+    elif(currPg==len(testMaster)-1):
+        return render_template('patPgp.html',
+                           options=testMaster[currPg],
+                           ppgnum=currPg-1)#, #do more error catching relative to size
+                           #npgnum=currPg+1)
+    else:
+        return render_template('patPgnp.html',
                            options=testMaster[currPg],
                            ppgnum=currPg-1,
-                           npgnum=currPg+1)
+                            npgnum=currPg+1)
+    
     #return render_template('patientPaging.html',options=testList)
 
 
