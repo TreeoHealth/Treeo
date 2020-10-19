@@ -9,24 +9,26 @@ UPDATE -- Google doc with ideal hire/what we need
 
 
 	This week
-#page out the patient print out (20/pg)
-#**disable the create acct button if there is an error on the form? (possible???)
-#Verify valid domain/email format
+#simplify email error messages
+#page out the patient print out (20/pg) 
+	-> search is in relevance-order (design must be MODULAR/can be organized by anything/sent any array)
+#**disable the create acct button if there is an error on the form? (possible???) 
+	-> no need to check empty, only invalid bc we made everything required (they can't submit if something is empty)
+Fix spacing/centering of search box/search button
+##make a joinURL field on createpg AND the mtg detail page <------------------0
 
 Fix drop down transparency 
 	--maybe try doing the register pg approach instead?
 	--maybe try a full list that updates as you type??
-Fix spacing/centering of search box/search button
-##make a joinURL field on createpg AND the mtg detail page <------------------0
 ---DO ERROR CATCHING FOR THE USERNAME ENTERED INTO THE CREATE MEETING PAGE
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
 	#HOW TO DO WE MANAGE THE TIME XONE OF THE CREting DR VS THE TIME ZONE OF THE PATIENT???
 #encrypt - names and passwords
 
-
 	
 	This month
+#profile -- Change picture (upload) 
 #SOLVE LATENCY ***
 	#think of ways to reduce aws queries
 	-keep a list of patient on the backend (only query for it once on log in bc it won't change while the dr is logged in)
@@ -34,7 +36,7 @@ Fix spacing/centering of search box/search button
 	-keep list of current appts (like patients)? (how to deal with dr making an appt while patient is logged in?)
 #SEND THE USER AN EMAIL (not confirmation, just notification of being added to an appt/delete and acct udated) 
 	#NOT MARKED AS SPAMMMM
-#make week/day view version of the calendar
+
 
 	Eventually
 Make a notification system (notify patients when a dr invites them to an appt)
@@ -140,6 +142,9 @@ Make search result page (from drop down results)
 ---------#make an autocomplete for patient appt create somehow (having 100+ usernames, a dropdown is not viable)
 	#make a search functionality for when the doctor is adding patients to the appt
 	#can use binary search bc we will have it sorted
+#Verify valid domain/email format
+#make week/day view version of the calendar
+
 	
 ~~~~[not done -- shhhhh!]~~~~
 #revise the url_for() uses in the nav bar (why is it bad??)
