@@ -22,6 +22,9 @@ dynamo_client = boto3.client('dynamodb')
 takenUsernames = aws_appt.returnAllPatients()
 patientList = aws_appt.searchPatientList()
 
+patientPages = []
+currPg=0
+
 @app.route('/get-items')
 def get_items():
     return jsonify(aws_controller.get_items())
@@ -547,7 +550,10 @@ def patientAcct(username):
 def list_patients():
     listStr = aws_appt.returnAllPatients()
     listStr.sort()
-    return render_template('picture.html', options=listStr)
+    patientPages = []
+    currPg=0
+    return displayPagedSearch(listStr)
+    #return render_template('picture.html', options=listStr) #THIS
 
 @app.route('/searchpgrender', methods=['POST','GET'])
 def search_patients():
@@ -558,8 +564,17 @@ def search_page():
     query = request.form['names']
     if(query==""): #if the form is empty, return all of the usernames
         listStr = aws_appt.returnAllPatients()
+        listStr = ["alpha","beta","chi","delta",
+              "eta","epsilon","gamma","iota",
+              "kappa", "lambda","mu","nu",
+              "omicron","omega","pi","phi",
+              "psi","rho","sigma","tau",
+              "theta", "upsilon", 'xi',"zeta"]
         listStr.sort()
-        return render_template('picture.html', options=listStr)
+        patientPages = []
+        currPg=0
+        return displayPagedSearch(listStr)
+        #return render_template('picture.html', options=listStr) #THIS
     
     actualUsername = (query.split(" - "))[0] #username - last name, first name
     response = aws_appt.getAcctFromUsername(actualUsername)
@@ -581,9 +596,90 @@ def search_page():
             jsonSuggest.append({'value':username,'data':username})
             actualUsername = (username.split(" - "))[0]
             listStr.append(actualUsername)
+    listStr = ["alpha","beta","chi","delta",
+              "eta","epsilon","gamma","iota",
+              "kappa", "lambda","mu","nu",
+              "omicron","omega","pi","phi",
+              "psi","rho","sigma","tau",
+              "theta", "upsilon", 'xi',"zeta"]
     listStr.sort()
-    return render_template('picture.html', options=listStr)
+    patientPages = []
+    currPg=0
+    return displayPagedSearch(listStr)
+    #return render_template('picture.html', options=listStr) #THIS
 
+
+def displayPagedSearch(patientList):
+    #the PROBLEM is that the patientPages needs to be cleared every time this is called
+    #but for some reason if it is cleared before appending, it is blank when nextPg() is triggered and tries to access the array
+    #to be solved
+    patientPages = []
+    print("1-->",patientPages)
+    currPg=0
+    if(len(patientList)>20):
+       #patientPages = []
+       numOfPages = (len(patientList)/20)+1
+       position = 0
+       tempList = []
+       for item in patientList:
+           tempList.append(item)
+           position = position+1
+           if(position==20):
+               patientPages.append(tempList)
+               position=0
+               tempList=[]
+       patientPages.append(tempList) #tacks on the last partial page
+       print("2-->",patientPages)
+       return render_template('patPgn.html',
+                           options=patientPages[currPg],
+                              fullPagesArr=patientPages,
+                           npgnum=currPg+1)
+    else:
+        #patientPages = []
+        print("3-->",patientPages)
+        patientPages.append(patientList)
+        return render_template('patientPaging.html',
+                           options=patientList,
+                               fullPagesArr=patientPages)
+
+       
+@app.route('/page', methods=['POST','GET'])
+def nextPg():
+    print(request.form['fullPagesArr'])
+    patientPages=request.form['fullPagesArr']
+    pageNum = len(patientPages)
+    print("4-->",patientPages)
+    #rint(pageNum)
+    try:
+        #print(request.form['prev'])
+        currPg = int(request.form['prev'])
+    except:
+        #print(request.form['next'])
+        currPg = int(request.form['next'])
+    print("CurrPg",currPg)
+    
+    if(len(patientPages)==1):
+        return render_template('patientPaging.html',
+                           options=patientPages[currPg],
+                               fullPagesArr=patientPages)
+    elif(currPg==0):
+        return render_template('patPgn.html',
+                           options=patientPages[currPg],
+                               fullPagesArr=patientPages,
+                           npgnum=currPg+1)
+    elif(currPg==(pageNum-1)):
+        return render_template('patPgp.html',
+                           options=patientPages[currPg],
+                               fullPagesArr=patientPages,
+                           ppgnum=currPg-1)
+    else:
+        return render_template('patPgnp.html',
+                           options=patientPages[currPg],
+                               fullPagesArr=patientPages,
+                           ppgnum=currPg-1,
+                            npgnum=currPg+1)
+
+    
 #UNUSED
 ##@app.route("/search")
 ##def processSearch():
@@ -650,5 +746,6 @@ def logout():
     return home()
 
 if __name__ == "__main__":
+    patientPages = []
     app.secret_key = os.urandom(12)
     app.run(debug=True,host='0.0.0.0', port=4000)
