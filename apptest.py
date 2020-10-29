@@ -13,6 +13,9 @@ import zoomtest_post
 import password_strength
 from email_validator import validate_email, EmailNotValidError
 from password_strength import PasswordPolicy
+from passlib.context import CryptContext
+
+
 #from aws_appt import getAllApptsFromUsername, returnAllPatients, getAcctFromUsername
 #from zoomtest_post import updateMtg,createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
 
@@ -53,7 +56,11 @@ def check_login():
     dynamodb = boto3.resource("dynamodb", region_name='us-east-1', endpoint_url="http://localhost:4000")
 
     table = dynamodb.Table('YourTestTable')
-
+    pwd_context = CryptContext(
+        schemes=["pbkdf2_sha256"],
+        default="pbkdf2_sha256",
+        pbkdf2_sha256__default_rounds=30000
+    )
     try:
         response = dynamo_client.get_item(TableName= 'users',
             Key={
@@ -64,7 +71,7 @@ def check_login():
             test = response.get('Item').get('password')
         except:
             return render_template('login.html', errorMsg="Incorrect username or password.")
-        if response.get('Item').get('password').get('S')!= request.form['password']:
+        if( False==(pwd_context.verify(request.form['password'], response.get('Item').get('password').get('S')))):
             print("WRONG PASSWORD")
             return render_template('login.html', errorMsg="Incorrect username or password.")
             #return home()
@@ -130,19 +137,6 @@ def new_register():
                                    fname = request.form['fname'],
                                    lname = request.form['lname']
                                    )
-
-        
-        response = dynamo_client.put_item(TableName= 'users',
-           Item={
-                'username': {"S":request.form['username']},
-                'password': {"S":request.form['password']},
-                'email': {"S":request.form['email']},
-                'fname':{"S":request.form['fname']},
-                'lname':{"S":request.form['lname']},
-                'docStatus':{"S":request.form['docStatus']}
-            }
-           )
-        takenUsernames.append(request.form['username'])
         try:
             formEmail = request.form['email']
             valid = validate_email(formEmail)
@@ -154,7 +148,24 @@ def new_register():
                                    email = request.form['email'],
                                    fname = request.form['fname'],
                                    lname = request.form['lname']
-                                   )    
+                                   ) 
+        pwd_context = CryptContext(
+        schemes=["pbkdf2_sha256"],
+        default="pbkdf2_sha256",
+        pbkdf2_sha256__default_rounds=30000
+        )
+        response = dynamo_client.put_item(TableName= 'users',
+           Item={
+                'username': {"S":request.form['username']},
+                'password': {"S":pwd_context.hash(request.form['password'])},
+                'email': {"S":request.form['email']},
+                'fname':{"S":request.form['fname']},
+                'lname':{"S":request.form['lname']},
+                'docStatus':{"S":request.form['docStatus']}
+            }
+           )
+        takenUsernames.append(request.form['username'])
+   
 
         if(request.form['docStatus']=='doctor'):
             session['logged_in_d']=True
