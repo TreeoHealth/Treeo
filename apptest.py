@@ -575,12 +575,12 @@ def search_page():
     query = request.form['names']
     if(query==""): #if the form is empty, return all of the usernames
         listStr = aws_appt.returnAllPatients()
-        listStr = ["alpha","beta","chi","delta",
-              "eta","epsilon","gamma","iota",
-              "kappa", "lambda","mu","nu",
-              "omicron","omega","pi","phi",
-              "psi","rho","sigma","tau",
-              "theta", "upsilon", 'xi',"zeta"]
+##        listStr = ["alpha","beta","chi","delta",
+##              "eta","epsilon","gamma","iota",
+##              "kappa", "lambda","mu","nu",
+##              "omicron","omega","pi","phi",
+##              "psi","rho","sigma","tau",
+##              "theta", "upsilon", 'xi',"zeta"]
         listStr.sort()
         patientPages = []
         currPg=0
@@ -607,12 +607,12 @@ def search_page():
             jsonSuggest.append({'value':username,'data':username})
             actualUsername = (username.split(" - "))[0]
             listStr.append(actualUsername)
-    listStr = ["alpha","beta","chi","delta",
-              "eta","epsilon","gamma","iota",
-              "kappa", "lambda","mu","nu",
-              "omicron","omega","pi","phi",
-              "psi","rho","sigma","tau",
-              "theta", "upsilon", 'xi',"zeta"]
+##    listStr = ["alpha","beta","chi","delta",
+##              "eta","epsilon","gamma","iota",
+##              "kappa", "lambda","mu","nu",
+##              "omicron","omega","pi","phi",
+##              "psi","rho","sigma","tau",
+##              "theta", "upsilon", 'xi',"zeta"]
     listStr.sort()
     patientPages = []
     currPg=0
@@ -624,42 +624,63 @@ def displayPagedSearch(patientList):
     #the PROBLEM is that the patientPages needs to be cleared every time this is called
     #but for some reason if it is cleared before appending, it is blank when nextPg() is triggered and tries to access the array
     #to be solved
-    patientPages = []
-    print("1-->",patientPages)
-    currPg=0
-    if(len(patientList)>20):
+   patientPages = []
+    #print("1-->",patientPages)
+   currPg=0
+   if(len(patientList)>5):
        #patientPages = []
-       numOfPages = (len(patientList)/20)+1
+       numOfPages = (len(patientList)/5)+1
        position = 0
        tempList = []
        for item in patientList:
            tempList.append(item)
            position = position+1
-           if(position==20):
+           if(position==5):
                patientPages.append(tempList)
                position=0
                tempList=[]
        patientPages.append(tempList) #tacks on the last partial page
-       print("2-->",patientPages)
+       #print("2-->",patientPages)
+       result = ""
+       for page in patientPages:
+           for patient in page:
+               result = result + str(patient)+","
+           result = result[:-1] #take off the last ,
+           result = result + "|"
+       result = result[:-1] #take off the last |
+               
+       
        return render_template('patPgn.html',
                            options=patientPages[currPg],
-                              fullPagesArr=patientPages,
+                              fullPagesArr=result,
                            npgnum=currPg+1)
-    else:
+   else:
         #patientPages = []
-        print("3-->",patientPages)
+        result = ""
+        for patient in patientPages:
+            result = result + str(patient)+","
+        result = result[:-1] #take off the last ,
+        #print("3-->",patientPages)
         patientPages.append(patientList)
         return render_template('patientPaging.html',
                            options=patientList,
-                               fullPagesArr=patientPages)
+                            fullPagesArr=result)
 
        
 @app.route('/page', methods=['POST','GET'])
 def nextPg():
-    print(request.form['fullPagesArr'])
-    patientPages=request.form['fullPagesArr']
+    pageStr = request.form['fullPagesArr']
+    patientPages = []
+    pages = pageStr.split("|")
+    temp = []
+    for page in pages:
+        for patient in page.split(","):
+            temp.append(patient)
+        patientPages.append(temp)
+        temp = []
     pageNum = len(patientPages)
-    print("4-->",patientPages)
+    #print("4-->",patientPages)
+    
     #rint(pageNum)
     try:
         #print(request.form['prev'])
@@ -667,26 +688,26 @@ def nextPg():
     except:
         #print(request.form['next'])
         currPg = int(request.form['next'])
-    print("CurrPg",currPg)
+    #print("CurrPg",currPg)
     
     if(len(patientPages)==1):
         return render_template('patientPaging.html',
                            options=patientPages[currPg],
-                               fullPagesArr=patientPages)
+                               fullPagesArr=pageStr)
     elif(currPg==0):
         return render_template('patPgn.html',
                            options=patientPages[currPg],
-                               fullPagesArr=patientPages,
+                               fullPagesArr=pageStr,
                            npgnum=currPg+1)
     elif(currPg==(pageNum-1)):
         return render_template('patPgp.html',
                            options=patientPages[currPg],
-                               fullPagesArr=patientPages,
+                               fullPagesArr=pageStr,
                            ppgnum=currPg-1)
     else:
         return render_template('patPgnp.html',
                            options=patientPages[currPg],
-                               fullPagesArr=patientPages,
+                               fullPagesArr=pageStr,
                            ppgnum=currPg-1,
                             npgnum=currPg+1)
 

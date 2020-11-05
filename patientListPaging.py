@@ -46,7 +46,6 @@ def index():
                            npgnum=currPg+1)
 
 
-
 @app.route('/listb', methods=['POST','GET'])
 def listb():
     patientPages = []
@@ -54,7 +53,6 @@ def listb():
     return displayPagedSearch(secondList)
 
     #return render_template('patientPaging.html',options=testList)
-
 
 @app.route('/lista', methods=['POST','GET'])
 def lista():#search_page():
