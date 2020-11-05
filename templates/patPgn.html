@@ -20,8 +20,9 @@
   {% endfor %}
 </div>
 </div>
+
 <form action="/page" method="POST">
-<div hidden name = "fullPagesArr" value={{fullPagesArr}}></div>
+<input hidden name = "fullPagesArr" value={{fullPagesArr}}></input>
 <button type="submit" name="prev" disabled>Prev</button>
 <button type="submit" name="next" value={{npgnum}}>Next</button>
 </form>
