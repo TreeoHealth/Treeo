@@ -11,8 +11,12 @@ Resources -- scrape the sites/forums for things that help
 
 	This week
 #simplify email error messages
-#page out the patient print out (20/pg) 
-	-> search is in relevance-order (design must be MODULAR/can be organized by anything/sent any array)
+#make a "show pw" button on login and register and create mtg
+
+#make a dropdown to control the size of the page??
+#-----Make a nav bar in the 4 paging pages
+#at the top of each page put an "x-y out of z"
+
 #**disable the create acct button if there is an error on the form? (possible???) 
 	-> no need to check empty, only invalid bc we made everything required (they can't submit if something is empty)
 Fix spacing/centering of search box/search button
@@ -145,6 +149,9 @@ Make search result page (from drop down results)
 	#can use binary search bc we will have it sorted
 #Verify valid domain/email format
 #make week/day view version of the calendar
+#page out the patient print out (20/pg) 
+	-> search is in relevance-order (design must be MODULAR/can be organized by anything/sent any array)
+
 
 	
 ~~~~[not done -- shhhhh!]~~~~

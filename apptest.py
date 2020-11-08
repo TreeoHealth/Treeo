@@ -625,17 +625,19 @@ def displayPagedSearch(patientList):
     #but for some reason if it is cleared before appending, it is blank when nextPg() is triggered and tries to access the array
     #to be solved
    patientPages = []
+   numPatientsOnPg = 5
     #print("1-->",patientPages)
    currPg=0
+   numOfPages = 0
    if(len(patientList)>5):
        #patientPages = []
-       numOfPages = (len(patientList)/5)+1
+       numOfPages = (len(patientList)/numPatientsOnPg)+1
        position = 0
        tempList = []
        for item in patientList:
            tempList.append(item)
            position = position+1
-           if(position==5):
+           if(position==numPatientsOnPg):
                patientPages.append(tempList)
                position=0
                tempList=[]
@@ -648,9 +650,14 @@ def displayPagedSearch(patientList):
            result = result[:-1] #take off the last ,
            result = result + "|"
        result = result[:-1] #take off the last |
+
                
-       
+       #<p>Results {{startResultNum}} - {{endResultNum}} / {{totalResultNum}} (Page {{currPgNum}})</p>
        return render_template('patPgn.html',
+                              startResultNum=1,
+                              endResultNum=numPatientsOnPg,
+                              totalResultNum=len(patientList),
+                              currPgNum=currPg+1,
                            options=patientPages[currPg],
                               fullPagesArr=result,
                            npgnum=currPg+1)
@@ -663,22 +670,30 @@ def displayPagedSearch(patientList):
         #print("3-->",patientPages)
         patientPages.append(patientList)
         return render_template('patientPaging.html',
+                            startResultNum=1,
+                              endResultNum=len(patientList),
+                              totalResultNum=len(patientList),
+                              currPgNum=currPg+1,
                            options=patientList,
                             fullPagesArr=result)
 
        
 @app.route('/page', methods=['POST','GET'])
 def nextPg():
+    numPatientsOnPg = 5
     pageStr = request.form['fullPagesArr']
     patientPages = []
     pages = pageStr.split("|")
     temp = []
+    counter = 0
     for page in pages:
         for patient in page.split(","):
             temp.append(patient)
+            counter = counter+1
         patientPages.append(temp)
         temp = []
     pageNum = len(patientPages)
+    totalNumPatients = counter
     #print("4-->",patientPages)
     
     #rint(pageNum)
@@ -692,20 +707,36 @@ def nextPg():
     
     if(len(patientPages)==1):
         return render_template('patientPaging.html',
+                                startResultNum=1,
+                              endResultNum=numPatientsOnPg,
+                              totalResultNum=totalNumPatients,
+                              currPgNum=currPg+1,
                            options=patientPages[currPg],
                                fullPagesArr=pageStr)
     elif(currPg==0):
         return render_template('patPgn.html',
+                                startResultNum=1,
+                              endResultNum=numPatientsOnPg,
+                              totalResultNum=totalNumPatients, 
+                              currPgNum=currPg+1,
                            options=patientPages[currPg],
                                fullPagesArr=pageStr,
                            npgnum=currPg+1)
     elif(currPg==(pageNum-1)):
         return render_template('patPgp.html',
+                                startResultNum=((currPg)*numPatientsOnPg)+1,##
+                              endResultNum=totalNumPatients,## not +5
+                              totalResultNum=totalNumPatients,
+                              currPgNum=currPg+1,
                            options=patientPages[currPg],
                                fullPagesArr=pageStr,
                            ppgnum=currPg-1)
     else:
         return render_template('patPgnp.html',
+                                startResultNum=((currPg)*numPatientsOnPg)+1, ##
+                              endResultNum=((currPg)*numPatientsOnPg)+1+5, ##+5
+                              totalResultNum=totalNumPatients,
+                              currPgNum=currPg+1,
                            options=patientPages[currPg],
                                fullPagesArr=pageStr,
                            ppgnum=currPg-1,
