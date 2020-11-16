@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/static/style.css" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
 <!--&#123;% block body %&#125;-->
 
 
@@ -15,7 +16,8 @@
 				<input type="text" class="login-field" value="" placeholder="username" name="username">
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
-				<input type="password" class="login-field" value="" placeholder="password" name="password">
+		<input type="password" id="password" name = "password" class="login-field" value="" placeholder="password" name="password">
+        <i style="margin-left: -30px;cursor: pointer;" class="far fa-eye" id="togglePassword"></i>
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
 <input type="submit" value="Log in" class="btn btn-primary btn-large btn-block">
 
@@ -26,3 +28,15 @@
 </div>
 </div>
 </div>
+
+    <script>
+	const togglePassword = document.querySelector('#togglePassword');
+const password = document.querySelector('#password');
+togglePassword.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    // toggle the eye slash icon
+    this.classList.toggle('fa-eye-slash');
+});
+</script>

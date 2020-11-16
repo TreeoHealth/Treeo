@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="/static/style.css" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
 <!--&#123;% block body %&#125;-->
 <head>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -29,7 +31,8 @@
 	<input class="login-field" type="text" placeholder="patient username" name="patientUser" id="autocomplete1"/>
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
-				<input type="password" class="login-field" value="" placeholder="password" name="password" required>
+		<input type="password" id="password" name = "password" class="login-field" value="" placeholder="password" name="password">
+        <i style="margin-left: -30px;cursor: pointer;" class="far fa-eye" id="togglePassword"></i>
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
 <div class="control-group">
 				<input type="time" class="login-field" value="" placeholder="time" name="time" required>
@@ -55,6 +58,14 @@
         console.log(query);
       }
   });
-
+	const togglePassword = document.querySelector('#togglePassword');
+const password = document.querySelector('#password');
+togglePassword.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    // toggle the eye slash icon
+    this.classList.toggle('fa-eye-slash');
+});
   </script>
 </body>

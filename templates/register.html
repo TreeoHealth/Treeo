@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="/static/style.css" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
 <!--&#123;% block body %&#125;-->
 <html>
 
@@ -16,6 +18,7 @@
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
 				<input type="password" class="login-field" id="password_form_input" required placeholder="password" name="password" value={{password}}>
+				<i style="margin-left: -30px;cursor: pointer;" class="far fa-eye" id="togglePassword"></i>
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
 <div class="error" id="passCheckNotif"></div>
 <div class="control-group">
@@ -45,6 +48,16 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 <script>
+	const togglePassword = document.querySelector('#togglePassword');
+	const password = document.querySelector('#password_form_input');
+	togglePassword.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    // toggle the eye slash icon
+    this.classList.toggle('fa-eye-slash');
+});
+
 $("#username_form_input").keyup(function(){
     var text = $(this).val();
 
