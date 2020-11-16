@@ -11,7 +11,8 @@ from botocore.exceptions import ClientError
 import aws_appt
 import zoomtest_post
 import password_strength
-from email_validator import validate_email, EmailNotValidError
+import email_validator
+from email_validator import validate_email, EmailNotValidError, EmailSyntaxError, EmailUndeliverableError
 from password_strength import PasswordPolicy
 from passlib.context import CryptContext
 
@@ -204,7 +205,14 @@ def emailcheck():
         text = ""
         return ""
     except EmailNotValidError as e:
-        text=""
+        if(type(e)==EmailSyntaxError):
+            text=""
+            return "Incorrectly formatted email address."
+        if(type(e)==EmailUndeliverableError):
+            text=""
+            return "Invalid domain."
+        
+        text = ""
         return str(e)
 
 @app.route('/nameLengthCheck', methods=['POST','GET'])
