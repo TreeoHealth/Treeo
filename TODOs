@@ -10,25 +10,21 @@ Resources -- scrape the sites/forums for things that help
 
 
 	This week
-#simplify email error messages
 #**make a dropdown to control the size of the page??
 	#slider bar instead of dropdown??
-	
-#disable the create acct button if there is an error on the form? (possible???) 
-	-> no need to check empty, only invalid bc we made everything required (they can't submit if something is empty)
 Fix spacing/centering of search box/search button
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
+---DO ERROR CATCHING FOR THE USERNAME ENTERED INTO THE CREATE MEETING PAGE
+#MESSAGING SYSTEM 
 
 **Fix drop down transparency 
 	--maybe try doing the register pg approach instead?
 	--maybe try a full list that updates as you type??
----DO ERROR CATCHING FOR THE USERNAME ENTERED INTO THE CREATE MEETING PAGE
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
 	#HOW TO DO WE MANAGE THE TIME XONE OF THE CREting DR VS THE TIME ZONE OF THE PATIENT???
-#encrypt - names and passwords
 
-	
+
 	This month
 #profile -- Change picture (upload) 
 #SOLVE LATENCY ***
@@ -40,10 +36,10 @@ Fix spacing/centering of search box/search button
 	#NOT MARKED AS SPAMMMM
 
 
+
 	Eventually
 Make a notification system (notify patients when a dr invites them to an appt)
 ##email validation? (valid domain at least)
-##look into dynamic text boxes (react to user input AS THEY TYPE -- do not need to submit)
 ###validation of zoom acct on creation??? Not possible
 ##TODO -- radio buttons for recurring meetings (how to line up recurring mtgs)
 ###form integration
@@ -151,9 +147,14 @@ Make search result page (from drop down results)
 #-----Make a nav bar in the 4 paging pages
 #at the top of each page put an "x-y out of z"
 #make a "show pw" button on login and register and create mtg <----------
+#simplify email error messages
+#encrypt - names and passwords
+##look into dynamic text boxes (react to user input AS THEY TYPE -- do not need to submit)
 
 	
 ~~~~[not done -- shhhhh!]~~~~
 #revise the url_for() uses in the nav bar (why is it bad??)
 #now that you know how to do variable links, update how the delete and edit buttons work
 #make an "add user to appt" function that updates the appt database item (max 1 patient)
+#disable the create acct button if there is an error on the form? (possible???) 
+	-> no need to check empty, only invalid bc we made everything required (they can't submit if something is empty)

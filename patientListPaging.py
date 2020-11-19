@@ -21,7 +21,13 @@ testList = ["blank" ]
 #secondList = ["test","a","b","c"]
 firstList = ["alpha","beta","chi","delta",
               "eta","epsilon","gamma","iota",
-            "kappa", "lambda","mu","nu"]
+            "kappa", "lambda","mu","nu",
+             "alpha","beta","chi","delta",
+              "eta","epsilon","gamma","iota",
+              "kappa", "lambda","mu","nu",
+              "omicron","omega","pi","phi",
+              "psi","rho","sigma","tau",
+              "theta", "upsilon", 'xi',"zeta"]
 secondList= ["omicron","omega","pi","phi",
               "psi","rho","sigma","tau",
               "theta", "upsilon", 'xi',"zeta"]
@@ -45,12 +51,41 @@ def index():
                            #ppgnum=currPg-1, #do more error catching relative to size
                            npgnum=currPg+1)
 
+@app.route('/changePgSize', methods=['POST','GET'])
+def changePgSize():
+    pageSize = int(request.form['myselect'])
+    
+    pageStr = request.form['fullPagesArr']
+    print("CHANGE SIZE TO ",pageSize,pageStr)
+    allPatients = []
+    pages = pageStr.split("|")
+    for page in pages:
+        for patient in page.split(","):
+            allPatients.append(patient)
+    print("CHANGE ALL PAT ",allPatients)
+    return displayPagedSearch(allPatients, pageSize)
+
+##
+##    counter = 0
+##
+##    patientPages = []
+##    temp = []
+##    for patient in allPatients:
+##        counter = counter +1
+##        temp.append(patient)
+##        if(counter==pageSize):
+##            patientPages.append(temp)
+##            temp = []
+
+    
+    
+            
 
 @app.route('/listb', methods=['POST','GET'])
 def listb():
     patientPages = []
     currPg=0
-    return displayPagedSearch(secondList)
+    return displayPagedSearch(secondList, 10)
 
     #return render_template('patientPaging.html',options=testList)
 
@@ -60,7 +95,7 @@ def lista():#search_page():
     #if(query==""): #if the form is empty, return all of the usernames
     patientPages = []
     currPg=0
-    return displayPagedSearch(firstList)
+    return displayPagedSearch(firstList, 10)
         #return render_template('picture.html', options=listStr) #THIS
     
     #actualUsername = (query.split(" - "))[0] #username - last name, first name
@@ -77,22 +112,22 @@ def lista():#search_page():
     
 
 
-def displayPagedSearch(patientList):
+def displayPagedSearch(patientList, listSize):
     #the PROBLEM is that the patientPages needs to be cleared every time this is called
     #but for some reason if it is cleared before appending, it is blank when nextPg() is triggered and tries to access the array
     #to be solved
     patientPages = []
     #print("1-->",patientPages)
     currPg=0
-    if(len(patientList)>5):
+    if(len(patientList)>listSize):
        #patientPages = []
-       numOfPages = (len(patientList)/5)+1
+       numOfPages = (len(patientList)/listSize)+1
        position = 0
        tempList = []
        for item in patientList:
            tempList.append(item)
            position = position+1
-           if(position==5):
+           if(position==listSize):
                patientPages.append(tempList)
                position=0
                tempList=[]
@@ -105,21 +140,22 @@ def displayPagedSearch(patientList):
            result = result[:-1] #take off the last ,
            result = result + "|"
        result = result[:-1] #take off the last |
-               
+       print("RESULT 1-> ",result)        
        
-       return render_template('patPgn.html',
+       return render_template('firstPgSize.html',
                            options=patientPages[currPg],
                               fullPagesArr=result,
                            npgnum=currPg+1)
     else:
         #patientPages = []
         result = ""
-        for patient in patientPages:
+        for patient in patientList:
             result = result + str(patient)+","
         result = result[:-1] #take off the last ,
-        #print("3-->",patientPages)
+        ##print("3-->",patientList)
+        ##print("RESULT 2-> ",result) 
         patientPages.append(patientList)
-        return render_template('patientPaging.html',
+        return render_template('onlyPgSize.html',#'patientPaging.html',
                            options=patientList,
                             fullPagesArr=result)
 
@@ -148,21 +184,21 @@ def nextPg():
     print("CurrPg",currPg)
     
     if(len(patientPages)==1):
-        return render_template('patientPaging.html',
+        return render_template('onlyPgSize.html',#'patientPaging.html',
                            options=patientPages[currPg],
                                fullPagesArr=pageStr)
     elif(currPg==0):
-        return render_template('patPgn.html',
+        return render_template('firstPgSize.html',
                            options=patientPages[currPg],
                                fullPagesArr=pageStr,
                            npgnum=currPg+1)
     elif(currPg==(pageNum-1)):
-        return render_template('patPgp.html',
+        return render_template('lastPgSize.html',
                            options=patientPages[currPg],
                                fullPagesArr=pageStr,
                            ppgnum=currPg-1)
     else:
-        return render_template('patPgnp.html',
+        return render_template('middlePgSize.html',
                            options=patientPages[currPg],
                                fullPagesArr=pageStr,
                            ppgnum=currPg-1,
