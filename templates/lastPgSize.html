@@ -12,12 +12,13 @@
 <div class="login-screen">
 <form action="/changePgSize" method="POST">
 <input hidden name = "fullPagesArr" value={{fullPagesArr}}></input>
-    <select name="myselect" id="myselect" onchange="this.form.submit()">
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="30">30</option>
-        <option value="50">50</option>
-    </select>
+<select name="listStatus" onchange="this.form.submit()">
+  {% for pageSize in sizeList %}
+    <option value="{{pageSize}}" {% if pageSize== default %} selected {% endif %}>
+	{{pageSize}}
+	</option>
+  {% endfor %}
+</select>
 </form>
 <div class="profile-box">
 {% for item in options %}
@@ -32,6 +33,7 @@
 </div>
 </div>
 <form action="/page" method="POST">
+<input hidden name = "pgSize" value={{pgSize}}></input>
 <input hidden name = "fullPagesArr" value={{fullPagesArr}}></input>
 <button type="submit" name="prev" value={{ppgnum}}>Prev</button>
 <button type="submit" name="next" disabled>Next</button>
