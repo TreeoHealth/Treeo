@@ -571,7 +571,7 @@ def list_patients():
     listStr.sort()
     patientPages = []
     currPg=0
-    return displayPagedSearch(listStr)
+    return displayPagedSearch(listStr, 10)
     #return render_template('picture.html', options=listStr) #THIS
 
 @app.route('/searchpgrender', methods=['POST','GET'])
@@ -592,7 +592,7 @@ def search_page():
         listStr.sort()
         patientPages = []
         currPg=0
-        return displayPagedSearch(listStr)
+        return displayPagedSearch(listStr,10)
         #return render_template('picture.html', options=listStr) #THIS
     
     actualUsername = (query.split(" - "))[0] #username - last name, first name
@@ -624,28 +624,41 @@ def search_page():
     listStr.sort()
     patientPages = []
     currPg=0
-    return displayPagedSearch(listStr)
+    return displayPagedSearch(listStr,10)
     #return render_template('picture.html', options=listStr) #THIS
 
+@app.route('/changePgSize', methods=['POST','GET'])
+def changePgSize():
+    pageSize = int(request.form['listStatus'])
+    
+    pageStr = request.form['fullPagesArr']
+    #print("CHANGE SIZE TO ",pageSize,pageStr)
+    allPatients = []
+    pages = pageStr.split("|")
+    for page in pages:
+        for patient in page.split(","):
+            allPatients.append(patient)
+    #print("CHANGE ALL PAT ",allPatients)
+    return displayPagedSearch(allPatients, pageSize)
 
-def displayPagedSearch(patientList):
+def displayPagedSearch(patientList, listSize):
     #the PROBLEM is that the patientPages needs to be cleared every time this is called
     #but for some reason if it is cleared before appending, it is blank when nextPg() is triggered and tries to access the array
     #to be solved
    patientPages = []
-   numPatientsOnPg = 5
+   numPatientsOnPg = listSize
     #print("1-->",patientPages)
    currPg=0
    numOfPages = 0
-   if(len(patientList)>5):
+   if(len(patientList)>listSize):
        #patientPages = []
-       numOfPages = (len(patientList)/numPatientsOnPg)+1
+       numOfPages = (len(patientList)/listSize)+1
        position = 0
        tempList = []
        for item in patientList:
            tempList.append(item)
            position = position+1
-           if(position==numPatientsOnPg):
+           if(position==listSize):
                patientPages.append(tempList)
                position=0
                tempList=[]
@@ -659,36 +672,45 @@ def displayPagedSearch(patientList):
            result = result + "|"
        result = result[:-1] #take off the last |
 
-               
+       selectSize = str(listSize)
+       sizesList = ['5','10','20','30','50']
        #<p>Results {{startResultNum}} - {{endResultNum}} / {{totalResultNum}} (Page {{currPgNum}})</p>
-       return render_template('patPgn.html',
+       return render_template('firstPgSize.html',
+                              sizeList=sizesList,
+                               default = selectSize,
                               startResultNum=1,
                               endResultNum=numPatientsOnPg,
                               totalResultNum=len(patientList),
                               currPgNum=currPg+1,
                            options=patientPages[currPg],
                               fullPagesArr=result,
+                              pgSize = selectSize,
                            npgnum=currPg+1)
    else:
         #patientPages = []
         result = ""
-        for patient in patientPages:
+        for patient in patientList:
             result = result + str(patient)+","
         result = result[:-1] #take off the last ,
         #print("3-->",patientPages)
         patientPages.append(patientList)
-        return render_template('patientPaging.html',
+        selectSize = str(listSize)
+        sizesList = ['5','10','20','30','50']
+        return render_template('onlyPgSize.html',
+                               sizeList=sizesList,
+                               default = selectSize,
                             startResultNum=1,
                               endResultNum=len(patientList),
                               totalResultNum=len(patientList),
                               currPgNum=currPg+1,
                            options=patientList,
-                            fullPagesArr=result)
+                            fullPagesArr=result,
+                               pgSize = selectSize)
 
        
 @app.route('/page', methods=['POST','GET'])
 def nextPg():
-    numPatientsOnPg = 5
+    numPatientsOnPg = int(request.form['pgSize'])
     pageStr = request.form['fullPagesArr']
     patientPages = []
     pages = pageStr.split("|")
@@ -712,41 +734,55 @@ def nextPg():
         #print(request.form['next'])
         currPg = int(request.form['next'])
     #print("CurrPg",currPg)
-    
+
+    selectSize = str(request.form['pgSize'])
+    sizesList = ['5','10','20','30','50']
     if(len(patientPages)==1):
-        return render_template('patientPaging.html',
+        return render_template('onlyPgSize.html',
+                               sizeList=sizesList,
+                               default = selectSize,
                                 startResultNum=1,
                               endResultNum=numPatientsOnPg,
                               totalResultNum=totalNumPatients,
                               currPgNum=currPg+1,
                            options=patientPages[currPg],
-                               fullPagesArr=pageStr)
+                               fullPagesArr=pageStr,
+                               pgSize = request.form['pgSize'])
     elif(currPg==0):
-        return render_template('patPgn.html',
+        return render_template('firstPgSize.html',
                                 startResultNum=1,
+                               sizeList=sizesList,
+                               default = selectSize,
                               endResultNum=numPatientsOnPg,
                               totalResultNum=totalNumPatients, 
                               currPgNum=currPg+1,
                            options=patientPages[currPg],
                                fullPagesArr=pageStr,
+                               pgSize = request.form['pgSize'],
                            npgnum=currPg+1)
     elif(currPg==(pageNum-1)):
-        return render_template('patPgp.html',
+        return render_template('lastPgSize.html',
+                               sizeList=sizesList,
+                               default = selectSize,
                                 startResultNum=((currPg)*numPatientsOnPg)+1,##
                               endResultNum=totalNumPatients,## not +5
                               totalResultNum=totalNumPatients,
                               currPgNum=currPg+1,
                            options=patientPages[currPg],
                                fullPagesArr=pageStr,
+                                pgSize = request.form['pgSize'],
                            ppgnum=currPg-1)
     else:
-        return render_template('patPgnp.html',
+        return render_template('middlePgSize.html',
+                               sizeList=sizesList,
+                               default = selectSize,
                                 startResultNum=((currPg)*numPatientsOnPg)+1, ##
-                              endResultNum=((currPg)*numPatientsOnPg)+1+5, ##+5
+                              endResultNum=((currPg)*numPatientsOnPg)+1+numPatientsOnPg, ##+5
                               totalResultNum=totalNumPatients,
                               currPgNum=currPg+1,
                            options=patientPages[currPg],
                                fullPagesArr=pageStr,
+                               pgSize = request.form['pgSize'],
                            ppgnum=currPg-1,
                             npgnum=currPg+1)
 
