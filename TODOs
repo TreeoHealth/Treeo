@@ -10,19 +10,18 @@ Resources -- scrape the sites/forums for things that help
 
 
 	This week
-#**make a dropdown to control the size of the page??
-	#slider bar instead of dropdown??
 Fix spacing/centering of search box/search button
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
 ---DO ERROR CATCHING FOR THE USERNAME ENTERED INTO THE CREATE MEETING PAGE
-#MESSAGING SYSTEM 
 
+#MESSAGING SYSTEM 
 **Fix drop down transparency 
 	--maybe try doing the register pg approach instead?
 	--maybe try a full list that updates as you type??
 #TODO -- FIX TIME ZONE MANAGEMENT (it is registering all time stamps as 4hrs in the future)
     #even the time creation is wrong but it is still seeing the time zone as EST so ??????
 	#HOW TO DO WE MANAGE THE TIME XONE OF THE CREting DR VS THE TIME ZONE OF THE PATIENT???
+#slider bar instead of dropdown??
 
 
 	This month
@@ -150,6 +149,7 @@ Make search result page (from drop down results)
 #simplify email error messages
 #encrypt - names and passwords
 ##look into dynamic text boxes (react to user input AS THEY TYPE -- do not need to submit)
+#**make a dropdown to control the size of the page??
 
 	
 ~~~~[not done -- shhhhh!]~~~~
