@@ -7,25 +7,21 @@
 <div class="mailbox">
   <div class="nav">
     <a href="{{ url_for('newEmail') }}">compose</a>
-    <a href="{{ url_for('index') }}" class="active">inbox</a>
-    <a href="{{ url_for('sentFolder') }}">sent</a>
+    <a href="{{ url_for('index') }}">inbox</a>
+    <a href="{{ url_for('sentFolder') }}" class="active">sent</a>
     <a href="{{ url_for('trashFolder') }}">trash</a>
   </div>
-  
-  <form action="/selectOption" method="POST">
   <div class="messages">
-  <input type = "submit" value="Trash"class = "trashBtn">
     {%for mID, sender, s_date, title  in msgList%}
     <div class="message">
-      <input name = "{{mID}}" value = {{mID}} type="checkbox" />
-	  <span class="sender">{{sender}} </span>
+      <input type="checkbox" />
+	  <span hidden>{{mID}}</span>
+      <span class="sender">{{sender}} </span>
 	  <span class="title">{{title}} </span>
       <span class="date">{{s_date}} <span>
       
     </div>
     {%endfor%}
     
-  
   </div>
-  </form>
 </div>

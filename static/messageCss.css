@@ -27,6 +27,7 @@ header h1 {
   margin: 0px auto -100px;
   position: relative;
   background: #CCDDED;
+  min-height:150px;
   border-radius: 0px 5px 0px 0px;
   width: 90%; max-width: 960px;
 }
@@ -120,23 +121,34 @@ input[name=search]:focus {
   outline: none;
 }
 
+.trashBtn
+{
+	border-color:red;
+	border-style:solid;
+	position:right;
+	padding: 2px;
+	margin:2px;
+}
+
 .message {
   clear: both;
   margin-bottom: 5px;
   position: relative;
-  padding: 5px;
+  padding: 15px;
   background: #bbd0e4;
   border-radius: 5px;
 }
 
 .message input {
   position: absolute;
-  top: 8px; left: 10px;
+  top: 18px; left: 10px;
   width: 30px;
 }
 
 .message .sender {
   display: block;
+
+  float:right;
   position: absolute;
   left: 40px;
   color: #000;
@@ -146,11 +158,13 @@ input[name=search]:focus {
 
 .message .title {
   display: inline-block;
+
   padding-left: 150px;
   width: 100%;
 }
 
 .message .date {
   position: absolute;
+
   right: 10px;
 }

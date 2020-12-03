@@ -1,0 +1,14 @@
+<link rel="stylesheet" href="/static/messageCss.css" type="text/css">
+
+<form action="/submitEmail" method="POST">
+<input readonly type="text"name = "sender_username" value = {{sender_username}}>
+<br><br>
+<input type="text" name = "reciever_username" placeholder="To:" value={{reciever_username}}>
+<br><br>
+<input type="text" name = "subject" placeholder="Subject" value={{subject}} >
+<br><br>
+<textarea name = "email_body" placeholder="Write here..." value ={{email_body}} >
+</textarea>
+<br><br>
+<input type="submit" value = "Send"></input>
+</form>
