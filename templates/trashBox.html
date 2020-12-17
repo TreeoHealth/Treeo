@@ -7,21 +7,40 @@
 <div class="mailbox">
   <div class="nav">
     <a href="{{ url_for('newEmail') }}">compose</a>
-    <a href="{{ url_for('index') }}">inbox</a>
+    <a href="{{ url_for('openInbox') }}">inbox {{inboxUnread}}</a>
     <a href="{{ url_for('sentFolder') }}" >sent</a>
-    <a href="{{ url_for('trashFolder') }}" class="active">trash</a>
+    <a href="{{ url_for('trashFolder') }}" class="active">trash {{trashUnread}}</a>
   </div>
+  
+
   <div class="messages">
-    {%for mID, sender, s_date, title  in msgList%}
-    <div class="message">
-      <input type="checkbox" />
-	  <span hidden>{{mID}}</span>
-      <span class="sender">{{sender}} </span>
-	  <span class="title">{{title}} </span>
-      <span class="date">{{s_date}} <span>
+
+  <form action="/permTrash" method="POST">
+  <input type = "image" name = "undotrash" value="Undo Trash Action" class = "trashBtn" src="/static/undoTrash.png" title="Undo Trash Action" />
+  <input type = "image" name = "permdel" value="Delete" class = "trashBtn"  src="/static/permenantDelete.png" title="Permenantly Delete" />
+  <br>
+    <input  class = "selectAll"  name = "selectAll" onClick="toggle(this)" type="checkbox" />
+    {%for date, mID,s_header,sender, s_date, title,unread in msgList%}
+	<a href="/msg/{{mID}}">
+    <div  {%if unread %} class="message unreadMsg" {%else%} class="message readMsg" {%endif%} >
+      <input class="selectCheck" name = "{{mID}}" value = {{mID}} type="checkbox" />
+      <span class="sender">{{s_header}}&nbsp;{{sender}} </span>
+	  <span class="title">{{title}}</span>
+      <span class="date">{{date}} <span>
       
     </div>
+	</a>
     {%endfor%}
     
   </div>
+  </form>
 </div>
+
+<script language="JavaScript">
+function toggle(source) {
+  checkboxes = document.getElementsByClassName("selectCheck");
+  for(var i=0, n=checkboxes.length;i<n;i++) {
+    checkboxes[i].checked = source.checked;
+  }
+}
+</script>

@@ -1,14 +1,85 @@
 <link rel="stylesheet" href="/static/messageCss.css" type="text/css">
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js"></script>
+</head>
 
-<form action="/submitEmail" method="POST">
-<input readonly type="text"name = "sender_username" value = {{sender_username}}>
+<header class = "hlabel">
+  <h1>messages</h1>
+</header>
+
+
+<div class="mailboxDetail">
+  <div class="nav">
+    <a href="{{ url_for('newEmail') }}">compose</a>
+    <a href="{{ url_for('openInbox') }}"  class="active">inbox {{inboxUnread}}</a>
+    <a href="{{ url_for('sentFolder') }}">sent</a>
+    <a href="{{ url_for('trashFolder') }}">trash {{trashUnread}}</a>
+  </div>
+  
+
+  <form action="/submitEmail" method="POST" >
+  
+  <br><br>
+
+<div class = "msgDetail">
+<label >FROM: </label>
+<input  readonly class="msgTextOutline"  type="text"name = "sender_username" value = {{sender_username}}>
+<br><div class="error">{{errorMsg}}</div><br>
+<label >TO: </label>
+<input required class="msgTextOutline" placeholder="To:" id = "reciever_username" type="text" name = "reciever_username" value={{reciever_username}}  >
 <br><br>
-<input type="text" name = "reciever_username" placeholder="To:" value={{reciever_username}}>
+<label >SUBJECT: </label>
+<input required class="msgTextOutline"  id = "subject" type="text" size = "50"maxlength = "50" placeholder="Subject" name = "subject" value="{{subject}}" >
+<span class = "error" id="subjCount"></span>
 <br><br>
-<input type="text" name = "subject" placeholder="Subject" value={{subject}} >
-<br><br>
-<textarea name = "email_body" placeholder="Write here..." value ={{email_body}} >
-</textarea>
-<br><br>
-<input type="submit" value = "Send"></input>
+<label>BODY: </label><span class = "error" id="bodyCount"></span>
+<textarea  id = "msgbody" maxlength="600" placeholder="Write here..." class="msgTextOutline" cols = "113" rows="8" name = "email_body" value ="{{email_body}}" required>{{email_body}}</textarea>
+<br>
+</div>
+<input class = "sendBtn"type="submit" value = "Send"></input>
 </form>
+</div>
+
+
+
+
+
+<script>
+  $('#reciever_username').autocomplete({
+      serviceUrl: '/search/reciever_username',
+      dataType: 'json',
+      onSearchComplete: function (query, suggestions) {
+        console.log(query);
+      }
+  });
+
+
+$("#subject").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/subjWordCheck",
+      type: "get",
+      data: {jsdata: text},
+      success: function(response) {
+        $("#subjCount").html(response);
+      }
+    });
+});
+
+$("#msgbody").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/bodyWordCheck",
+      type: "get",
+      data: {jsdata: text},
+      success: function(response) {
+        $("#bodyCount").html(response);
+      }
+    });
+});
+
+</script>

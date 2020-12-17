@@ -809,8 +809,7 @@ def process(box):
     listPatients=patientList
     for username in listPatients:
         if(query in username):
-            jsonSuggest.append({'value':username,'data':username})#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
-        #suggestions = [{'value': 'joe','data': 'joe'}, {'value': 'jim','data': 'jim'}]
+            jsonSuggest.append({'value':username,'data':username})
     return jsonify({"suggestions":jsonSuggest})
 
 @app.route('/showallmtgs', methods=['POST','GET'])

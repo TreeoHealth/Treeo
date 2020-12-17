@@ -13,7 +13,7 @@ html, body {
 header {
   margin: 0px auto;
   position: relative;
-  width: 90%; max-width: 960px;
+  width: 80%;
   height: 100px;
 }
 
@@ -23,13 +23,28 @@ header h1 {
   font-size: 30px;
 }
 
+.hlabel
+{
+	width: 80%;
+}
+
 .mailbox {
-  margin: 0px auto -100px;
+  margin: 0px auto;
   position: relative;
   background: #CCDDED;
   min-height:150px;
   border-radius: 0px 5px 0px 0px;
-  width: 90%; max-width: 960px;
+  width: 80%; 
+}
+
+.mailboxDetail {
+  margin: 0px auto;
+  position: relative;
+  background: #CCDDED;
+  min-height:150px;
+  border-radius: 0px 5px 0px 0px;
+  width: 80%; 
+  min-width:700px;
 }
 
 .nav {
@@ -123,11 +138,68 @@ input[name=search]:focus {
 
 .trashBtn
 {
-	border-color:red;
+	border-color:#EEE;
 	border-style:solid;
+	border-width:2px;
+	  background: #bbd0e4;
+	  max-width:40px;
+	  max-height:40px;
 	position:right;
 	padding: 2px;
 	margin:2px;
+}
+
+.sendBtn
+{
+	border-color:#EEE;
+	border-style:solid;
+	border-width:2px;
+	background: #bbd0e4;
+	position:right;
+	padding: 2px;
+	margin-left:225px;
+	margin-bottom:10px;
+	margin-top:10px;
+	font-size:110%;
+	font-weight:bold;
+}
+
+.error{
+color: red;
+text-align: left;
+font-size: 12px;
+}
+
+.msgTextOutline
+{
+	border-style:solid;
+	border-color:b0b0b0;
+	border-width:1px;
+}
+
+.replyBtn
+{
+	border-color:#EEE;
+	border-style:solid;
+	border-width:2px;
+	  background: #bbd0e4;
+	float:left;
+	padding: 2px;
+	margin-left:215px;
+	margin-bottom:10 px;
+	margin-top: 10px;
+}
+
+.emptyFolder
+{
+	width:100%;
+	background-color:#EEE;
+	color:#b0b0b0;
+	text-align:center;
+	font-size:150%;
+  border-radius: 5px;
+  padding-top:15px;
+  padding-bottom:15px;
 }
 
 .message {
@@ -139,23 +211,50 @@ input[name=search]:focus {
   border-radius: 5px;
 }
 
+
+
 .message input {
   position: absolute;
   top: 18px; left: 10px;
   width: 30px;
 }
 
+.msgDetail{
+  margin-bottom: 5px;
+  padding: 15px;
+  background: white;/*#bbd0e4;*/
+  border-radius: 5px;
+  margin-left: 215px;
+  margin-right:25px;
+  min-width:400px;
+}
+
 .message .sender {
   display: block;
-
+position: absolute;
   float:right;
-  position: absolute;
   left: 40px;
   color: #000;
-  font-weight: bold;
   width: 90px;
 }
 
+.selectAll{
+	margin:10px;
+  top: 18px; left: 20px;
+  width: 30px;
+}
+
+ * textarea
+ {
+	 resize: none;
+ }
+ 
+ * label
+ {
+	 color:black;
+	 
+ }
+ 
 .message .title {
   display: inline-block;
 
@@ -163,8 +262,23 @@ input[name=search]:focus {
   width: 100%;
 }
 
+a .message *{
+
+	text-decoration:none;
+	color:#000;
+}
+
 .message .date {
   position: absolute;
-
+/*border-color:green;
+	border-style:solid;*/
   right: 10px;
+}
+
+.unreadMsg span{
+  font-weight: bold;
+}
+
+.readMsg span{
+	font-weight: normal;
 }

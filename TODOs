@@ -1,5 +1,6 @@
 TODOS
 NOTE --> reload CSS = ctrl+f5 ***
+<!--THE SPACES IN THE variable text ARE ONLY ALLOWED BC OF THE "" AROUND THE {{}} var-->
 SUGGEST CHANGES TO THE PITCH DECK
 CHANGE GITHUB NAME x
 UPDATE -- Google doc with ideal hire/what we need
@@ -7,6 +8,8 @@ UPDATE -- Google doc with ideal hire/what we need
 	   --how to convert the med lingo into user friendly language with NLP?
 Resources -- scrape the sites/forums for things that help
 11/12 -- Treeo 1st pitch 6-7 pm
+Comment on the team onboarding doc by monday (12/14)
+Messaging system notes update
 
 
 	This week
@@ -14,7 +17,8 @@ Fix spacing/centering of search box/search button
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
 ---DO ERROR CATCHING FOR THE USERNAME ENTERED INTO THE CREATE MEETING PAGE
 
-#MESSAGING SYSTEM 
+#MESSAGING SYSTEM -- ask isha about message info layout
+#CHANGE AWS scans to queries 
 **Fix drop down transparency 
 	--maybe try doing the register pg approach instead?
 	--maybe try a full list that updates as you type??
@@ -37,6 +41,9 @@ Fix spacing/centering of search box/search button
 
 
 	Eventually
+#let them delete their account
+	#update messages -- from deactivated user [have deac pat and doc] [make part of the username a forbidden char so no one can make an account with that name] 
+	#(don't let them reply)
 Make a notification system (notify patients when a dr invites them to an appt)
 ##email validation? (valid domain at least)
 ###validation of zoom acct on creation??? Not possible

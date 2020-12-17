@@ -1,0 +1,56 @@
+<link rel="stylesheet" href="/static/messageCss.css" type="text/css">
+<header class = "hlabel">
+  <h1>messages</h1>
+</header>
+
+
+<div class="mailboxDetail">
+  <div class="nav">
+    <a href="{{ url_for('newEmail') }}">compose</a>
+    <a href="{{ url_for('openInbox') }}"  class="active">inbox {{inboxUnread}}</a>
+    <a href="{{ url_for('sentFolder') }}">sent</a>
+    <a href="{{ url_for('trashFolder') }}">trash {{trashUnread}}</a>
+  </div>
+  
+
+<form action="/submitReplyEmail" method="POST">
+  <br><br>
+<input hidden type = "text" value = "{{headMsgID}}" name = "headMsgID"/>
+<div class = "msgDetail">
+<label >FROM: </label>
+<input  readonly class="msgTextOutline"  type="text"name = "sender_username" value = {{sender_username}}>
+<br><br>
+<label >TO: </label>
+<input readonly class="msgTextOutline"  type="text" name = "reciever_username" value={{reciever_username}}  >
+<br><br>
+<label >SUBJECT: </label>
+<input readonly class="msgTextOutline"  id = "subject" type="text" size = "54"maxlength = "54" name = "subject" value="{{subject}}" >
+<br><br>
+<label>BODY: </label><span class = "error" id="bodyCount"></span>
+<textarea  id = "msgbody" maxlength="600" class="msgTextOutline" placeholder="Write here..."  cols = "113" rows="8" name = "email_body" value ="{{email_body}}" required>{{email_body}}</textarea>
+<br>
+</div>
+<input class = "sendBtn"type="submit" value = "Send"></input>
+</form>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+
+<script>
+
+$("#msgbody").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/bodyWordCheck",
+      type: "get",
+      data: {jsdata: text},
+      success: function(response) {
+        $("#bodyCount").html(response);
+      }
+    });
+});
+
+</script>
