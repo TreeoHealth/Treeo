@@ -586,23 +586,29 @@ def getAllUnreadMessages(username):
     return unreadList #make into class object later
 
 
-def getAllMessages(username):
+def getAllMessages(username, pageNum):
+    #Limit, Select, ReturnConsumedCapacity, TotalSegments, Segment,
+    #ScanFilter, ConditionalOperator, ExclusiveStartKey, TableName, IndexName, AttributesToGet, ProjectionExpression, FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues, ConsistentRead
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('MessageDB')
     scan_kwargs = {
         'FilterExpression': Key('reciever').eq(username)&Key('reciever_loc').eq("inbox"),
-        'ProjectionExpression': "messageID, read_status,sender,send_time, send_date, subject"
+        'ProjectionExpression': "messageID, read_status,sender,send_time, send_date, subject",
+        'Segment': 5,
+        'TotalSegments':1
     }
     
     done = False
     start_key = None
 
     msgList = []
-    
+    numPg = 0
     while not done:
         if start_key:
             scan_kwargs['ExclusiveStartKey'] = start_key
         response = table.scan(**scan_kwargs)
+        print(numPg, response)
+        numPg = numPg+1
         msgList = [[str(i['send_date'] + " - " +i['send_time']),i['messageID'],i['sender'],i['send_date'],i['subject'],True] if i['read_status']=='unread' else [str(i['send_date'] + " - " +i['send_time']),i['messageID'],i['sender'],i['send_date'],i['subject'],False] for i in response['Items']]
         
         start_key = response.get('LastEvaluatedKey', None)
@@ -610,7 +616,8 @@ def getAllMessages(username):
 
     msgList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
 
-    return msgList
+    pageSize = 5
+    return msgList[pageNum*pageSize:pageSize+(pageNum*pageSize)]
 ##    dynamodb = boto3.resource('dynamodb')
 ##    table = dynamodb.Table('MessageDB')
 ##    response = table.scan()
@@ -884,6 +891,11 @@ def index():
     #- DONE :) -do the deescription on hover
 #*- DONE :) -make autocomplete for usernames (user cannot enter an invalid username)
 
+#--in the sent folder, change the sender to who the recipient is
+
+#WRITE QUERY FOR SELECTIVE RETURNS
+    #when they are a patient user, the dropdown should only have doctors
+    #when they are a doctor user, the dropdown should only be doctors/patients
 
 #*--read up on if AWS can support paged queries (only query for items on that page?)
 

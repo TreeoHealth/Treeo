@@ -1,0 +1,20 @@
+
+
+query all messages then split [w][x][y][z]
+
+embed each page with the number page they are in that specific folder 
+next = embed the inbox page with the old page number +1
+prev = "" -1
+(if they are at 0, disable the prev button)
+(stop at 0 or # msgs/size of page)
+display msgs numbered (page num*page size to page num * page size + (page size-1))
+ --account for partial pages (if we are on the final page, make the array sent index with [:])
+   ((total num - page num*page size) -1= idex to go to for final page) -> 0 to this index
+ final page = page num * page size + (page size-1) >= total num
+
+[01234][56789][0123-]
+
+next with no prev (1st)
+next and prev (middle)
+prev and no next (last)
+no prev or next (empty or only 1 page)

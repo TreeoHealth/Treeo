@@ -15,9 +15,9 @@
 
   <form action="/reply" method="POST" >
   <input hidden type = "text" value = "{{headMsgID}}" name = "headMsgID"/>
-	<input type = "submit" name = "reply" value="Reply" class = "replyBtn">
+		<input type="image" name = "reply" class = "replyBtn" value="Trash" src="/static/reply.png" title="Reply" />
   
-  </form><br><br>
+  </form>
 {%for date, mID, sender_username, reciever_username, subject, email_body in msgList%}
 <div class = "msgDetail" id = "{{mID}}">
 <label >FROM: </label>

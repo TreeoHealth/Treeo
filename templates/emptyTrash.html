@@ -16,8 +16,8 @@
   <div class="messages">
 
   <form action="/permTrash" method="POST">
-  <input type = "submit" name = "permdel" value="Delete"class = "trashBtn">
-  <input type = "submit" name = "undotrash" value="Undo Trash Action" class = "trashBtn">
+  <input type = "image" name = "undotrash" value="Undo Trash Action" class = "trashBtn" src="/static/undoTrash.png" title="Undo Trash Action" />
+  <input type = "image" name = "permdel" value="Delete" class = "trashBtn"  src="/static/permenantDelete.png" title="Permenantly Delete" />
   <br>
     <input  class = "selectAll"  name = "selectAll" onClick="toggle(this)" type="checkbox" /><br>
 <div class="emptyFolder">No messages in trash</div>

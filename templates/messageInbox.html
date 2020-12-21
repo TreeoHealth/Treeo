@@ -20,6 +20,9 @@
   <input type="image" name = "trash" class = "trashBtn" value="Trash" src="/static/moveToTrash.png" title="Move to Trash" />
   <input type = "image" name = "mar" value="Mark as read" class = "trashBtn" src="/static/markAsRead.png" title="Mark as Read" >
   <input type = "image" name = "mau" value="Mark as unread"class = "trashBtn" src="/static/markAsUnread.png" title="Mark as Unread" >
+  <input type="submit" {%if noPrev %} disabled style="color:red;" {%endif%} name = "prevPg" value= "  <  "/>
+  <input type="submit" {%if noNext %} disabled style="color:red;" {%endif%}  name = "nextPg" value= "  >  "/>
+  <input type ="number" hidden name = "currPageNum" value={{currPageNum}}/>
 <br><input class = "selectAll" name = "selectAll" onClick="toggle(this)" type="checkbox" /><br>  
   {%for date, mID, sender, s_date, title,unread in msgList%}
 	<a href="/msg/{{mID}}">

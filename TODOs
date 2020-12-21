@@ -13,6 +13,15 @@ Messaging system notes update
 
 
 	This week
+	
+-DynamoDB has no filter+limit (idk if this is scalable for everything we need the db to do)
+	-no conditional querying
+	-no inherent paging of results
+1) stay with dynamo and do "dumb" workarounds that are inefficient
+2) try moving to external relational database (hosting becomes an issue)
+		(and we have to change all of that code)
+	
+
 Fix spacing/centering of search box/search button
 ##make a joinURL field on createpg AND the mtg detail page <------------------0
 ---DO ERROR CATCHING FOR THE USERNAME ENTERED INTO THE CREATE MEETING PAGE

@@ -179,14 +179,16 @@ font-size: 12px;
 
 .replyBtn
 {
-	border-color:#EEE;
+		border-color:#EEE;
 	border-style:solid;
 	border-width:2px;
 	  background: #bbd0e4;
-	float:left;
+	  max-width:40px;
+	  max-height:40px;
+
 	padding: 2px;
 	margin-left:215px;
-	margin-bottom:10 px;
+	margin-bottom: 10px;
 	margin-top: 10px;
 }
 
