@@ -17,7 +17,11 @@
 
     <form action="/selectSent" method="POST">
 	<input type="image" name = "trash" class = "trashBtn" value="Trash" src="/static/moveToTrash.png" title="Move to Trash" />
-<br>   
+  <input type="image" class = "prevBtn" {%if noPrev %} disabled style="background-color:red;" {%endif%} name = "prevPg" title= "Newer" src="/static/backward.png"/>
+  <input type="image" class = "nextBtn" {%if noNext %} disabled style="background-color:red;" {%endif%}  name = "nextPg" title= "Older" src="/static/forward.png"/>
+  <span class="emailCount">{{startEmailNum}}-{{endEmailNum}} of {{totalEmailNum}}</span>
+  <input hidden name = "currPageNum" value={{currPageNum}}></input>
+  <br>   
    <input  class = "selectAll" name = "selectAll" onClick="toggle(this)" type="checkbox" />
     {%for date,mID,s_header,sender, s_date, title  in msgList%}
 	<a href="/msg/{{mID}}">

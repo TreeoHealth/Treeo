@@ -17,7 +17,9 @@
 
     <form action="/selectSent" method="POST">
 	<input type="image" name = "trash" class = "trashBtn" value="Trash" src="/static/moveToTrash.png" title="Move to Trash" />
-<br>   
+  <input type="image" class = "prevBtn" disabled style="background-color:red;" name = "prevPg" title= "Newer" src="/static/backward.png"/>
+  <input type="image" class = "nextBtn" disabled style="background-color:red;" name = "nextPg" title= "Older" src="/static/forward.png"/>
+  <br>   
    <input  class = "selectAll" name = "selectAll" onClick="toggle(this)" type="checkbox" /><br>
 <div class="emptyFolder">No messages in sent</div>
     

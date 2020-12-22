@@ -186,7 +186,7 @@ font-size: 12px;
 	  max-width:40px;
 	  max-height:40px;
 
-	padding: 2px;
+	padding: 4px;
 	margin-left:215px;
 	margin-bottom: 10px;
 	margin-top: 10px;
@@ -213,7 +213,52 @@ font-size: 12px;
   border-radius: 5px;
 }
 
+.emailCount
+{
+  margin-left: 23%;
+  color:#b0b0b0;
+  font-size: 11pt;
+  margin-right:10px;
+  margin-bottom:70px;
+  border-color:red;
+	border-style:solid;
+  border-width:2px;
+  text-align: right;
+  padding: 7px;
+  margin-top: -43px;
+  
+  display: block;
+  position: absolute;
+}
 
+
+.nextBtn
+{
+	border-color:#EEE;
+	border-style:solid;
+	border-width:2px;
+	  background: #bbd0e4;
+	  max-width:40px;
+	  max-height:40px;
+	position:right;
+	padding: 2px;
+  margin:2px;
+
+}
+
+.prevBtn
+{
+	border-color:#EEE;
+	border-style:solid;
+	border-width:2px;
+	  background: #bbd0e4;
+	  max-width:40px;
+	  max-height:40px;
+	position:right;
+	padding: 2px;
+	margin:2px;
+
+}
 
 .message input {
   position: absolute;

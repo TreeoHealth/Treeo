@@ -18,6 +18,10 @@
   <form action="/permTrash" method="POST">
   <input type = "image" name = "undotrash" value="Undo Trash Action" class = "trashBtn" src="/static/undoTrash.png" title="Undo Trash Action" />
   <input type = "image" name = "permdel" value="Delete" class = "trashBtn"  src="/static/permenantDelete.png" title="Permenantly Delete" />
+  <input type="image" class = "prevBtn" {%if noPrev %} disabled style="background-color:red;" {%endif%} name = "prevPg" title= "Newer" src="/static/backward.png"/>
+  <input type="image" class = "nextBtn" {%if noNext %} disabled style="background-color:red;" {%endif%}  name = "nextPg" title= "Older" src="/static/forward.png"/>
+  <span class="emailCount">{{startEmailNum}}-{{endEmailNum}} of {{totalEmailNum}}</span>
+  <input hidden name = "currPageNum" value={{currPageNum}}></input>
   <br>
     <input  class = "selectAll"  name = "selectAll" onClick="toggle(this)" type="checkbox" />
     {%for date, mID,s_header,sender, s_date, title,unread in msgList%}

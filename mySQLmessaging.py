@@ -57,10 +57,7 @@ def formatEmail():
                           trashUnread = countUnreadInTrash(session['username'])
                           )
     else:
-       return render_template("messageInbox.html",
-                          inboxUnread =countUnreadInInbox(session['username']),
-                          trashUnread = countUnreadInTrash(session['username']),
-                          msgList = msgListObj)
+       return openInbox()
 
 @app.route('/submitReplyEmail', methods=['POST','GET'])
 def formatReplyEmail():
@@ -77,55 +74,164 @@ def formatReplyEmail():
                           trashUnread = countUnreadInTrash(session['username'])
                           )
    else:
-       return render_template("messageInbox.html",
-                          inboxUnread =countUnreadInInbox(session['username']),
-                          trashUnread = countUnreadInTrash(session['username']),
-                          msgList = msgListObj)
+       return openInbox()
 
 @app.route('/sentFolder', methods=['POST','GET'])
 def sentFolder():
-   msgListObj = getAllMessagesSent(session['username'])
-   if(len(msgListObj)==0):
-       return render_template("emptySent.html",
+    return renderPagedSent(0)
+
+
+def renderPagedSent(pgNum):
+    
+    pageSize = 10
+    msgList = getAllMessagesSent(session['username'])
+    pageNumber = int(pgNum)
+    if(pageNumber<0):
+        pageNumber=0 #first page
+    elif pageNumber>(len(msgList)/pageSize):
+        pageNumber=(len(msgList)/pageSize) #final possible page number
+
+    if(len(msgList)==0): #if the query is empty
+        #return (False, [], False) #no prev, no next
+        return render_template("emptySent.html",
                           inboxUnread =countUnreadInInbox(session['username']),
-                          trashUnread = countUnreadInTrash(session['username'])
-                          );
-   else:
-       return render_template("sentBox.html",
+                          trashUnread = ""
+                          )
+    if((pageNumber*pageSize+(pageSize)>=len(msgList)) and pageNumber!=0):  #this is the final page (not not first)
+        #return (True, msgList[pageNumber*pageSize:], False)
+        return render_template("sentBox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
-                          msgList=msgListObj);
+                          noPrev = False,
+                          noNext = True,
+                          currPageNum = pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:])
+    elif(pageNumber==0 and pageSize<len(msgList)): #this is the first page and there is a next page
+        #return (False, msgList[0:pageSize-1], True)
+        #print("HERE", msgList[0:pageSize])
+        return render_template("sentBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = True,
+                          noNext = False,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = pageSize,
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:pageSize])
+    elif(pageNumber==0): #this is the first and only page
+        #return (False, msgList[0:], False)
+        return render_template("sentBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = True,
+                          noNext = True,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:])
+    else: #there is a prev and next page
+        #return (True, msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize-1)], True)
+        return render_template("sentBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = False,
+                          noNext = False,
+                          currPageNum =pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = pageNumber*pageSize+(pageSize),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize)])
+
 
 @app.route('/trashFolder', methods=['POST','GET'])
 def trashFolder():
-   msgListObj = getAllTrashMessages(session['username'])
-   if(len(msgListObj)==0):
-       return render_template("emptyTrash.html",
+    return renderPagedTrash(0)
+
+def renderPagedTrash(pgNum):
+    
+    pageSize = 10
+    msgList = getAllTrashMessages(session['username'])
+    pageNumber = int(pgNum)
+    if(pageNumber<0):
+        pageNumber=0 #first page
+    elif pageNumber>(len(msgList)/pageSize):
+        pageNumber=(len(msgList)/pageSize) #final possible page number
+
+    if(len(msgList)==0): #if the query is empty
+        #return (False, [], False) #no prev, no next
+        return render_template("emptyTrash.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = ""
-                          );
-   else:
-       return render_template("trashBox.html",
+                          )
+    if((pageNumber*pageSize+(pageSize)>=len(msgList)) and pageNumber!=0):  #this is the final page (not not first)
+        #return (True, msgList[pageNumber*pageSize:], False)
+        return render_template("trashBox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
-                          msgList=msgListObj);
+                          noPrev = False,
+                          noNext = True,
+                          currPageNum = pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:])
+    elif(pageNumber==0 and pageSize<len(msgList)): #this is the first page and there is a next page
+        #return (False, msgList[0:pageSize-1], True)
+        #print("HERE", msgList[0:pageSize])
+        return render_template("trashBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = True,
+                          noNext = False,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = pageSize,
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:pageSize])
+    elif(pageNumber==0): #this is the first and only page
+        #return (False, msgList[0:], False)
+        return render_template("trashBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = True,
+                          noNext = True,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:])
+    else: #there is a prev and next page
+        #return (True, msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize-1)], True)
+        return render_template("trashBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = False,
+                          noNext = False,
+                          currPageNum =pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = pageNumber*pageSize+(pageSize),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize)])
 
 
 @app.route('/selectOption', methods=['POST','GET'])
 def selectOption():
     x = ""
     try:
-       x = str(request.form['prevPg'])
+       x = str(request.form['prevPg.x'])
        pageNum = request.form['currPageNum']
-       print("Prev")
-       return getAllMessagesPaged(session['username'], int(pageNum)-1, 7)
+       return getAllMessagesPaged(session['username'], str(int(pageNum)-1))
        
     except:
         try:
-            x = str(request.form['nextPg'])
+            x = str(request.form['nextPg.x'])
             pageNum = request.form['currPageNum']
-            print("Next")
-            return getAllMessagesPaged(session['username'], int(pageNum)+1, 7)
+            return getAllMessagesPaged(session['username'], str(int(pageNum)+1))
             
         except:
             try:
@@ -149,8 +255,10 @@ def selectOption():
 
 
 
-def getAllMessagesPaged(username, pageNumber, pageSize): #page to be rendered
+def getAllMessagesPaged(username, pgNum): #page to be rendered
 #<MYSQL FUNCTIONAL>
+    pageSize = 10
+
     query = ("SELECT send_date, send_time, subject, read_status, messageID, sender FROM messageDB "
              "WHERE reciever = %s AND reciever_loc = %s")  
     cursor.execute(query, (username,"inbox")) 
@@ -163,32 +271,44 @@ def getAllMessagesPaged(username, pageNumber, pageSize): #page to be rendered
 
     msgList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
 
+
+    pageNumber = int(pgNum)
+    if(pageNumber<0):
+        pageNumber=0 #first page
+    elif pageNumber>(len(msgList)/pageSize):
+        pageNumber=(len(msgList)/pageSize) #final possible page number
+
     if(len(msgList)==0): #if the query is empty
         #return (False, [], False) #no prev, no next
         return render_template("emptyInbox.html",
                           inboxUnread ="",
                           trashUnread = countUnreadInTrash(session['username'])
                           )
-    if((pageNumber*pageSize+(pageSize)>=len(msgList))):  #this is the final page
+    if((pageNumber*pageSize+(pageSize)>=len(msgList)) and pageNumber!=0):  #this is the final page (not not first)
         #return (True, msgList[pageNumber*pageSize:], False)
         return render_template("messageInbox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
                           noPrev = False,
                           noNext = True,
-                          currPageNum = pageNumber,
+                          currPageNum = pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
                           msgList=msgList[pageNumber*pageSize:])
     elif(pageNumber==0 and pageSize<len(msgList)): #this is the first page and there is a next page
         #return (False, msgList[0:pageSize-1], True)
-        print("HERE", msgList[0:pageSize])
-        msgList = msgList[0:pageSize]
+        #print("HERE", msgList[0:pageSize])
         return render_template("messageInbox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
                           noPrev = True,
                           noNext = False,
-                          currPageNum =pageNumber,
-                          msgList=msgList)
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = pageSize,
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:pageSize])
     elif(pageNumber==0): #this is the first and only page
         #return (False, msgList[0:], False)
         return render_template("messageInbox.html",
@@ -196,7 +316,10 @@ def getAllMessagesPaged(username, pageNumber, pageSize): #page to be rendered
                           trashUnread = countUnreadInTrash(session['username']),
                           noPrev = True,
                           noNext = True,
-                          currPageNum =pageNumber,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
                           msgList=msgList[0:])
     else: #there is a prev and next page
         #return (True, msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize-1)], True)
@@ -205,22 +328,36 @@ def getAllMessagesPaged(username, pageNumber, pageSize): #page to be rendered
                           trashUnread = countUnreadInTrash(session['username']),
                           noPrev = False,
                           noNext = False,
-                          currPageNum =pageNumber,
-                          msgList=msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize-1)])
+                          currPageNum =pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = pageNumber*pageSize+(pageSize),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize)])
 
-    return msgList
 
 @app.route('/selectSent', methods=['POST','GET'])
 def selectSent():
-   try:
-       x = str(request.form['trash.x'])
-       for check in request.form:
-           print(check)
-           if(str(check)!='trash.x' and str(check)!='trash.y'and str(check)!='selectAll'):
-               moveToTrash(str(check), session['username'])
-       return sentFolder()
-   except:
-       return sentFolder()
+    try:
+       x = str(request.form['prevPg.x'])
+       pageNum = request.form['currPageNum']
+       return renderPagedSent(str(int(pageNum)-1))
+       
+    except:
+        try:
+            x = str(request.form['nextPg.x'])
+            pageNum = request.form['currPageNum']
+            return renderPagedSent(str(int(pageNum)+1))
+            
+        except:
+            try:
+                x = str(request.form['trash.x'])
+                for check in request.form:
+                    print(check)
+                    if(str(check)!='trash.x' and str(check)!='trash.y'and str(check)!='selectAll'):
+                        moveToTrash(str(check), session['username'])
+                return sentFolder()
+            except:
+                return sentFolder()
 
 
 @app.route("/search/<string:box>")
@@ -250,19 +387,31 @@ def bodyCheck():
 
 @app.route('/permTrash', methods=['POST','GET'])
 def emptyTrash():
-   x=""
-   try:
-       x = str(request.form['permdel.x'])
-       for check in request.form:
-           if(str(check)!='permdel.x' and str(check)!='permdel.y' and str(check)!='selectAll'):
-               permenantDel(str(check), session['username'])
-   except:
-           x = str(request.form['undotrash.x'])
-           for check in request.form:
-               if(str(check)!='undotrash.x' and str(check)!='undotrash.y' and str(check)!='selectAll'):
-                   undoTrash(str(check), session['username'])
+    x=""
+    try:
+       x = str(request.form['prevPg.x'])
+       pageNum = request.form['currPageNum']
+       return renderPagedTrash(str(int(pageNum)-1))
+       
+    except:
+        try:
+            x = str(request.form['nextPg.x'])
+            pageNum = request.form['currPageNum']
+            return renderPagedTrash(str(int(pageNum)+1))
+            
+        except:
+            try:
+                x = str(request.form['permdel.x'])
+                for check in request.form:
+                    if(str(check)!='permdel.x' and str(check)!='permdel.y' and str(check)!='selectAll'):
+                        permenantDel(str(check), session['username'])
+            except:
+                x = str(request.form['undotrash.x'])
+                for check in request.form:
+                    if(str(check)!='undotrash.x' and str(check)!='undotrash.y' and str(check)!='selectAll'):
+                        undoTrash(str(check), session['username'])
 
-   return trashFolder()
+    return trashFolder()
 
    
 
@@ -575,21 +724,8 @@ def reply():
 
 @app.route('/inbox')
 def openInbox():
-   return getAllMessagesPaged(session['username'], 0, 7)
+   return getAllMessagesPaged(session['username'],"0")
 
-
-
-   msgListObj = getAllMessages(session['username'])
-   if(len(msgListObj)==0):
-       return render_template("emptyInbox.html",
-                          inboxUnread ="",
-                          trashUnread = countUnreadInTrash(session['username'])
-                          )
-   else:
-       return render_template("messageInbox.html",
-                          inboxUnread =countUnreadInInbox(session['username']),
-                          trashUnread = countUnreadInTrash(session['username']),
-                          msgList=msgListObj)
 
 
 @app.route('/u1')
@@ -693,8 +829,14 @@ if __name__ == '__main__':
 
 #*--read up on if AWS can support paged queries (only query for items on that page?)
 
-#MAKE NEXT/PREV inherently disabled on empty
-#catch if page num given is out of bounds (go the furthest it allows and send back that new number)
-#eventually
-#*--make pages for inbox
+#- DONE :) -MAKE NEXT/PREV inherently disabled on empty
+#- DONE :) -catch if page num given is out of bounds (go the furthest it allows and send back that new number)
+
+#- DONE :) -make counter (x-y of z) < >
+#--STYLING 
+#- DONE :) -make pictures for 2 icons
+#- DONE :) -incorporate paging into trash
+#- DONE :) -incorporate into sent
+
+#--jump to first page, jump last page buttons (???)
 
