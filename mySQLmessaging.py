@@ -10,8 +10,15 @@ import mysql.connector
 from mysql.connector import errorcode
 
 app = Flask(__name__)
-cnx = mysql.connector.connect(user='root', password='password',
-                              host='127.0.0.1')
+#cnx = mysql.connector.connect(user='root', password='password',
+#                              host='127.0.0.1')
+config = {
+  'host':'treeo-server.mysql.database.azure.com',
+  'user':'treeo_master@treeo-server',
+  'password':'Password1',
+  'database':'treeohealthdb'
+}
+cnx = mysql.connector.connect(**config)
 cursor = cnx.cursor()
 cursor.execute("USE treeoHealthDB")
 
