@@ -816,27 +816,26 @@ if __name__ == '__main__':
 #- DONE :) -change button/action words to icons
     #- DONE :) -do the deescription on hover
 #*- DONE :) -make autocomplete for usernames (user cannot enter an invalid username)
-
 #- DONE :) -in the sent folder, change the sender to who the recipient is
-
     #-DONE :)- make a "To:" label like trash
 #- DONE :) -make reply button into a picture
 #- DONE :) -PUT PICTURE ICONS ON ALL EMPTY PAGES
-
-#WRITE QUERY FOR SELECTIVE RETURNS
-    #when they are a patient user, the dropdown should only have doctors
-    #when they are a doctor user, the dropdown should only be doctors/patients
-
-#*--read up on if AWS can support paged queries (only query for items on that page?)
-
+#*- DONE :) -read up on if AWS can support paged queries (only query for items on that page?)
 #- DONE :) -MAKE NEXT/PREV inherently disabled on empty
 #- DONE :) -catch if page num given is out of bounds (go the furthest it allows and send back that new number)
-
 #- DONE :) -make counter (x-y of z) < >
-#--STYLING 
 #- DONE :) -make pictures for 2 icons
 #- DONE :) -incorporate paging into trash
 #- DONE :) -incorporate into sent
 
-#--jump to first page, jump last page buttons (???)
+#*--add search bar (mid top)
 
+#--STYLING 
+
+#change all aws to mysql queries
+#change all aws dependency in zoom post and apptest
+#incorporate messaging into it
+#connect dropdown check to user dtb
+    #WRITE QUERY FOR SELECTIVE RETURNS
+    #when they are a patient user, the dropdown should only have doctors
+    #when they are a doctor user, the dropdown should only be doctors/patients
