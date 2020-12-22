@@ -839,6 +839,7 @@ if __name__ == '__main__':
 
 #--STYLING 
 
+#REMOTE AZURE CONNECTION IN ALL BELOW IMPLEMENTATION
 #change all aws to mysql queries
 #change all aws dependency in zoom post and apptest
 #incorporate messaging into it

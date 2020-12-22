@@ -1,14 +1,14 @@
 AZURE
--made new account on AZURE
+-made new account on AZURE (https://azure.microsoft.com/en-us/free/)
 -made new mysql db server through portal (cheapest possible) by this https://docs.microsoft.com/en-us/azure/mysql/quickstart-create-mysql-server-database-using-azure-portal
 	admin: treeo_master (Password1)
-	server: treeo-server -- needed to change the firewall to allow all IPs to access and turn off SSL auth
--made new db and user (with granted access) by this https://docs.microsoft.com/en-us/azure/mysql/howto-create-users?tabs=single-server
+	server: treeo-server -- needed to change the firewall to allow all IPs to access and turn off SSL auth (portal>server menu>connection security>SSL connection disable + allow all IP [0.0.0.0-255.255.255.255])
+-made new db and user (with granted access) by this https://docs.microsoft.com/en-us/azure/mysql/howto-create-users?tabs=single-server [NOTE: I have not tested how to actually use this to access the DB yet]
 	user: treeoUser (Password1)
 	database: treeohealthdb
 
-in portal, the 1st option to the right of the search bar will open a bash instance in windwo
-	mysql --host treeo-server.mysql.database.azure.com --database treeohealthdb --user treeoUser@mydemoserver -p
+in portal, the 1st option to the right of the search bar will open a bash instance in that window, then type:
+	mysql --host treeo-server.mysql.database.azure.com --database treeohealthdb --user treeo_master@treeo-server -p (or treeoUser instead of treeo_master)
 	
 in workbench
 	Home (+ to add connection)
@@ -18,9 +18,10 @@ in workbench
 	Password : Password1 (in vault)
 	Test connection to confirm
 
-Run mysqltest.py to insert a test row (only run 1 time)
+[NOTE: I already ran this so don't or it will drop and remake the table]
+	For the setup, run mysqltest.py to insert a test row (only run 1 time)
 
-Query in workbench to confirm
+Query in workbench to confirm (or run mysqlmessaging.py to test that it's updating the way it should)
 	-sidebar doesn't have the dropdown like localhost so run this query
 	
 USE treeohealthdb;
