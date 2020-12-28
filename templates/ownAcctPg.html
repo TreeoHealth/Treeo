@@ -31,6 +31,10 @@
 	<label class="login-field-icon fui-user" for="login-name">Email</label>
 	<input readonly type="text" class="login-field" value={{email}} name="email">
 </div>
+<div class="control-group">
+	<label class="login-field-icon fui-user" for="login-name">Member Since</label>
+	<input readonly type="text" class="login-field" value="{{createDate}}" name="createDate">
+</div>
 <form action='/acctEditrender/' method = "POST">
 <input type="hidden" value={{username}} name="username">
 <input type="submit" value="Edit Account Details" class="btn btn-primary btn-large btn-block">

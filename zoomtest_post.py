@@ -14,11 +14,11 @@
 import http.client
 import json
 #from OpenSSL import SSL
-import aws_appt
+import mySQL_apptDB
 #from aws_appt import getAllApptsFromUsername,createApptAWS, deleteApptAWS,getApptFromMtgId #updateApptAWS,
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
 
-headerKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE2MDk0MzM5NDAsImlhdCI6MTU5OTA5NzQ5MX0.bcpybYtMqLNBfPrw5uBDPOnUA8U5CXUAhwxrnYqC1NI'
+headerKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE2MDk3MzQyNTksImlhdCI6MTYwOTEyOTQ1N30.j_v2lfEWoOSlcTLVTEhbfXE00oJUzrHmWGqq3R2ZCg4'
 
 headers = { 'authorization': "Bearer "+headerKey }
 
@@ -37,7 +37,7 @@ def addParticipant(mtgID, firstName, lastName, email):
 
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
 #https://api.zoom.us/v2/meetings/{meetingId}/registrants
-    conn.request("POST", "/v2/meetings/"+str(mtgID)+"registrants", json.dumps(payload), headers)
+    conn.request("POST", "/v2/meetings/"+str(mtgID)+"/registrants", json.dumps(payload), headers)
     res = conn.getresponse()
     raw_data = res.read()
     #data = json.loads(raw_data.decode("utf-8"))
@@ -45,32 +45,8 @@ def addParticipant(mtgID, firstName, lastName, email):
     #return data
 
 
-def createUser(email, firstName, lastName):
-    payload = {
-        'action':'create',
-        'user_info':{
-            'email':email,
-            'type':1,
-            'first_name':firstName,
-            'last_name':lastName
-            }
-        }
-
-    headers = {
-        'content-type': "application/json",
-        'authorization': "Bearer "+headerKey
-        }
-
-    conn.request("POST", "/v2/users", json.dumps(payload), headers)
-    res = conn.getresponse()
-    raw_data = res.read()
-    data = json.loads(raw_data.decode("utf-8"))
-    conn.close()
-    return data
-
-
 #----post below
-def createMtg(topic, time, password, doctor, patient):
+def createMtg(topic, time, password, doctor, patient, cursor, cnx):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     payload={
       "topic": topic,
@@ -102,19 +78,21 @@ def createMtg(topic, time, password, doctor, patient):
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     
-    result = aws_appt.createApptAWS(topic, str(data.get("id")), doctor, patient, str(data.get("start_time")), str(data.get("join_url")))
+    #createAppt(mtgName, mtgid, doctor, patient, start_time, joinURL, cursor, cnx)
+    mySQL_apptDB.createAppt(topic, str(data.get("id")), doctor, patient, str(data.get("start_time")), str(data.get("join_url")), cursor, cnx)
     
     conn.close()
-    return data, result
+    return data
 
-def updateMtg(mtgid, topic, time, password):
+def updateMtg(mtgid, topic, time, cursor, cnx):
+    zoomResp = getMtgFromMtgID(mtgid)
     payload={
       "topic": topic,
       "type": 2,
       "start_time": time,
       "duration": 40,
       "timezone": "Eastern Time (US and Canada)",
-      "password": password,
+      "password": zoomResp.get('password'), #keep the password the same by querying what it already is
       "settings": {
         "host_video": 'true',
         "mute_upon_entry": 'true',
@@ -128,7 +106,7 @@ def updateMtg(mtgid, topic, time, password):
         }
 
     conn.request("PATCH", "/v2/meetings/"+str(mtgid), json.dumps(payload), headers)
-    aws_appt.updateApptAWS(topic, mtgid,time)
+    mySQL_apptDB.updateAppt(topic, mtgid,time, cursor, cnx)
     res = conn.getresponse()
     raw_data = res.read()
     print(raw_data)
@@ -136,11 +114,11 @@ def updateMtg(mtgid, topic, time, password):
     conn.close()
     return getMtgFromMtgID(mtgid)
 
-def deleteMtgFromID(mtgID):
+def deleteMtgFromID(mtgID, cursor, cnx):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     conn.request("DELETE", "/v2/meetings/"+str(mtgID), headers=headers)
     res = conn.getresponse()
-    aws_appt.deleteApptAWS(mtgID)
+    mySQL_apptDB.deleteAppt(mtgID, cursor, cnx)
     raw_data = res.read()
     print(raw_data)
     conn.close()
@@ -165,7 +143,7 @@ def getMtgFromMtgID(info):
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     conn.close()
-    return data,aws_appt.getApptFromMtgId(str(info))
+    return data
 
 def getUserFromEmail(email):
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
@@ -196,7 +174,8 @@ def mtgInfoToJSON():
 
 
 
-
+#print(createMtg("topic", "2020-12-31T10:30:00Z", "abc", "doctor", "patient"))
+#print(getMtgFromMtgID(77580648369))
 ##addParticipant(72261254435,'isha', 'naik', 'inaik4000@gmail.com')
 #jsonResp = getMtgFromMtgID(72261254435)
 #jsonResp = updateMtg(77588267056, "Updated", "2020-07-30T12:30:00Z", "newp")

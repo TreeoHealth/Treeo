@@ -4,11 +4,6 @@ import os
 from flask import Flask, jsonify
 import json
 import re
-import boto3
-from boto3.dynamodb.conditions import Key, Attr
-import aws_controller
-from botocore.exceptions import ClientError
-import aws_appt
 import zoomtest_post
 import password_strength
 import email_validator
@@ -16,22 +11,37 @@ from email_validator import validate_email, EmailNotValidError, EmailSyntaxError
 from password_strength import PasswordPolicy
 from passlib.context import CryptContext
 
+import mysql.connector
+from mysql.connector import errorcode
+import mySQL_apptDB
 
-#from aws_appt import getAllApptsFromUsername, returnAllPatients, getAcctFromUsername
-#from zoomtest_post import updateMtg,createMtg,getMtgFromMtgID, getMtgsFromUserID,getUserFromEmail,deleteMtgFromID
 
 app = Flask(__name__)
 
-dynamo_client = boto3.client('dynamodb')
-takenUsernames = aws_appt.returnAllPatients()
-patientList = aws_appt.searchPatientList()
+
 
 patientPages = []
 currPg=0
 
-@app.route('/get-items')
-def get_items():
-    return jsonify(aws_controller.get_items())
+config = {
+  'host':'treeo-server.mysql.database.azure.com',
+  'user':'treeo_master@treeo-server',
+  'password':'Password1',
+  'database':'treeohealthdb'
+}
+cnx = mysql.connector.connect(**config)
+cursor = cnx.cursor(buffered=True)
+cursor.execute("USE treeoHealthDB")
+
+takenUsernames = mySQL_apptDB.returnAllPatients(cursor, cnx)
+patientList = mySQL_apptDB.searchPatientList(cursor, cnx)
+
+pwd_context = CryptContext(
+        schemes=["pbkdf2_sha256"],
+        default="pbkdf2_sha256",
+        pbkdf2_sha256__default_rounds=30000
+    )
+
 
 @app.route('/')
 def home():
@@ -54,41 +64,23 @@ def displayLoggedInHome():
 
 @app.route('/login', methods=['POST','GET'])
 def check_login():
-    dynamodb = boto3.resource("dynamodb", region_name='us-east-1', endpoint_url="http://localhost:4000")
-
-    table = dynamodb.Table('YourTestTable')
-    pwd_context = CryptContext(
-        schemes=["pbkdf2_sha256"],
-        default="pbkdf2_sha256",
-        pbkdf2_sha256__default_rounds=30000
-    )
-    try:
-        response = dynamo_client.get_item(TableName= 'users',
-            Key={
-                'username': {"S":request.form['username']}                
-            }
-        )
-        try:
-            test = response.get('Item').get('password')
-        except:
-            return render_template('login.html', errorMsg="Incorrect username or password.")
-        if( False==(pwd_context.verify(request.form['password'], response.get('Item').get('password').get('S')))):
-            print("WRONG PASSWORD")
-            return render_template('login.html', errorMsg="Incorrect username or password.")
-            #return home()
-        formEmail = response.get('Item').get('email').get('S')
-        docStatus = str(response.get('Item').get('docStatus').get('S'))
-        if(docStatus=='doctor'):
+    result = mySQL_apptDB.checkUserLogin(request.form['username'], request.form['password'],cursor, cnx)
+    
+    if(result==False):
+        print("WRONG PASSWORD")
+        return render_template('login.html', errorMsg="Incorrect username or password.")
+    else:
+        #(u, dS, str(f+" "+l), e, cD)
+        info = mySQL_apptDB.getAcctFromUsername(request.form['username'],cursor, cnx)
+        if(info[1]=='doctor'):
             session['logged_in_d']=True
             session['logged_in_p']=False
         else:
             session['logged_in_p'] = True
             session['logged_in_d']=False
         session['username'] = request.form['username']
-        session['name'] = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
-    except ClientError as e:
-        print(e.response['Error']['Message'])
-    return home()
+        session['name'] = info[2]
+        return displayLoggedInHome()
 
 @app.route('/registerrender', methods=['POST','GET'])
 def regPg():
@@ -96,13 +88,13 @@ def regPg():
 
 @app.route('/register', methods=['POST','GET'])
 def new_register():
-    response = dynamo_client.get_item(TableName= 'users',
-        Key={
-            'username': {"S":request.form['username']}                
-        }
-    )
+    docStatus = ""
     try:
-        test = response.get('Item').get('password')
+        docStatus=request.form['docStatus']
+    except:
+        docStatus='patient'
+    
+    if(mySQL_apptDB.isUsernameTaken(request.form['username'],cursor, cnx)):
         return render_template('register.html',
                                errorMsg="Username is already taken. Please use a different one.",
                                username = request.form['username'],
@@ -111,64 +103,18 @@ def new_register():
                                fname = request.form['fname'],
                                lname = request.form['lname']
                                )
-    except:
-
-        policy = PasswordPolicy.from_names(
-            length=8,  # min length: 8
-            uppercase=1,  # need min. 2 uppercase letters
-            numbers=1  # need min. 2 digits
-            )
-        if len(request.form['fname'])<2 or len(request.form['lname'])<2:
-            return render_template('register.html',
-                                   errorMsg="First and last name must have at least 2 characters.",
-                                    username = request.form['username'],
-                                   password = request.form['password'],
-                                   email = request.form['email'],
-                                   fname = request.form['fname'],
-                                   lname = request.form['lname']
-                                   )
-##PASSWORD STRENGTH
-        isEnough = policy.test(str(request.form['password']))
-        if len(isEnough):
-            return render_template('register.html',
-                                   errorMsg="Password must be min length 8, 1 upper case, and 1 number.",
-                                    username = request.form['username'],
-                                   password = request.form['password'],
-                                   email = request.form['email'],
-                                   fname = request.form['fname'],
-                                   lname = request.form['lname']
-                                   )
-        try:
-            formEmail = request.form['email']
-            valid = validate_email(formEmail)
-        except:
-            return render_template('register.html',
-                                   errorMsg="Invalid email format or domain.",
-                                    username = request.form['username'],
-                                   password = request.form['password'],
-                                   email = request.form['email'],
-                                   fname = request.form['fname'],
-                                   lname = request.form['lname']
-                                   ) 
-        pwd_context = CryptContext(
-        schemes=["pbkdf2_sha256"],
-        default="pbkdf2_sha256",
-        pbkdf2_sha256__default_rounds=30000
-        )
-        response = dynamo_client.put_item(TableName= 'users',
-           Item={
-                'username': {"S":request.form['username']},
-                'password': {"S":pwd_context.hash(request.form['password'])},
-                'email': {"S":request.form['email']},
-                'fname':{"S":request.form['fname']},
-                'lname':{"S":request.form['lname']},
-                'docStatus':{"S":request.form['docStatus']}
-            }
-           )
-        takenUsernames.append(request.form['username'])
-   
-
-        if(request.form['docStatus']=='doctor'):
+    
+    reply = mySQL_apptDB.insertUser(request.form['username'], 
+                            request.form['password'], 
+                            request.form['email'], 
+                            request.form['fname'], 
+                            request.form['lname'], 
+                            docStatus,
+                            cursor, cnx)
+    
+    print(reply)
+    if reply=="success":
+        if(docStatus=='doctor'):
             session['logged_in_d']=True
             session['logged_in_p']=False
         else:
@@ -176,8 +122,48 @@ def new_register():
             session['logged_in_d']=False
         session['username'] = request.form['username']
         session['name'] = request.form['fname']+" "+request.form['lname']
-        
+        print(reply,  session['logged_in_p'],  session['logged_in_d'], session['username'])
         return displayLoggedInHome()
+    elif reply=="bad email or domain":
+        return render_template('register.html',
+                                   errorMsg="Invalid email format or domain.",
+                                    username = request.form['username'],
+                                   password = request.form['password'],
+                                   email = request.form['email'],
+                                   fname = request.form['fname'],
+                                   lname = request.form['lname']
+                                   ) 
+    elif reply=="weak password":
+        return render_template('register.html',
+                                   errorMsg="Password must be min length 8, 1 upper case, and 1 number.",
+                                    username = request.form['username'],
+                                   password = request.form['password'],
+                                   email = request.form['email'],
+                                   fname = request.form['fname'],
+                                   lname = request.form['lname']
+                                   )
+    elif reply=="short name error":
+        return render_template('register.html',
+                                   errorMsg="First and last name must have at least 2 characters.",
+                                    username = request.form['username'],
+                                   password = request.form['password'],
+                                   email = request.form['email'],
+                                   fname = request.form['fname'],
+                                   lname = request.form['lname']
+                                   )
+    elif reply=="bad status specifier":
+        return render_template('register.html',
+                                   errorMsg="Choose Dr or Patient option.",
+                                    username = request.form['username'],
+                                   password = request.form['password'],
+                                   email = request.form['email'],
+                                   fname = request.form['fname'],
+                                   lname = request.form['lname']
+                                   ) 
+    
+
+
+        
 
 @app.route('/usernamecheck', methods=['POST','GET'])
 def usernamecheck():
@@ -274,7 +260,7 @@ def accessDenied():
 def createPg():
     if session['logged_in_p']:
         return accessDenied()
-    listStr = aws_appt.returnAllPatients()
+    listStr = mySQL_apptDB.returnAllPatients(cursor, cnx)
     listStr.sort()
     return render_template('create_mtg.html',
                            errorMsg = "",
@@ -307,16 +293,17 @@ def create_mtg():
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
     #need to ensure that what is entered is either autocorrect, or valid
-    if len(request.form['patientUser'].split(" - "))>1:
-        username = request.form['patientUser'].split(" - ")[0]
-        jsonResp, awsResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], username)
+    try:
+        if len(request.form['patientUser'].split(" - "))>1:
+            username = request.form['patientUser'].split(" - ")[0]
+            jsonResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], username, cursor, cnx)
 #session['username'] == doctor
-    else:
-        jsonResp, awsResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'])
-    date=time[:10]
-    finalStr = ""
-    if awsResp!="Successfully inserted the appt into the database.":
-        listStr = aws_appt.returnAllPatients()
+        else:
+            jsonResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'],cursor, cnx)
+        date=time[:10]
+        finalStr = ""
+    except:    
+        listStr = mySQL_apptDB.returnAllPatients(cursor, cnx)
         listStr.sort()
         return render_template('create_mtg.html',
                                errorMsg = awsResp,
@@ -345,7 +332,7 @@ def create_mtg():
 
 @app.route('/data')
 def return_data():
-    arrOfMtgs =aws_appt.getAllApptsFromUsername(session['username'])
+    arrOfMtgs =mySQL_apptDB.getAllApptsFromUsername(session['username'], cursor, cnx)
     #[{ "title": "Meeting",
     #"start": "2014-09-12T10:30:00-05:00",
     #"end": "2014-09-12T12:30:00-05:00",
@@ -354,8 +341,9 @@ def return_data():
     mtgList = []
     finalStr = ""
     for item in arrOfMtgs:
-        time = str(item.get("start_time"))
-        mtgid = str(item.get("mtgid"))
+        #[mI, mN, sT]
+        time = str(item[2])
+        mtgid = str(item[0])
         if(time[-1]=='Z'):
             time = time[:-1] #takes off the 'z'
         if(len(time[11:].split(":"))>=4): #catches any times with extra :00s
@@ -365,7 +353,7 @@ def return_data():
         if(end_time<=9): #catches any times <9 that would be single digit
             strend = time[:11]+"0"+str(end_time)+time[13:]
         
-        mtgObj = {"title":str(item.get("mtgName")), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
+        mtgObj = {"title":str(item[1]), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
         mtgList.append(mtgObj)
     #BADDDD (change this)
     with open('appts.json', 'w') as outfile:
@@ -376,18 +364,20 @@ def return_data():
 
 @app.route('/showmtgdetail/<mtgid>', methods=['POST','GET'])
 def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
-    jsonResp,awsResp = zoomtest_post.getMtgFromMtgID(str(mtgid))
+    jsonResp = zoomtest_post.getMtgFromMtgID(str(mtgid))
+    apptDetail = mySQL_apptDB.getApptFromMtgId(str(mtgid), cursor, cnx)
+        #(mI, d, p, mN, sT, jU)
     time=str(jsonResp.get("start_time"))
     #split and display
     date=time[:10]
-    docUser = awsResp.get('Item').get('doctor').get('S')
-    patUser = awsResp.get('Item').get('patient').get('S')
+    docUser = apptDetail[1]
+    patUser = apptDetail[2]
     if(session.get('logged_in_p')):
         return render_template('apptDetail.html',
                                mtgnum=mtgid,
                                doctor=docUser,
                                patient = session['username'],
-                               mtgname=str(jsonResp.get("topic")),
+                               mtgname=str(apptDetail[3]),
                                mtgtime=str(time[11:-1]),
                                mtgdate=str(date))
     elif(session.get('logged_in_d')):
@@ -395,7 +385,7 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
                        mtgnum=mtgid,
                        doctor =docUser,
                        patient = patUser,
-                       mtgname=str(jsonResp.get("topic")),
+                       mtgname=str(apptDetail[3]),
                        mtgtime=str(time[11:-1]),
                        mtgdate=str(date))
 
@@ -404,7 +394,7 @@ def editPgFromID():
     mtgid = str(request.form['mtgnum'])
     if session['logged_in_p']:
         return accessDenied()
-    jsonResp, awsResp = zoomtest_post.getMtgFromMtgID(request.form['mtgnum'])
+    jsonResp = zoomtest_post.getMtgFromMtgID(request.form['mtgnum'])
 
     #mtgname, pword, mtgtime, mtgdate
     time=str(jsonResp.get("start_time"))
@@ -424,15 +414,17 @@ def editSubmit():
     if session['logged_in_p']:
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
-    jsonResp = zoomtest_post.updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,str(request.form['password']))
+    jsonResp = zoomtest_post.updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,cursor, cnx)
 
-    jsonResp,awsResp = zoomtest_post.getMtgFromMtgID(str(request.form['mtgnum']))
+    jsonResp= zoomtest_post.getMtgFromMtgID(str(request.form['mtgnum']))
     time=str(jsonResp.get("start_time"))
 
+    apptDetail = mySQL_apptDB.getApptFromMtgId(str(request.form['mtgnum']), cursor, cnx)
+        #(mI, d, p, mN, sT, jU)
     #split and display
     date=time[:10]
-    docUser = awsResp.get('Item').get('doctor').get('S')
-    patUser = awsResp.get('Item').get('patient').get('S')
+    docUser = apptDetail[1]
+    patUser = apptDetail[2]
     return render_template('apptDetailDrOptions.html',
                        mtgnum=str(request.form['mtgnum']),
                        doctor =docUser,
@@ -443,27 +435,29 @@ def editSubmit():
 
 @app.route('/acctdetails', methods=['POST','GET'])
 def acct_details():     
-    response = aws_appt.getAcctFromUsername(str(session['username']))
-    name = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
+    #(u, dS, str(f+" "+l), e, cD)
+    info = mySQL_apptDB.getAcctFromUsername(str(session['username']),cursor, cnx)
     return render_template('ownAcctPg.html', 
-                           username=session['username'],
-                           docstatus=response.get('Item').get('docStatus').get('S'),
-                           nm=name,
-                           email=response.get('Item').get('email').get('S')
+                           username=info[0],
+                           docstatus=info[1],
+                           nm=info[2],
+                           email=info[3],
+                           createDate = info[4]
                            )
 
 @app.route('/acctEditrender/', methods=['POST','GET'])
 def editAcctRender():
-    awsResp = aws_appt.getAcctFromUsername(str(request.form['username']))
+    #(emailAdd,fn, ln,passw)
+    info = mySQL_apptDB.userAcctInfo(str(request.form['username']),cursor, cnx)
     return render_template('editProfile.html',
                            errorMsg="",
                            username=session['username'],
                            pword1="",
                            pwordNew1="",
                            pwordNew2="",
-                           email=awsResp.get('Item').get('email').get('S'),
-                           fname=awsResp.get('Item').get('fname').get('S'),
-                           lname=awsResp.get('Item').get('lname').get('S')
+                           email=info[0],
+                           fname=info[1],
+                           lname=info[2]
                            )
 
 @app.route('/editacct', methods=['POST','GET'])
@@ -471,7 +465,8 @@ def editAcctDetails():
     oldPw = str(request.form['pword1'])
     newPw1 = str(request.form['pwordNew1'])
     newPw2 = str(request.form['pwordNew2'])
-    awsResp = aws_appt.getAcctFromUsername(str(request.form['username']))
+    #(emailAdd,fn, ln,passw)
+    info = mySQL_apptDB.userAcctInfo(str(request.form['username']),cursor, cnx)
     pwUpdate = False
     errMsg=""
     errFlag=False
@@ -480,6 +475,7 @@ def editAcctDetails():
         pwUpdate=False
         print("NO PASSWORD UPDATE")
     else:
+        print("PASSWORD UPDATE")
         policy = PasswordPolicy.from_names(
             length=8,  # min length: 8
             uppercase=1,  # need min. 2 uppercase letters
@@ -490,8 +486,8 @@ def editAcctDetails():
         errMsg=""
         errFlag=False
 #FIRST NEED TO VALIDATE THAT THE OLD PASSWORD IS RIGHT!!!
-        oldPassw = awsResp.get('Item').get('password').get('S')
-        if oldPw!=oldPassw:
+        oldPassw = info[3]
+        if False==(pwd_context.verify(oldPw, oldPassw)):
             errFlag=True
             errMsg="Password entered does not match the acct's password."
         elif oldPw==newPw1 and newPw1==newPw2:
@@ -504,48 +500,52 @@ def editAcctDetails():
         elif len(isEnough):
             errFlag=True
             errMsg="New password must be min length 8, 1 upper case, and 1 number."
-
-    if(errFlag):
+    print(errMsg)
+    if(errMsg!=""):
         return render_template('editProfile.html',
-                           errorMsg=errMsg,
+                           errorMsg="ERROR: "+errMsg,
                            username=session['username'],
                            pword1="",
                            pwordNew1="",
                            pwordNew2="",
-                           email=awsResp.get('Item').get('email').get('S'),
-                           fname=awsResp.get('Item').get('fname').get('S'),
-                           lname=awsResp.get('Item').get('lname').get('S')
+                           email=info[0],
+                           fname=info[1],
+                           lname=info[2]
                            )
     #if the password is fine, check names and email formatting
     if len(request.form['fname'])<2 or len(request.form['lname'])<2:
-        #awsResp = aws_appt.getAcctFromUsername(str(request.form['username']))
         return render_template('editProfile.html',
                            errorMsg="First and last name must have at least 2 characters.",
                            username=session['username'],
                            pword1="",
                            pwordNew1="",
                            pwordNew2="",
-                           email=awsResp.get('Item').get('email').get('S'),
-                           fname=awsResp.get('Item').get('fname').get('S'),
-                           lname=awsResp.get('Item').get('lname').get('S')
+                           email=info[0],
+                           fname=info[1],
+                           lname=info[2]
                            )
     emailAddr=str(request.form['email'])
-    if(len(emailAddr.split("@"))!=2):
+    try:
+        valid = validate_email(emailAddr)
+    except:
         return render_template('editProfile.html',
                            errorMsg="Invalid email address format.",
                            username=session['username'],
                            pword1="",
                            pwordNew1="",
                            pwordNew2="",
-                           email=awsResp.get('Item').get('email').get('S'),
-                           fname=awsResp.get('Item').get('fname').get('S'),
-                           lname=awsResp.get('Item').get('lname').get('S')
+                           email=info[0],
+                           fname=info[1],
+                           lname=info[2]
                            )
+    print("UPDATE CALL")
     #if it's gotten past here, we know password is fine (or not being updated), email is fine, f and l name are fine
     if(pwUpdate==False):
-        response = aws_appt.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], awsResp.get('Item').get('password').get('S'))
+        response = mySQL_apptDB.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], "",cursor, cnx)
+        print("1", response)
     else:
-        response = aws_appt.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], newPw1)
+        response = mySQL_apptDB.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], newPw1,cursor, cnx)
+        print("2", response)
     session['name']=str(request.form['fname'])+" "+str(request.form['lname'])
     return acct_details()
 
@@ -556,18 +556,19 @@ def patientAcct(username):
     ##dr will not be given the option to edit any details
     ##this is where medical details will eventually be rendered
     print("PATIENT USER")
-    response = aws_appt.getAcctFromUsername(str(username))
-    name = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
+    #(u, dS, str(f+" "+l), e, cD)
+    info = mySQL_apptDB.getAcctFromUsername(str(username),cursor, cnx)
     return render_template('patientAcctDetails.html', 
                            username=username,
-                           docstatus=response.get('Item').get('docStatus').get('S'),
-                           nm=name,
-                           email=response.get('Item').get('email').get('S')
+                           docstatus=info[1],
+                           nm=info[2],
+                           email=info[3],
+                           createDate = info[4]
                            )
 
 @app.route('/patients', methods=['POST','GET'])
 def list_patients():
-    listStr = aws_appt.returnAllPatients()
+    listStr = mySQL_apptDB.returnAllPatients(cursor, cnx)
     listStr.sort()
     patientPages = []
     currPg=0
@@ -582,7 +583,7 @@ def search_patients():
 def search_page():
     query = request.form['names']
     if(query==""): #if the form is empty, return all of the usernames
-        listStr = aws_appt.returnAllPatients()
+        listStr = mySQL_apptDB.returnAllPatients(cursor, cnx)
 ##        listStr = ["alpha","beta","chi","delta",
 ##              "eta","epsilon","gamma","iota",
 ##              "kappa", "lambda","mu","nu",
@@ -596,15 +597,16 @@ def search_page():
         #return render_template('picture.html', options=listStr) #THIS
     
     actualUsername = (query.split(" - "))[0] #username - last name, first name
-    response = aws_appt.getAcctFromUsername(actualUsername)
-    if(len(query.split(" - "))==2 and len(response)==2):
+    info = mySQL_apptDB.getAcctFromUsername(actualUsername,cursor, cnx)
+    
+    if(len(query.split(" - "))==2 and mySQL_apptDB.isUsernameTaken(actualUsername,cursor, cnx)):
             #if the username exists and the user used the autocomplete -> take them to the account page directly
-        name = str(response.get('Item').get('fname').get('S'))+" "+str(response.get('Item').get('lname').get('S'))
         return render_template('patientAcctDetails.html', 
-                           username=actualUsername,
-                           docstatus=response.get('Item').get('docStatus').get('S'),
-                           nm=name,
-                           email=response.get('Item').get('email').get('S')
+                            username=info[0],
+                           docstatus=info[1],
+                           nm=info[2],
+                           email=info[3],
+                           createDate = info[4]
                            )
     
     jsonSuggest=[]
@@ -836,13 +838,13 @@ def deletePgNum():
 def deleteMtg():
     if session['logged_in_p']:
         return accessDenied()
-    awsResp = aws_appt.getApptFromMtgId(str(request.form['mtgID']))
-    try:
-        if len(awsResp)>=1:
-            zoomtest_post.deleteMtgFromID(str(request.form['mtgID']))
+   
+    if (mySQL_apptDB.isMeetingIDValid(str(request.form['mtgID']), cursor, cnx)==True):
+        zoomtest_post.deleteMtgFromID(str(request.form['mtgID']), cursor, cnx)
         return render_template('deleteConfirm.html', mtgnum=str(request.form['mtgID']))
-    except:
-        return "NO That is a bad meeting ID, please go back and try again<br><a href='/deleterender'>Delete</a>"
+    else:
+        return deletePg()
+
         
 
 @app.route("/logout", methods=['POST','GET'])
