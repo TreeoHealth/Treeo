@@ -140,7 +140,6 @@ def getNameFromUsername(username, cursor, cnx):
     cursor.execute(query, (username, ))
     for f, l in cursor:
         return str(f+" "+l)
-    return 
 
 def getAcctFromUsername(username, cursor, cnx):
     query = ("SELECT username, fname, lname, docStatus, email, creationDate FROM userTable WHERE username = %s")   

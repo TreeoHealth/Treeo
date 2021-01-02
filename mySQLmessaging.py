@@ -19,6 +19,8 @@ config = {
   'database':'treeohealthdb'
 }
 cnx = mysql.connector.connect(**config)
+tmpcursor = cnx.cursor(buffered=True) #THIS IS TO FIX "Unread result found error"
+tmpcursor.execute("USE treeoHealthDB")
 cursor = cnx.cursor(buffered=True) #THIS IS TO FIX "Unread result found error"
 cursor.execute("USE treeoHealthDB")
 
@@ -647,6 +649,11 @@ def getAllMessagesSent(username):
     msgList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
     return msgList
 
+def testQuery():
+    query = ("SELECT * FROM messageDB M INNER JOIN userTable UT ON M.sender=UT.username")  
+    cursor.execute(query) 
+    for i in cursor:
+        print(i)
 
 def getAllMsgsInConvo(convoID):
 #<MYSQL FUNCTIONAL>
@@ -657,8 +664,8 @@ def getAllMsgsInConvo(convoID):
     convoList = []
     for (send_date, send_time,sender, subject, messageID, msgbody, reciever) in cursor:
         dateWhole = str(send_date + "   " +send_time)
-        send = str(sender+ " - " + mySQL_apptDB.getNameFromUsername(sender,cursor, cnx))
-        recieve = str(reciever+ " - " + mySQL_apptDB.getNameFromUsername(reciever,cursor, cnx))
+        send = str(sender+ " - " + mySQL_apptDB.getNameFromUsername(sender,tmpcursor, cnx))
+        recieve = str(reciever+ " - " + mySQL_apptDB.getNameFromUsername(reciever,tmpcursor, cnx))
         #print(send, recieve)
         convoList.append([dateWhole,messageID,send, recieve, subject, msgbody])
        
@@ -779,10 +786,11 @@ def index():
 #permenantDel("232028501183", "test_send")
 #getAllTrashMessages("test_send")
 #getAllMessagesSent("test_send")
-#getAllMsgsInConvo("232028501183")
+#testQuery()
+#print(getAllMsgsInConvo("134850073356"))
 
-##cursor.close()
-##cnx.close()
+# cursor.close()
+# cnx.close()
 
 if __name__ == '__main__':
    app.secret_key = os.urandom(12)
@@ -851,22 +859,25 @@ if __name__ == '__main__':
 #- DONE :) -change where messaging's dropdown are coming from
 
 #- DONE :) -connect dropdown check to user dtb
-    #WRITE QUERY FOR SELECTIVE RETURNS
-    #when they are a patient user, the dropdown should only have doctors
-    #when they are a doctor user, the dropdown should only be doctors/patients
     
-#incorporate messaging into it
-#FIX MYSQL TIMEOUE ERRORS -- what acct is the server on??
+    
+#- DONE :) -incorporate messaging into it
+
+#FIX MYSQL TIMEOUT ERRORS -- what acct is the server on??
+#include inbox link in nav bar pages
+    #put inbox unread tally icon in nav bar
+#in the function where patients and drs are mixed, figure out how to distinguish them
+    #conditional formatting of the dropdown (CSS)
 
 #Change schema to have a care team assignment
-    #doctor - fn ln un email pw
+    #doctor - fn ln un email pw drtype (dietician/dr/lifes)
     #patient - fn ln un email pw dr1 dr2 dr3
 #make an ADMIN dashboard -- view all unassigned patients
     #-assign 1 dr of each type to unassigned patient
+##WRITE QUERY FOR SELECTIVE RETURNS
+    #when they are a patient user, the dropdown should only have THEIR doctors
+    #when they are a doctor user, the dropdown should only be doctors/patients
     
-
-#in the function where patients and drs are mixed, figure out how to distinguish them
-    #conditional formatting of the dropdown (CSS)
 
 #*--add search bar (mid top)
 #--STYLING 

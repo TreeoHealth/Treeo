@@ -15,9 +15,12 @@
 <h1>Welcome {{name}}</h1>
 <h2>{{docStat}}</h2>
 
+
 <a href="{{ url_for('createPg') }}" class="btn btn-primary btn-large btn-block">Create Meeting</a>
 <br>
 <a href="{{ url_for('deletePg') }}" class="btn btn-primary btn-large btn-block">Delete Meeting</a>
+<br>
+<a href="{{ url_for('openInbox') }}" class="btn btn-primary btn-large btn-block">Inbox</a>
 <br>
 <a href="{{ url_for('show_mtg') }}" class="btn btn-primary btn-large btn-block">Calendar</a>
 <br>

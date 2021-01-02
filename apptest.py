@@ -6,6 +6,8 @@ import json
 import re
 import zoomtest_post
 import password_strength
+import datetime
+from datetime import date, datetime,timezone
 import email_validator
 from email_validator import validate_email, EmailNotValidError, EmailSyntaxError, EmailUndeliverableError
 from password_strength import PasswordPolicy
@@ -30,8 +32,12 @@ config = {
   'database':'treeohealthdb'
 }
 cnx = mysql.connector.connect(**config)
+
+#NOTE: NEED 2 cursors for nested queries!!!
 cursor = cnx.cursor(buffered=True)
 cursor.execute("USE treeoHealthDB")
+tmpcursor = cnx.cursor(buffered=True) #THIS IS TO FIX "Unread result found error"
+tmpcursor.execute("USE treeoHealthDB")
 
 takenUsernames = mySQL_apptDB.returnAllPatients(cursor, cnx)
 patientList = mySQL_apptDB.searchPatientList(cursor, cnx)
@@ -845,7 +851,718 @@ def deleteMtg():
     else:
         return deletePg()
 
+    
+@app.route('/submitEmail', methods=['POST','GET'])
+def formatEmail():
+
+    query = request.form['reciever_username']
+    # insertMessage(request.form['sender_username'],
+    #         request.form['reciever_username'],
+    #         request.form['subject'],
+    #         request.form['email_body'],
+    #               "0"
+    #               )
+    actualUsername = (query.split(" - "))[0] #username - last name, first name
+    response = mySQL_apptDB.getAcctFromUsername(actualUsername, cursor, cnx)
+        #(u, dS, str(f+" "+l), e, cD)
+    if(len(query.split(" - "))==2): #if they chose from dropdown
+       insertMessage(request.form['sender_username'],
+           actualUsername,
+           request.form['subject'],
+           request.form['email_body'],
+                 "0"
+                 )
+    elif(mySQL_apptDB.isUsernameTaken(query, cursor, cnx)): #if it is a raw usern (not from dropdown)
+       insertMessage(request.form['sender_username'],
+           request.form['reciever_username'],
+           request.form['subject'],
+           request.form['email_body'],
+                 "0"
+                 )
+    else: #invalid username
+       return render_template("newEmail.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          sender_username = session['username'],
+                          errorMsg="Please enter a valid user ID",
+                          reciever_username="",
+                          subject = request.form['subject'],
+                          email_body = request.form['email_body'])
+    msgListObj = getAllMessages(session['username'])
+    if(len(msgListObj)==0):
+       return render_template("emptyInbox.html",
+                          inboxUnread ="",
+                          trashUnread = countUnreadInTrash(session['username'])
+                          )
+    else:
+       return openInbox()
+
+@app.route('/submitReplyEmail', methods=['POST','GET'])
+def formatReplyEmail():
+   insertMessage(request.form['sender_username'],
+       request.form['reciever_username'],
+       request.form['subject'],
+       request.form['email_body'],
+       request.form['headMsgID']
+                 )
+   msgListObj = getAllMessages(session['username'])
+   if(len(msgListObj)==0):
+       return render_template("emptyInbox.html",
+                          inboxUnread ="",
+                          trashUnread = countUnreadInTrash(session['username'])
+                          )
+   else:
+       return openInbox()
+
+@app.route('/sentFolder', methods=['POST','GET'])
+def sentFolder():
+    return renderPagedSent(0)
+
+
+def renderPagedSent(pgNum):
+    
+    pageSize = 10
+    msgList = getAllMessagesSent(session['username'])
+    pageNumber = int(pgNum)
+    if(pageNumber<0):
+        pageNumber=0 #first page
+    elif pageNumber>(len(msgList)/pageSize):
+        pageNumber=(len(msgList)/pageSize) #final possible page number
+
+    if(len(msgList)==0): #if the query is empty
+        #return (False, [], False) #no prev, no next
+        return render_template("emptySent.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = ""
+                          )
+    if((pageNumber*pageSize+(pageSize)>=len(msgList)) and pageNumber!=0):  #this is the final page (not not first)
+        #return (True, msgList[pageNumber*pageSize:], False)
+        return render_template("sentBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = False,
+                          noNext = True,
+                          currPageNum = pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:])
+    elif(pageNumber==0 and pageSize<len(msgList)): #this is the first page and there is a next page
+        #return (False, msgList[0:pageSize-1], True)
+        #print("HERE", msgList[0:pageSize])
+        return render_template("sentBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = True,
+                          noNext = False,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = pageSize,
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:pageSize])
+    elif(pageNumber==0): #this is the first and only page
+        #return (False, msgList[0:], False)
+        return render_template("sentBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = True,
+                          noNext = True,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:])
+    else: #there is a prev and next page
+        #return (True, msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize-1)], True)
+        return render_template("sentBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = False,
+                          noNext = False,
+                          currPageNum =pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = pageNumber*pageSize+(pageSize),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize)])
+
+
+@app.route('/trashFolder', methods=['POST','GET'])
+def trashFolder():
+    return renderPagedTrash(0)
+
+def renderPagedTrash(pgNum):
+    
+    pageSize = 10
+    msgList = getAllTrashMessages(session['username'])
+    pageNumber = int(pgNum)
+    if(pageNumber<0):
+        pageNumber=0 #first page
+    elif pageNumber>(len(msgList)/pageSize):
+        pageNumber=(len(msgList)/pageSize) #final possible page number
+
+    if(len(msgList)==0): #if the query is empty
+        #return (False, [], False) #no prev, no next
+        return render_template("emptyTrash.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = ""
+                          )
+    if((pageNumber*pageSize+(pageSize)>=len(msgList)) and pageNumber!=0):  #this is the final page (not not first)
+        #return (True, msgList[pageNumber*pageSize:], False)
+        return render_template("trashBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = False,
+                          noNext = True,
+                          currPageNum = pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:])
+    elif(pageNumber==0 and pageSize<len(msgList)): #this is the first page and there is a next page
+        #return (False, msgList[0:pageSize-1], True)
+        #print("HERE", msgList[0:pageSize])
+        return render_template("trashBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = True,
+                          noNext = False,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = pageSize,
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:pageSize])
+    elif(pageNumber==0): #this is the first and only page
+        #return (False, msgList[0:], False)
+        return render_template("trashBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = True,
+                          noNext = True,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:])
+    else: #there is a prev and next page
+        #return (True, msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize-1)], True)
+        return render_template("trashBox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = False,
+                          noNext = False,
+                          currPageNum =pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = pageNumber*pageSize+(pageSize),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize)])
+
+
+@app.route('/selectOption', methods=['POST','GET'])
+def selectOption():
+    x = ""
+    try:
+       x = str(request.form['prevPg.x'])
+       pageNum = request.form['currPageNum']
+       return getAllMessagesPaged(session['username'], str(int(pageNum)-1))
+       
+    except:
+        try:
+            x = str(request.form['nextPg.x'])
+            pageNum = request.form['currPageNum']
+            return getAllMessagesPaged(session['username'], str(int(pageNum)+1))
+            
+        except:
+            try:
+                x = str(request.form['trash.x'])
+                for check in request.form:
+                    if(str(check)!='trash.x' and str(check)!='trash.y' and str(check)!='selectAll'):
+                        moveToTrash(str(check), session['username'])
+            except:
+                try:
+                    x = str(request.form['mar.x'])
+                    for check in request.form:
+                        if(str(check)!='mar.x' and str(check)!='mar.y' and str(check)!='selectAll'):
+                             markAsRead(str(check))
+                except:
+                    x = str(request.form['mau.x'])
+                    for check in request.form:
+                        if(str(check)!='mau.x' and str(check)!='mau.y' and str(check)!='selectAll'):
+                            markAsUnread(str(check))
+
+    return openInbox()
+
+
+
+def getAllMessagesPaged(username, pgNum): #page to be rendered
+#<MYSQL FUNCTIONAL>
+    pageSize = 10
+
+    query = ("SELECT send_date, send_time, subject, read_status, messageID, sender FROM messageDB "
+             "WHERE reciever = %s AND reciever_loc = %s")  
+    cursor.execute(query, (username,"inbox")) 
+    msgList = []
+    for (send_date, send_time, subject, read_status, messageID, sender) in cursor:
+            if read_status=='unread':
+                msgList.append([str(send_date + " - " +send_time),messageID,sender,send_date,subject,True])
+            else:
+                msgList.append([str(send_date + " - " +send_time),messageID,sender,send_date,subject,False])
+
+    msgList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
+
+
+    pageNumber = int(pgNum)
+    if(pageNumber<0):
+        pageNumber=0 #first page
+    elif pageNumber>(len(msgList)/pageSize):
+        pageNumber=(len(msgList)/pageSize) #final possible page number
+
+    if(len(msgList)==0): #if the query is empty
+        #return (False, [], False) #no prev, no next
+        return render_template("emptyInbox.html",
+                          inboxUnread ="",
+                          trashUnread = countUnreadInTrash(session['username'])
+                          )
+    if((pageNumber*pageSize+(pageSize)>=len(msgList)) and pageNumber!=0):  #this is the final page (not not first)
+        #return (True, msgList[pageNumber*pageSize:], False)
+        return render_template("messageInbox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = False,
+                          noNext = True,
+                          currPageNum = pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:])
+    elif(pageNumber==0 and pageSize<len(msgList)): #this is the first page and there is a next page
+        #return (False, msgList[0:pageSize-1], True)
+        #print("HERE", msgList[0:pageSize])
+        return render_template("messageInbox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = True,
+                          noNext = False,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = pageSize,
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:pageSize])
+    elif(pageNumber==0): #this is the first and only page
+        #return (False, msgList[0:], False)
+        return render_template("messageInbox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = True,
+                          noNext = True,
+                          currPageNum =pgNum,
+                          startEmailNum = 1,
+                          endEmailNum = len(msgList),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[0:])
+    else: #there is a prev and next page
+        #return (True, msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize-1)], True)
+        return render_template("messageInbox.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          noPrev = False,
+                          noNext = False,
+                          currPageNum =pgNum,
+                          startEmailNum = (pageNumber*pageSize)+1,
+                          endEmailNum = pageNumber*pageSize+(pageSize),
+                          totalEmailNum = len(msgList),
+                          msgList=msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize)])
+
+
+@app.route('/selectSent', methods=['POST','GET'])
+def selectSent():
+    try:
+       x = str(request.form['prevPg.x'])
+       pageNum = request.form['currPageNum']
+       return renderPagedSent(str(int(pageNum)-1))
+       
+    except:
+        try:
+            x = str(request.form['nextPg.x'])
+            pageNum = request.form['currPageNum']
+            return renderPagedSent(str(int(pageNum)+1))
+            
+        except:
+            try:
+                x = str(request.form['trash.x'])
+                for check in request.form:
+                    print(check)
+                    if(str(check)!='trash.x' and str(check)!='trash.y'and str(check)!='selectAll'):
+                        moveToTrash(str(check), session['username'])
+                return sentFolder()
+            except:
+                return sentFolder()
+
+
+@app.route("/search/<string:box>")
+def usernameSearch(box):
+   jsonSuggest = []
+   query = request.args.get('query')
+   if(session['docStatus']=='doctor'):
+        listPatients= mySQL_apptDB.allSearchUsers(cursor, cnx)
+   else:
+        listPatients= mySQL_apptDB.searchDoctorList(cursor, cnx)
+   for username in listPatients:
+       if(query in username):
+           jsonSuggest.append({'value':username,'data':username})
+   return jsonify({"suggestions":jsonSuggest})
+
+@app.route('/subjWordCheck', methods=['POST','GET'])
+def subjCheck():
+   text = str(len(request.args.get('jsdata')))
+   text = text + "/50"
+   print(text)
+   return text
+
+@app.route('/bodyWordCheck', methods=['POST','GET'])
+def bodyCheck():
+   text = str(len(request.args.get('jsdata')))
+   text = text + "/600"
+   print(text)
+   return text
+
+
+@app.route('/permTrash', methods=['POST','GET'])
+def emptyTrash():
+    x=""
+    try:
+       x = str(request.form['prevPg.x'])
+       pageNum = request.form['currPageNum']
+       return renderPagedTrash(str(int(pageNum)-1))
+       
+    except:
+        try:
+            x = str(request.form['nextPg.x'])
+            pageNum = request.form['currPageNum']
+            return renderPagedTrash(str(int(pageNum)+1))
+            
+        except:
+            try:
+                x = str(request.form['permdel.x'])
+                for check in request.form:
+                    if(str(check)!='permdel.x' and str(check)!='permdel.y' and str(check)!='selectAll'):
+                        permenantDel(str(check), session['username'])
+            except:
+                x = str(request.form['undotrash.x'])
+                for check in request.form:
+                    if(str(check)!='undotrash.x' and str(check)!='undotrash.y' and str(check)!='selectAll'):
+                        undoTrash(str(check), session['username'])
+
+    return trashFolder()
+
+   
+
+
+def undoTrash(msgID, username):
+    #if it is in the trash and the sender == current username -> move it to sent folder
+    #else move it to inbox
+#<MYSQL FUNCTIONAL>
+    sender_loc='sent_folder'
+    reciever_loc='inbox'
+
+    query = ("SELECT sender, reciever FROM messageDB "
+             "WHERE messageID = %s")  
+    cursor.execute(query, (msgID,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+
+    for (sender, reciever) in cursor:
+        if sender == username:
+            updateFormat = ("UPDATE messageDB SET sender_loc = %s "
+                                "WHERE messageID = %s")
+            cursor.execute(updateFormat, (sender_loc,msgID))
+            cnx.commit()
+        else:
+            updateFormat = ("UPDATE messageDB SET reciever_loc = %s "
+                                "WHERE messageID = %s")
+            cursor.execute(updateFormat, (reciever_loc,msgID))
+            cnx.commit()
+
+
+
+def insertMessage(sender, reciever, subject,body, convoID):
+#<MYSQL FUNCTIONAL>
+    
+    msgID= ""
+    msgID= msgID+str(datetime.now().strftime('%H%M%S'))
+    msgID= msgID+str(datetime.now()).split(".")[1]
+
+    #TODO -- account for convoID 0 or not
+    formatInsert = ("INSERT INTO messageDB "
+                   "(messageID, sender,reciever,subject,"
+                    "msgbody,convoID,send_time,send_date,"
+                    "read_status,sender_loc,reciever_loc,perm_del) "
+                   "VALUES (%s, %s,%s, %s,%s, %s,%s, %s,%s, %s,%s, %s)") #NOTE: use %s even with numbers
+    insertContent = (msgID, sender, reciever, subject,
+                             body, (msgID if convoID == "0" else convoID),
+                             str(datetime.now().strftime('%H:%M:%S')),str(date.today().strftime("%B %d, %Y")),
+                             "unread", "sent_folder", "inbox", "n")
+
+    cursor.execute(formatInsert, insertContent)
+    cnx.commit()
         
+
+@app.route('/newEmail', methods=['POST','GET'])
+def newEmail():
+   return render_template("newEmail.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          sender_username = session['username'],
+                          errorMsg="",
+                          reciever_username="",
+                          subject = "",
+                          email_body = "")
+
+def countUnreadInInbox(username):
+#<MYSQL FUNCTIONAL>
+    query = ("SELECT messageID FROM messageDB "
+             "WHERE reciever = %s AND read_status=%s AND reciever_loc=%s")  
+    cursor.execute(query, (username,'unread','inbox'))
+    unreadNum = 0
+    for (messageID,) in cursor:
+        unreadNum = unreadNum+1
+        
+    if(unreadNum == 0):
+        return ""
+    else:
+        return "("+str(unreadNum)+")"
+
+    
+  
+def countUnreadInTrash(username):
+#<MYSQL FUNCTIONAL>
+    query = ("SELECT messageID FROM messageDB "
+             "WHERE reciever = %s AND read_status=%s AND reciever_loc=%s")  
+    cursor.execute(query, (username,'unread','trash'))
+    unreadNum = 0
+    for (messageID,) in cursor:
+        unreadNum = unreadNum+1
+        
+    if(unreadNum == 0):
+        return ""
+    else:
+        return "("+str(unreadNum)+")"
+
+
+def markAsRead(msgID):
+#<MYSQL FUNCTIONAL>
+    try:
+        read_status='read'
+        updateFormat = ("UPDATE messageDB SET read_status = %s "
+                                "WHERE messageID = %s")
+        cursor.execute(updateFormat, (read_status,msgID))
+        cnx.commit()
+
+    except:
+        
+        return "ERROR. Could not mark as read."
+
+
+    
+
+def markAsUnread(msgID):
+#<MYSQL FUNCTIONAL>
+    try:
+        read_status='unread'
+        updateFormat = ("UPDATE messageDB SET read_status = %s "
+                                "WHERE messageID = %s")
+        cursor.execute(updateFormat, (read_status,msgID))
+        cnx.commit()
+        
+    except:
+        return "ERROR. Could not mark as unread."
+    
+
+def permenantDel(msgID, del_username):
+#<MYSQL FUNCITIONAL>
+    query = ("SELECT sender, reciever, perm_del FROM messageDB "
+             "WHERE messageID = %s")  
+    cursor.execute(query, (msgID,))
+    perm_del = "n"
+    for (sender, reciever, perm_del) in cursor:
+        if sender == del_username and perm_del=='n':
+            perm_del = 's'
+        elif sender == del_username and perm_del=='r':
+            perm_del = 'sr'
+        elif reciever == del_username and perm_del=='n':
+            perm_del = 'r'
+        elif reciever == del_username and perm_del=='s':
+            perm_del = 'sr'
+        else:
+            perm_del = 'n'
+
+        if perm_del == 'sr':    
+            delete_test = (
+                "DELETE FROM messageDB " #table name NOT db name
+                "WHERE messageID = %s")
+            cursor.execute(delete_test, (msgID,))
+            cnx.commit()
+        else:
+            updateFormat = ("UPDATE messageDB SET perm_del = %s "
+                                "WHERE messageID = %s")
+            cursor.execute(updateFormat, (perm_del,msgID))
+            cnx.commit()
+
+    
+def moveToTrash(msgID, del_username):
+#<MYSQL FUNCTIONAL>
+    sender_loc='trash'
+    reciever_loc='trash'
+
+    query = ("SELECT sender, reciever FROM messageDB "
+             "WHERE messageID = %s")  
+    cursor.execute(query, (msgID,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+
+    for (sender, reciever) in cursor:
+        if sender == del_username:
+            updateFormat = ("UPDATE messageDB SET sender_loc = %s "
+                                "WHERE messageID = %s")
+            cursor.execute(updateFormat, (sender_loc,msgID))
+            cnx.commit()
+        else:
+            updateFormat = ("UPDATE messageDB SET reciever_loc = %s "
+                                "WHERE messageID = %s")
+            cursor.execute(updateFormat, (reciever_loc,msgID))
+            cnx.commit()
+
+
+def getAllTrashMessages(username):
+#<MYSQL FUNCTIONAL>
+    query = ("SELECT send_date, send_time,read_status, reciever_loc,subject, perm_del, messageID, sender, sender_loc, reciever FROM messageDB "
+             "WHERE reciever = %s OR sender = %s")  
+    cursor.execute(query, (username,username)) 
+
+    trashList = []
+    for (send_date, send_time,read_status, reciever_loc, subject, perm_del, messageID, sender, sender_loc, reciever) in cursor:
+        dateWhole = str(send_date+ " - " +send_time)
+        if (reciever==username and reciever_loc=='trash' and perm_del!='r' ) or (sender==username and sender_loc=='trash' and perm_del!='s'):
+           if(reciever==username and read_status=='unread'):
+               trashList.append([dateWhole,messageID,"",sender,send_date,subject,True])
+           elif(sender==username):
+               trashList.append([dateWhole, messageID,"To:",reciever,send_date,subject,False])
+           else:
+               trashList.append([dateWhole,messageID,"",sender,send_date,subject,False])
+    trashList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
+    return trashList
+
+
+def getAllMessages(username):
+#<MYSQL FUNCTIONAL>
+    query = ("SELECT send_date, send_time, subject, read_status, messageID, sender FROM messageDB "
+             "WHERE reciever = %s AND reciever_loc = %s")  
+    cursor.execute(query, (username,"inbox")) 
+    msgList = []
+    #NOTE: bc messageInbox.html is implemented with spans, spaces can't be printed, so we left the username displayed
+    for (send_date, send_time, subject, read_status, messageID, sender) in cursor:
+            if read_status=='unread':
+                msgList.append([str(send_date + " - " +send_time),messageID,sender,send_date,subject,True])
+            else:
+                msgList.append([str(send_date + " - " +send_time),messageID,sender,send_date,subject,False])
+
+    msgList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
+    return msgList
+
+
+def getAllMessagesSent(username):
+#<MYSQL FUNCTIONAL>
+    query = ("SELECT send_date, send_time, subject, messageID, reciever FROM messageDB "
+             "WHERE sender = %s AND sender_loc = %s")  
+    cursor.execute(query, (username,"sent_folder")) 
+    msgList = []
+    for (send_date, send_time, subject, messageID, reciever) in cursor:
+        msgList.append([str(send_date + " - " +send_time),messageID,"To:",reciever,send_date,subject])
+
+    msgList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
+    return msgList
+
+
+def getAllMsgsInConvo(convoID):
+    query = ("SELECT send_date, send_time,sender, subject, messageID, msgbody, reciever FROM messageDB "
+             "WHERE convoID = %s")  
+    cursor.execute(query, (convoID,)) 
+
+    convoList = []
+    for (send_date, send_time,sender, subject, messageID, msgbody, reciever) in cursor:
+        dateWhole = str(send_date + "   " +send_time)
+        send = str(sender+ " - " + mySQL_apptDB.getNameFromUsername(sender,tmpcursor, cnx))
+        recieve = str(reciever+ " - " + mySQL_apptDB.getNameFromUsername(reciever,tmpcursor, cnx))
+        #print(send, recieve)
+        convoList.append([dateWhole,messageID,send, recieve, subject, msgbody])
+       
+    convoList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y   %H:%M:%S"))
+    return convoList
+
+
+
+
+@app.route('/msg/<msgid>', methods=['POST','GET'])
+def openMsg(msgid):
+#<TEST MYSQL>
+    query = ("SELECT sender, reciever, sender_loc, reciever_loc, convoID FROM messageDB "
+             "WHERE messageID = %s")  
+    cursor.execute(query, (msgid,))
+    for (sender, reciever, sender_loc, reciever_loc, convoID) in cursor:
+        if(reciever==session['username']):
+            markAsRead(msgid)
+        convoList=getAllMsgsInConvo(convoID)
+        if(reciever == session['username'] and reciever_loc=='inbox'):
+            return render_template("msgInfo.html",
+                                  inbox = True,sent = False,trashbox=False,
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                              headMsgID = convoID,
+                              msgList=convoList,
+                                  targetmId = str(msgid)
+                              )
+        elif(sender_loc == 'trash' or reciever_loc=='trash'):
+            return render_template("msgInfo.html",
+                                  inbox = False,sent = False,trashbox=True,
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                              headMsgID = convoID,
+                              msgList=convoList,
+                                  targetmId = str(msgid)
+                              )
+        else:
+            return render_template("msgInfo.html",
+                                  inbox = False,sent = True,trashbox=False,
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                              headMsgID = convoID,
+                              msgList=convoList,
+                                  targetmId = str(msgid)
+                              )
+
+@app.route('/reply', methods=['POST','GET'])
+def reply():
+#<TEST MYSQL>
+    convoID =request.form['headMsgID']
+    query = ("SELECT sender, reciever, subject FROM messageDB "
+             "WHERE messageID = %s")  
+    cursor.execute(query, (convoID,))
+    subj = ""
+    for (sender, reciever, subject) in cursor:
+        if("re: " in subject):
+            subj = subject
+        else:
+            subj = "re: "+subject
+    print(subj)
+    originalReciever = reciever
+    originalSender = sender
+
+    return render_template("replyEmail.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          headMsgID=convoID,
+                          sender_username = session['username'],
+                          reciever_username=(originalReciever if originalSender == session['username'] else originalSender),
+                          subject = subj,
+                          email_body = "")
+@app.route('/inbox')
+def openInbox():
+   return getAllMessagesPaged(session['username'],"0")
 
 @app.route("/logout", methods=['POST','GET'])
 def logout():

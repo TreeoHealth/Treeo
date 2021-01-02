@@ -15,6 +15,7 @@ header {
   position: relative;
   width: 80%;
   height: 100px;
+  margin-bottom: -10px;
 }
 
 header h1 {
@@ -253,6 +254,18 @@ font-size: 12px;
 	padding: 2px;
   margin:2px;
 
+}
+.inboxnav
+{
+text-align: center;
+margin-top: -25px;
+font-size: medium;
+}
+.inboxnav a {
+  text-decoration:none;
+  color:rgb(255, 255, 255);
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .prevBtn
