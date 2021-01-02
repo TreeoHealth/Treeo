@@ -306,7 +306,7 @@ def create_mtg():
         listStr = mySQL_apptDB.returnAllPatients(cursor, cnx)
         listStr.sort()
         return render_template('create_mtg.html',
-                               errorMsg = awsResp,
+                               errorMsg = "ERROR. Could not create meeting.",
                                options=listStr)
 #ADD PATIENT FIELD
     

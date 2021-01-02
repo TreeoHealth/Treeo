@@ -4,7 +4,7 @@ import json
 import datetime
 from datetime import date, datetime,timezone
 import time
-import aws_appt
+import mySQL_apptDB
 
 import mysql.connector
 from mysql.connector import errorcode
@@ -19,44 +19,45 @@ config = {
   'database':'treeohealthdb'
 }
 cnx = mysql.connector.connect(**config)
-cursor = cnx.cursor()
+cursor = cnx.cursor(buffered=True) #THIS IS TO FIX "Unread result found error"
 cursor.execute("USE treeoHealthDB")
 
 @app.route('/submitEmail', methods=['POST','GET'])
 def formatEmail():
 
     query = request.form['reciever_username']
-    insertMessage(request.form['sender_username'],
-            request.form['reciever_username'],
-            request.form['subject'],
-            request.form['email_body'],
-                  "0"
-                  )
-#    actualUsername = (query.split(" - "))[0] #username - last name, first name
-#    response = aws_appt.getAcctFromUsername(actualUsername)
-#    if(len(query.split(" - "))==2 and len(response)==2):
-#        insertMessage(request.form['sender_username'],
-#            actualUsername,
-#            request.form['subject'],
-#            request.form['email_body'],
-#                  "0"
-#                  )
-#    elif(len(aws_appt.getAcctFromUsername(query))==2):
-#        insertMessage(request.form['sender_username'],
-#            request.form['reciever_username'],
-#            request.form['subject'],
-#            request.form['email_body'],
-#                  "0"
-#                  )
-#    else:
-#        return render_template("newEmail.html",
-#                           inboxUnread =countUnreadInInbox(session['username']),
-#                           trashUnread = countUnreadInTrash(session['username']),
-#                           sender_username = session['username'],
-#                           errorMsg="Please enter a valid user ID",
-#                           reciever_username="",
-#                           subject = request.form['subject'],
-#                           email_body = request.form['email_body'])
+    # insertMessage(request.form['sender_username'],
+    #         request.form['reciever_username'],
+    #         request.form['subject'],
+    #         request.form['email_body'],
+    #               "0"
+    #               )
+    actualUsername = (query.split(" - "))[0] #username - last name, first name
+    response = mySQL_apptDB.getAcctFromUsername(actualUsername, cursor, cnx)
+        #(u, dS, str(f+" "+l), e, cD)
+    if(len(query.split(" - "))==2): #if they chose from dropdown
+       insertMessage(request.form['sender_username'],
+           actualUsername,
+           request.form['subject'],
+           request.form['email_body'],
+                 "0"
+                 )
+    elif(mySQL_apptDB.isUsernameTaken(query, cursor, cnx)): #if it is a raw usern (not from dropdown)
+       insertMessage(request.form['sender_username'],
+           request.form['reciever_username'],
+           request.form['subject'],
+           request.form['email_body'],
+                 "0"
+                 )
+    else: #invalid username
+       return render_template("newEmail.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          sender_username = session['username'],
+                          errorMsg="Please enter a valid user ID",
+                          reciever_username="",
+                          subject = request.form['subject'],
+                          email_body = request.form['email_body'])
     msgListObj = getAllMessages(session['username'])
     if(len(msgListObj)==0):
        return render_template("emptyInbox.html",
@@ -371,7 +372,10 @@ def selectSent():
 def process(box):
    jsonSuggest = []
    query = request.args.get('query')
-   listPatients= aws_appt.searchPatientList()
+   if(session['docStatus']=='doctor'):
+        listPatients= mySQL_apptDB.allSearchUsers(cursor, cnx)
+   else:
+        listPatients= mySQL_apptDB.searchDoctorList(cursor, cnx)
    for username in listPatients:
        if(query in username):
            jsonSuggest.append({'value':username,'data':username})
@@ -620,6 +624,7 @@ def getAllMessages(username):
              "WHERE reciever = %s AND reciever_loc = %s")  
     cursor.execute(query, (username,"inbox")) 
     msgList = []
+    #NOTE: bc messageInbox.html is implemented with spans, spaces can't be printed, so we left the username displayed
     for (send_date, send_time, subject, read_status, messageID, sender) in cursor:
             if read_status=='unread':
                 msgList.append([str(send_date + " - " +send_time),messageID,sender,send_date,subject,True])
@@ -652,7 +657,10 @@ def getAllMsgsInConvo(convoID):
     convoList = []
     for (send_date, send_time,sender, subject, messageID, msgbody, reciever) in cursor:
         dateWhole = str(send_date + "   " +send_time)
-        convoList.append([dateWhole,messageID,sender, reciever, subject, msgbody])
+        send = str(sender+ " - " + mySQL_apptDB.getNameFromUsername(sender,cursor, cnx))
+        recieve = str(reciever+ " - " + mySQL_apptDB.getNameFromUsername(reciever,cursor, cnx))
+        #print(send, recieve)
+        convoList.append([dateWhole,messageID,send, recieve, subject, msgbody])
        
     convoList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y   %H:%M:%S"))
     return convoList
@@ -738,16 +746,19 @@ def openInbox():
 @app.route('/u1')
 def user1():
    session['username'] = "first_user"
+   session['docStatus'] = 'patient'
    return openInbox()
 
 @app.route('/u2')
 def user2():
    session['username'] = "second_user"
+   session['docStatus'] = 'doctor'
    return openInbox()
 
 @app.route('/u3')
 def user3():
    session['username'] = "third_user"
+   session['docStatus'] = 'patient'
    return openInbox()
 
 
@@ -835,15 +846,32 @@ if __name__ == '__main__':
 #- DONE :) -incorporate paging into trash
 #- DONE :) -incorporate into sent
 
-#*--add search bar (mid top)
 
-#--STYLING 
+#- DONE :) -#do dropdown styling of messaging 
+#- DONE :) -change where messaging's dropdown are coming from
 
-#REMOTE AZURE CONNECTION IN ALL BELOW IMPLEMENTATION
-#change all aws to mysql queries
-#change all aws dependency in zoom post and apptest
-#incorporate messaging into it
-#connect dropdown check to user dtb
+#- DONE :) -connect dropdown check to user dtb
     #WRITE QUERY FOR SELECTIVE RETURNS
     #when they are a patient user, the dropdown should only have doctors
     #when they are a doctor user, the dropdown should only be doctors/patients
+    
+#incorporate messaging into it
+#FIX MYSQL TIMEOUE ERRORS -- what acct is the server on??
+
+#Change schema to have a care team assignment
+    #doctor - fn ln un email pw
+    #patient - fn ln un email pw dr1 dr2 dr3
+#make an ADMIN dashboard -- view all unassigned patients
+    #-assign 1 dr of each type to unassigned patient
+    
+
+#in the function where patients and drs are mixed, figure out how to distinguish them
+    #conditional formatting of the dropdown (CSS)
+
+#*--add search bar (mid top)
+#--STYLING 
+
+#- DONE :) -REMOTE AZURE CONNECTION IN ALL BELOW IMPLEMENTATION
+#- DONE :) -change all aws to mysql queries
+#- DONE :) -change all aws dependency in zoom post and apptest
+

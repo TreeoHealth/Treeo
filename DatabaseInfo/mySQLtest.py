@@ -30,18 +30,48 @@ else:
 
 DB_NAME = 'treeoHealthDB'
 cursor.execute("USE {}".format(DB_NAME))
-cursor.execute("DROP TABLE IF EXISTS apptTable;")
+# cursor.execute("DROP TABLE IF EXISTS userTable;")
+cursor.execute("DROP TABLE IF EXISTS doctorTable;")
+cursor.execute("DROP TABLE IF EXISTS patientTable;")
 print("Finished dropping table (if existed).")
-cursor.execute("CREATE TABLE apptTable ("
-       "  mtgID varchar(30) NOT NULL,"
-       "  doctor varchar(50) NOT NULL,"
-       "  patient varchar(50) NOT NULL,"
-       "  mtgName varchar(150) NOT NULL,"
-       "  startTime varchar(40) NOT NULL,"
-       "  joinURL varchar(300) NOT NULL,"
-       "  PRIMARY KEY (mtgID), UNIQUE KEY mtgID (mtgID)"
+
+cursor.execute("CREATE TABLE doctorTable ("
+       "  username varchar(30) NOT NULL,"
+       "  password varchar(100) NOT NULL,"
+       "  email varchar(50) NOT NULL,"
+       "  fname varchar(30) NOT NULL,"
+       "  lname varchar(30) NOT NULL,"
+       "  creationDate varchar(50) NOT NULL,"
+       "  PRIMARY KEY (username), UNIQUE KEY username (username)"
        ") ENGINE=InnoDB"
    )
+cursor.execute("CREATE TABLE patientTable ("
+       "  username varchar(30) NOT NULL,"
+       "  password varchar(100) NOT NULL,"
+       "  email varchar(50) NOT NULL,"
+       "  fname varchar(30) NOT NULL,"
+       "  lname varchar(30) NOT NULL,"
+       "  creationDate varchar(50) NOT NULL,"
+       "  drOne varchar(50) NOT NULL,"
+       "  drTwo varchar(50) NOT NULL,"
+       "  drThree varchar(50) NOT NULL,"
+       "  PRIMARY KEY (username), UNIQUE KEY username (username)"
+       ") ENGINE=InnoDB"
+   )
+
+
+# cursor.execute("DROP TABLE IF EXISTS apptTable;")
+# print("Finished dropping table (if existed).")
+# cursor.execute("CREATE TABLE apptTable ("
+#        "  mtgID varchar(30) NOT NULL,"
+#        "  doctor varchar(50) NOT NULL,"
+#        "  patient varchar(50) NOT NULL,"
+#        "  mtgName varchar(150) NOT NULL,"
+#        "  startTime varchar(40) NOT NULL,"
+#        "  joinURL varchar(300) NOT NULL,"
+#        "  PRIMARY KEY (mtgID), UNIQUE KEY mtgID (mtgID)"
+#        ") ENGINE=InnoDB"
+#    )
 # print("Finished creating table.")
 # formatInsert = ("INSERT INTO messageDB "
 #                    "(messageID, sender,reciever,subject,"

@@ -231,6 +231,15 @@ font-size: 12px;
   position: absolute;
 }
 
+.autocomplete-suggestions
+{
+	background-color: #ECF0F1;
+}
+
+.autocomplete-suggestion:hover
+{
+	background-color: #8f8f8f;
+}
 
 .nextBtn
 {

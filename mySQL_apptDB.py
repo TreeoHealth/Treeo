@@ -111,6 +111,20 @@ def searchPatientList(cursor, cnx):
             patientArr.append(tmp)
     return patientArr
 
+def allSearchUsers(cursor, cnx):
+    query = ("SELECT username, fname, lname FROM userTable")         #BETWEEN %s AND %s")
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    nameArr = []
+    for un,fn,ln in cursor:
+        tmp = str(un+" - "+ln+", "+fn)
+        nameArr.append(tmp)
+    return nameArr
+
+def careTeamOfUser(username, cursor, cnx):
+    nameArr = []
+    
+    return nameArr
+
 def searchDoctorList(cursor, cnx):
     query = ("SELECT username, fname, lname, docStatus FROM userTable")         #BETWEEN %s AND %s")
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
@@ -120,6 +134,13 @@ def searchDoctorList(cursor, cnx):
             tmp = str(un+" - "+ln+", "+fn)
             docArr.append(tmp)
     return docArr
+
+def getNameFromUsername(username, cursor, cnx):
+    query = ("SELECT fname, lname FROM userTable WHERE username = %s")   
+    cursor.execute(query, (username, ))
+    for f, l in cursor:
+        return str(f+" "+l)
+    return 
 
 def getAcctFromUsername(username, cursor, cnx):
     query = ("SELECT username, fname, lname, docStatus, email, creationDate FROM userTable WHERE username = %s")   

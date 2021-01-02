@@ -21,10 +21,10 @@
 {%for date, mID, sender_username, reciever_username, subject, email_body in msgList%}
 <div class = "msgDetail" id = "{{mID}}">
 <label >FROM: </label>
-<input  readonly type="text"name = "sender_username" value = {{sender_username}}>
+<input  readonly type="text"name = "sender_username" value = "{{sender_username}}" size = "50">
 <br><br>
 <label >TO: </label>
-<input readonly type="text" name = "reciever_username" value={{reciever_username}}>
+<input readonly type="text" name = "reciever_username" value="{{reciever_username}}" size = "50">
 <br><br>
 <label >SUBJECT: </label>
 <input  readonly type="text" size = "50" name = "subject" value="{{subject}}" ><input style = "margin-left:120px;text-align:center;color:#b0b0b0;" readonly size = "27" type="text" name = "timestamp" value="{{date}}" >
