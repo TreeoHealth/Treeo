@@ -60,7 +60,10 @@ def home():
 def displayLoggedInHome():
     if(session.get('logged_in_d')):
         docStatus = 'doctor'
-        return render_template('homePageDr.html',docStat = docStatus,name=session['name'])
+        return render_template('homePageDr.html',
+                               docStat = docStatus,
+                               docType= mySQL_apptDB.getDrTypeOfAcct(session['username'], cursor, cnx),
+                               name=session['name'])
     else:
         docStatus = 'patient'
         return render_template('homePage.html',docStat = docStatus,name=session['name'])
@@ -94,12 +97,6 @@ def regPg():
 
 @app.route('/register', methods=['POST','GET'])
 def new_register():
-    docStatus = ""
-    try:
-        docStatus=request.form['docStatus']
-    except:
-        docStatus='patient'
-    
     if(mySQL_apptDB.isUsernameTaken(request.form['username'],cursor, cnx)):
         return render_template('register.html',
                                errorMsg="Username is already taken. Please use a different one.",
@@ -109,14 +106,34 @@ def new_register():
                                fname = request.form['fname'],
                                lname = request.form['lname']
                                )
-    
-    reply = mySQL_apptDB.insertUser(request.form['username'], 
+        
+        
+    docStatus = ""
+    try:
+        docStatus=request.form['docStatus']
+    except:
+        docStatus='patient'
+    docType=""
+    reply = ""
+    if(docStatus!='patient'):
+        docType = request.form['drType']
+        reply = mySQL_apptDB.insertDoctor(request.form['username'], 
                             request.form['password'], 
                             request.form['email'], 
                             request.form['fname'], 
                             request.form['lname'], 
-                            docStatus,
+                            docType,
                             cursor, cnx)
+    else:
+        reply = mySQL_apptDB.insertPatient(request.form['username'], 
+                            request.form['password'], 
+                            request.form['email'], 
+                            request.form['fname'], 
+                            request.form['lname'], 
+                            cursor, cnx)
+    
+    
+    
     
     print(reply)
     if reply=="success":
@@ -286,7 +303,7 @@ def createWithUsername(username):
 def createUserSearch():
     jsonSuggest = []
     query = request.args.get('query')
-    listPatients=patientList#takenUsernames
+    listPatients=mySQL_apptDB.searchPatientList(cursor, cnx)
     for username in listPatients:
         if(query in username):
             jsonSuggest.append({'value':username,'data':username.split(" - ")[0]})#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
@@ -445,7 +462,7 @@ def acct_details():
     info = mySQL_apptDB.getAcctFromUsername(str(session['username']),cursor, cnx)
     return render_template('ownAcctPg.html', 
                            username=info[0],
-                           docstatus=info[1],
+                           docstatus= (info[1] if info[1] == 'patient' else str(info[1]+" - "+mySQL_apptDB.getDrTypeOfAcct(session['username'], cursor, cnx))),
                            nm=info[2],
                            email=info[3],
                            createDate = info[4]
@@ -1202,7 +1219,7 @@ def selectSent():
 def usernameSearch(box):
    jsonSuggest = []
    query = request.args.get('query')
-   if(session['docStatus']=='doctor'):
+   if(session['logged_in_d']==True):
         listPatients= mySQL_apptDB.allSearchUsers(cursor, cnx)
    else:
         listPatients= mySQL_apptDB.searchDoctorList(cursor, cnx)

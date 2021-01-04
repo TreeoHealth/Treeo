@@ -35,7 +35,12 @@
 
 <input type="radio" name="docStatus" value="doctor">
 <label for="doctor">Doctor</label><br>
-<input type="radio" name="docStatus" value="patient">
+<select name="drType">
+  <option value="dietician"></option>
+  <option value="physician"></option>
+  <option value="lifecoach"></option>
+</select>
+<input type="radio" selected name="docStatus" value="patient">
 <label for="patient">Patient</label><br>
 
 <input type="submit" value="Register" id = "myBtn" class="btn btn-primary btn-large btn-block">

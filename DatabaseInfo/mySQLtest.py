@@ -30,7 +30,7 @@ else:
 
 DB_NAME = 'treeoHealthDB'
 cursor.execute("USE {}".format(DB_NAME))
-# cursor.execute("DROP TABLE IF EXISTS userTable;")
+cursor.execute("DROP TABLE IF EXISTS userTable;")
 cursor.execute("DROP TABLE IF EXISTS doctorTable;")
 cursor.execute("DROP TABLE IF EXISTS patientTable;")
 print("Finished dropping table (if existed).")
@@ -41,6 +41,7 @@ cursor.execute("CREATE TABLE doctorTable ("
        "  email varchar(50) NOT NULL,"
        "  fname varchar(30) NOT NULL,"
        "  lname varchar(30) NOT NULL,"
+       "  drType varchar(30) NOT NULL,"
        "  creationDate varchar(50) NOT NULL,"
        "  PRIMARY KEY (username), UNIQUE KEY username (username)"
        ") ENGINE=InnoDB"

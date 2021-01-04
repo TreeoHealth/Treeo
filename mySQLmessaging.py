@@ -869,10 +869,16 @@ if __name__ == '__main__':
 #in the function where patients and drs are mixed, figure out how to distinguish them
     #conditional formatting of the dropdown (CSS)
 
-#Change schema to have a care team assignment
-    #doctor - fn ln un email pw drtype (dietician/dr/lifes)
-    #patient - fn ln un email pw dr1 dr2 dr3
-#make an ADMIN dashboard -- view all unassigned patients
+#- DONE :) -Change schema to have a care team assignment
+    #- DONE :) -doctor - fn ln un email pw drtype (dietician/dr/lifes)
+    #- DONE :) -patient - fn ln un email pw dr1 dr2 dr3
+    #- DONE :) -change queries in mySQL_apptDB to check both for login/validity/etc
+    #- DONE :) -change info (dr vs patient) -- name
+    #- DONE :) -change search users list functions
+    #- DONE :) -add/delete user (split into dr/patient)
+    #- DONE :) -other etc. utility functions
+#--TEST ALL ABOVE FUNCTIONALITY (via apptest.py) + DEBUG
+#--make an ADMIN dashboard -- view all unassigned patients
     #-assign 1 dr of each type to unassigned patient
 ##WRITE QUERY FOR SELECTIVE RETURNS
     #when they are a patient user, the dropdown should only have THEIR doctors
@@ -881,6 +887,7 @@ if __name__ == '__main__':
 
 #*--add search bar (mid top)
 #--STYLING 
+#--redo msgDB schema with FK to user tables
 
 #- DONE :) -REMOTE AZURE CONNECTION IN ALL BELOW IMPLEMENTATION
 #- DONE :) -change all aws to mysql queries
