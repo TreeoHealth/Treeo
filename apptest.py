@@ -626,7 +626,6 @@ def search_page():
             #if the username exists and the user used the autocomplete -> take them to the account page directly
         return render_template('patientAcctDetails.html', 
                             username=info[0],
-                           docstatus=info[1],
                            nm=info[2],
                            email=info[3],
                            createDate = info[4]
@@ -902,6 +901,7 @@ def formatEmail():
                           trashUnread = countUnreadInTrash(session['username']),
                           sender_username = session['username'],
                           errorMsg="Please enter a valid user ID",
+                          userNotif = "",
                           reciever_username="",
                           subject = request.form['subject'],
                           email_body = request.form['email_body'])
@@ -1215,14 +1215,15 @@ def selectSent():
                 return sentFolder()
 
 
-@app.route("/search/<string:box>")
+@app.route("/emailsearch/<string:box>")
 def usernameSearch(box):
    jsonSuggest = []
    query = request.args.get('query')
+   listPatients=[]
    if(session['logged_in_d']==True):
         listPatients= mySQL_apptDB.allSearchUsers(cursor, cnx)
    else:
-        listPatients= mySQL_apptDB.searchDoctorList(cursor, cnx)
+        listPatients= mySQL_apptDB.getCareTeamOfUser(session['username'],cursor, cnx)
    for username in listPatients:
        if(query in username):
            jsonSuggest.append({'value':username,'data':username})
@@ -1323,11 +1324,24 @@ def insertMessage(sender, reciever, subject,body, convoID):
 
 @app.route('/newEmail', methods=['POST','GET'])
 def newEmail():
-   return render_template("newEmail.html",
+    if(session['logged_in_p']==True):
+        unassigned = mySQL_apptDB.getAllUnassignedPatients(cursor, cnx)
+        if(session['username'] in unassigned):
+            return render_template("newEmail.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
                           sender_username = session['username'],
                           errorMsg="",
+                          userNotif = "NOTE: your care team has not been assigned, so you can only message the help account",
+                          reciever_username="",
+                          subject = "",
+                          email_body = "")
+    return render_template("newEmail.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          sender_username = session['username'],
+                          errorMsg="",
+                          userNotif = "",
                           reciever_username="",
                           subject = "",
                           email_body = "")

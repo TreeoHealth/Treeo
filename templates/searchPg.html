@@ -8,19 +8,20 @@
 <link rel="stylesheet" href="/static/style.css" type="text/css">
 <!--&#123;% block body %&#125;-->
 <div id="wrapper">
-<div id = "navwrapper">
-<nav> 
-	&nbsp;<a href="{{ url_for('home') }}">Home</a>
-	<a href="{{ url_for('show_mtg') }}">Calendar</a>
-	<a href="{{ url_for('acct_details') }}">Account Details</a>
-	<a href="{{ url_for('logout') }}">Logout</a>
-</nav>
-</div>
+  <div class="navwrapper">
+    <nav> 
+      &nbsp;<a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('show_mtg') }}">Calendar</a>
+      <a href="{{ url_for('acct_details') }}">Account Details</a>
+      <a href="{{ url_for('openInbox') }}">Inbox</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    </div>
 
 <form action="/searchResult" method="POST">
 <div class="login">
 <div class="login-screen">
-<input class="login-field" type="text" name="names" id="autocomplete1"/>
+<input class="login-field-search" type="text" name="names" id="autocomplete1"/>
 <input type="submit" value="Search" class="btn btn-primary btn-large btn-block">
 
 </div>

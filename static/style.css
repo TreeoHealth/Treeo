@@ -51,6 +51,12 @@ color: #777;
 .login-form {
 text-align: center;
 }
+
+.login-field-search {
+	margin:6px;
+	margin-bottom: 10px;
+}
+
 .control-group {
 margin-bottom: 10px;
 }
@@ -78,6 +84,13 @@ border: 2px solid #3498DB;
 box-shadow: none;
 }
 
+#navwrapper
+{
+	border:2px solid #C5C6C7;
+	padding:3px;
+	background-color:#0B0C10;
+	background-image:none;
+}
 #navwrapper nav a
 {
 	text-decoration:none;
@@ -97,12 +110,46 @@ box-shadow: none;
 	color:#45A29E;
 }
 
-#navwrapper
+.navwrapper
 {
 	border:2px solid #C5C6C7;
 	padding:3px;
 	background-color:#0B0C10;
 	background-image:none;
+}
+
+.navwrapper nav a
+{
+	text-decoration:none;
+	/*border:2px solid #C5C6C7;*/
+	padding:3px;
+	color:white;
+	
+}
+
+.navwrapper nav a:hover
+{
+	color:white;
+}
+
+.navwrapper nav a:visited
+{
+	color:#45A29E;
+}
+
+.wrapper
+{
+	border:1px solid white;
+	min-width:700px;
+	max-width:1024px;
+	box-shadow: 5px 5px #828282;
+	background-image:none;
+	background-color:#7fdaeb;
+	width: 50%;
+	margin-right: auto;
+	margin-left: auto;
+	margin-bottom: 300px;
+	padding-bottom:25px;
 }
 
 #wrapper
@@ -140,6 +187,10 @@ margin: 0 auto;
 .autocomplete-suggestions
 {
 	background-color: #ECF0F1;
+}
+.autocomplete-suggestion:hover
+{
+	background-color: #888888;
 }
 
 .btn:hover {

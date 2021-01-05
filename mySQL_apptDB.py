@@ -118,7 +118,7 @@ def isUsernameTaken(username, cursor, cnx): #fix SQL DONE
         return True #if this is a dr, if will not query the patientTable
     
     query = ("SELECT username FROM patientTable WHERE username = %s") 
-    cursor.execute(query, (username, username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    cursor.execute(query, (username, )) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     for item in cursor:
         return True 
     
@@ -185,23 +185,42 @@ def searchPatientList(cursor, cnx):
     return patientArr
 
 def allSearchUsers(cursor, cnx): #fix SQL DONE
-    query = ("SELECT * "
-             "FROM (SELECT username, fname, lname FROM patientTable) " 
-             "UNION (SELECT username, fname, lname FROM doctorTable)") 
+    query=("SELECT username, fname, lname FROM patientTable")
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     nameArr = []
     for un,fn,ln in cursor:
         tmp = str(un+" - "+ln+", "+fn)
         nameArr.append(tmp)
-
+    query=("SELECT username, fname, lname FROM doctorTable")
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    for un,fn,ln in cursor:
+        tmp = str(un+" - "+ln+", "+fn)
+        nameArr.append(tmp)
+    nameArr.append("TreeoHelp - help, treeo")
     return nameArr
 
 def getCareTeamOfUser(username, cursor, cnx):
     query = ("SELECT drOne, drTwo, drThree FROM patientTable WHERE username = %s") 
     cursor.execute(query, (username, ))
+    docArr = []
+
     for d1, d2, d3 in cursor:
-        return (d1, d2, d3)
-    return 
+        print(d1, d2, d3)
+        if(d1=="N/A" or d2=="N/A" or d3=="N/A"):
+            docArr.append("TreeoHelp - help, treeo") #let them message a help account
+        else: #dr team is assigned so they can be in the dropdown
+            u1 = d1
+            u2 = d2
+            u3 = d3
+            #(e,f,l,p)
+            r1 = userAcctInfo(u1, cursor, cnx)
+            r2 = userAcctInfo(u2, cursor, cnx)
+            r3 = userAcctInfo(u3, cursor, cnx)
+            docArr.append(str(u1+" - "+r1[2]+", "+r1[1]))
+            docArr.append(str(u2+" - "+r2[2]+", "+r2[1]))
+            docArr.append(str(u3+" - "+r3[2]+", "+r3[1]))
+            docArr.append("TreeoHelp - help, treeo")
+    return docArr
 
 def assignPatientCareTeam(patientUser, dr1User, dr2User, dr3User, cursor, cnx):
     currCare = getCareTeamOfUser(patientUser, cursor, cnx)
@@ -221,6 +240,7 @@ def searchDoctorList(cursor, cnx):
     for un,fn,ln in cursor:
         tmp = str(un+" - "+ln+", "+fn)
         docArr.append(tmp)
+    docArr.append("TreeoHelp - help, treeo")
     return docArr
 
 def getDrTypeOfAcct(username, cursor, cnx):
@@ -248,9 +268,9 @@ def getAllDrPhysician(cursor, cnx):
         docArr.append(tmp)
     return docArr
 
-def getAllDrLife(cursor, cnx):
+def getAllDrHealth(cursor, cnx):
     query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s")         #BETWEEN %s AND %s")
-    cursor.execute(query, ("lifecoach",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    cursor.execute(query, ("healthcoach",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     docArr = []
     for un,fn,ln in cursor:
         tmp = str(un+" - "+ln+", "+fn)
@@ -386,8 +406,8 @@ def deleteUserAcct(username, cursor, cnx):
 
 
 def getAllApptsFromUsername(username, cursor, cnx):
-    query = ("SELECT mtgID, mtgName, startTime FROM apptTable")         #BETWEEN %s AND %s")
-    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    query = ("SELECT mtgID, mtgName, startTime FROM apptTable WHERE doctor = %s OR patient = %s")         #BETWEEN %s AND %s")
+    cursor.execute(query, (username, username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
     for mI, mN, sT in cursor:
         patientArr.append([mI, mN, sT])
@@ -439,9 +459,6 @@ def updateAppt(mtgName, mtgid,start_time, cursor, cnx):
 # cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
 # for item in cursor:
 #    print(item) #each item = a row = a tuple
-
-
-
 
 cursor.close()
 cnx.close()

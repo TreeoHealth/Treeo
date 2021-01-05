@@ -7,6 +7,15 @@
 
 <header class = "hlabel">
   <h1>messages</h1>
+  <div class="inboxnav">
+    <nav> 
+      &nbsp;<a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('show_mtg') }}">Calendar</a>
+      <a href="{{ url_for('acct_details') }}">Account Details</a>
+      <a href="{{ url_for('openInbox') }}">Inbox</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    </div>
 </header>
 
 
@@ -24,13 +33,13 @@
   <br><br>
 
 <div class = "msgDetail">
-<label >FROM: </label>
+<label >FROM: </label><br>
 <input  readonly class="msgTextOutline"  type="text"name = "sender_username" value = {{sender_username}}>
 <br><div class="error">{{errorMsg}}</div><br>
-<label >TO: </label>
+<label >TO: </label> <div class="error">{{userNotif}}</div>
 <input required class="msgTextOutline" placeholder="To:" id = "reciever_username" type="text" name = "reciever_username" value={{reciever_username}}  >
 <br><br>
-<label >SUBJECT: </label>
+<label >SUBJECT: </label><br>
 <input required class="msgTextOutline"  id = "subject" type="text" size = "50"maxlength = "50" placeholder="Subject" name = "subject" value="{{subject}}" >
 <span class = "error" id="subjCount"></span>
 <br><br>
@@ -48,7 +57,7 @@
 
 <script>
   $('#reciever_username').autocomplete({
-      serviceUrl: '/search/reciever_username',
+      serviceUrl: '/emailsearch/reciever_username',
       dataType: 'json',
       onSearchComplete: function (query, suggestions) {
         console.log(query);

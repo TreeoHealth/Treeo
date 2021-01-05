@@ -3,10 +3,15 @@
 
 <link rel="stylesheet" href="/static/style.css" type="text/css">
 <!--&#123;% block body %&#125;-->
-<div id="wrapper">
 <div id = "navwrapper">
-</div>
-
+  <nav> 
+    &nbsp;<a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('show_mtg') }}">Calendar</a>
+    <a href="{{ url_for('acct_details') }}">Account Details</a>
+    <a href="{{ url_for('openInbox') }}">Inbox</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </nav>
+  </div>
 <div class="login">
 <p>Results {{startResultNum}} - {{endResultNum}} / {{totalResultNum}} (Page {{currPgNum}})</p>
 <div class="login-screen">

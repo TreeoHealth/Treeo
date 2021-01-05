@@ -853,21 +853,13 @@ if __name__ == '__main__':
 #- DONE :) -make pictures for 2 icons
 #- DONE :) -incorporate paging into trash
 #- DONE :) -incorporate into sent
-
-
 #- DONE :) -#do dropdown styling of messaging 
 #- DONE :) -change where messaging's dropdown are coming from
-
 #- DONE :) -connect dropdown check to user dtb
-    
-    
 #- DONE :) -incorporate messaging into it
-
-#FIX MYSQL TIMEOUT ERRORS -- what acct is the server on??
-#include inbox link in nav bar pages
-    #put inbox unread tally icon in nav bar
-#in the function where patients and drs are mixed, figure out how to distinguish them
-    #conditional formatting of the dropdown (CSS)
+#- DONE :) -REMOTE AZURE CONNECTION IN ALL BELOW IMPLEMENTATION
+#- DONE :) -change all aws to mysql queries
+#- DONE :) -change all aws dependency in zoom post and apptest
 
 #- DONE :) -Change schema to have a care team assignment
     #- DONE :) -doctor - fn ln un email pw drtype (dietician/dr/lifes)
@@ -875,21 +867,51 @@ if __name__ == '__main__':
     #- DONE :) -change queries in mySQL_apptDB to check both for login/validity/etc
     #- DONE :) -change info (dr vs patient) -- name
     #- DONE :) -change search users list functions
-    #- DONE :) -add/delete user (split into dr/patient)
+    #- DONE :) -add user (split into dr/patient)
     #- DONE :) -other etc. utility functions
+##- DONE :) -WRITE QUERY FOR SELECTIVE RETURNS
+    #- DONE :) -when they are a doctor user, the dropdown should be all doctors/patients
+#- DONE :) -fix own acct detail pg styling
+#- DONE :) -include inbox link in nav bar pages
+#- DONE :) -FIX QUERY (rn doctor1 has admin's appt on his calendar)
+
+#FIX MYSQL TIMEOUT ERRORS -- what acct is the server on??
+
+#fix all calendar styling
+#when querying, delete all appts that happened before the current day 
+    #when editing an appt, if curr time>end time do not let them edit
+    #(have an archive for past appts/appt history) -- not deleted appts
+
+#when appt is created -> notify patient with automated msg
+   
+#in the function where patients and drs are mixed, figure out how to distinguish them
+    #conditional formatting of the dropdown (CSS)
+
+
+
+  
+    
+    #- DONE :) -when they are a patient user, the dropdown should only have THEIR doctors
 #--TEST ALL ABOVE FUNCTIONALITY (via apptest.py) + DEBUG
 #--make an ADMIN dashboard -- view all unassigned patients
+    #-make another type of acct (not p/d but admin) -- need other admins to make them into admins? (how to make admins)
+    #if the user type is admin, go to admin dashboard
+    #-show error message when <3 drs assigned (or incorrect username used)
+    #-hook up 3 dropdown autocompletes for the 3 types of drs 
+        #   (only allow the dr to be assigned if it is in that dropdown/is that type of dr)
     #-assign 1 dr of each type to unassigned patient
-##WRITE QUERY FOR SELECTIVE RETURNS
-    #when they are a patient user, the dropdown should only have THEIR doctors
-    #when they are a doctor user, the dropdown should only be doctors/patients
-    
+    #-send automated msg to inbox of patient telling them they have been assigned to a care team
+    #-make a "TreeoHelp" account that they can msg even if they don't have a care team yet
+        #- DONE :) -MAKE SURE TO HANDLE THE "No assigned care team" message so it is not treated as a username -> crash
 
-#*--add search bar (mid top)
+    
+#fix stupid implementation of "paging" in search results
+#*--add search bar (mid top of inbox)
 #--STYLING 
 #--redo msgDB schema with FK to user tables
+#--[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
+    #-tbd how to handle a dr being deleted when they are on patient care team
+#*--put inbox unread tally icon in nav bar
 
-#- DONE :) -REMOTE AZURE CONNECTION IN ALL BELOW IMPLEMENTATION
-#- DONE :) -change all aws to mysql queries
-#- DONE :) -change all aws dependency in zoom post and apptest
+
 
