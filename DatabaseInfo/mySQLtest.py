@@ -30,35 +30,43 @@ else:
 
 DB_NAME = 'treeoHealthDB'
 cursor.execute("USE {}".format(DB_NAME))
-cursor.execute("DROP TABLE IF EXISTS userTable;")
-cursor.execute("DROP TABLE IF EXISTS doctorTable;")
-cursor.execute("DROP TABLE IF EXISTS patientTable;")
-print("Finished dropping table (if existed).")
-
-cursor.execute("CREATE TABLE doctorTable ("
+# cursor.execute("DROP TABLE IF EXISTS userTable;")
+# cursor.execute("DROP TABLE IF EXISTS doctorTable;")
+# cursor.execute("DROP TABLE IF EXISTS patientTable;")
+# print("Finished dropping table (if existed).")
+cursor.execute("CREATE TABLE adminTable ("
        "  username varchar(30) NOT NULL,"
        "  password varchar(100) NOT NULL,"
-       "  email varchar(50) NOT NULL,"
        "  fname varchar(30) NOT NULL,"
        "  lname varchar(30) NOT NULL,"
-       "  drType varchar(30) NOT NULL,"
        "  creationDate varchar(50) NOT NULL,"
        "  PRIMARY KEY (username), UNIQUE KEY username (username)"
        ") ENGINE=InnoDB"
    )
-cursor.execute("CREATE TABLE patientTable ("
-       "  username varchar(30) NOT NULL,"
-       "  password varchar(100) NOT NULL,"
-       "  email varchar(50) NOT NULL,"
-       "  fname varchar(30) NOT NULL,"
-       "  lname varchar(30) NOT NULL,"
-       "  creationDate varchar(50) NOT NULL,"
-       "  drOne varchar(50) NOT NULL,"
-       "  drTwo varchar(50) NOT NULL,"
-       "  drThree varchar(50) NOT NULL,"
-       "  PRIMARY KEY (username), UNIQUE KEY username (username)"
-       ") ENGINE=InnoDB"
-   )
+# cursor.execute("CREATE TABLE doctorTable ("
+#        "  username varchar(30) NOT NULL,"
+#        "  password varchar(100) NOT NULL,"
+#        "  email varchar(50) NOT NULL,"
+#        "  fname varchar(30) NOT NULL,"
+#        "  lname varchar(30) NOT NULL,"
+#        "  drType varchar(30) NOT NULL,"
+#        "  creationDate varchar(50) NOT NULL,"
+#        "  PRIMARY KEY (username), UNIQUE KEY username (username)"
+#        ") ENGINE=InnoDB"
+#    )
+# cursor.execute("CREATE TABLE patientTable ("
+#        "  username varchar(30) NOT NULL,"
+#        "  password varchar(100) NOT NULL,"
+#        "  email varchar(50) NOT NULL,"
+#        "  fname varchar(30) NOT NULL,"
+#        "  lname varchar(30) NOT NULL,"
+#        "  creationDate varchar(50) NOT NULL,"
+#        "  drOne varchar(50) NOT NULL,"
+#        "  drTwo varchar(50) NOT NULL,"
+#        "  drThree varchar(50) NOT NULL,"
+#        "  PRIMARY KEY (username), UNIQUE KEY username (username)"
+#        ") ENGINE=InnoDB"
+#    )
 
 
 # cursor.execute("DROP TABLE IF EXISTS apptTable;")

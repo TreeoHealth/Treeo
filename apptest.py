@@ -16,6 +16,8 @@ from passlib.context import CryptContext
 import mysql.connector
 from mysql.connector import errorcode
 import mySQL_apptDB
+import mySQL_userDB
+import mySQL_adminDB
 
 
 app = Flask(__name__)
@@ -39,8 +41,8 @@ cursor.execute("USE treeoHealthDB")
 tmpcursor = cnx.cursor(buffered=True) #THIS IS TO FIX "Unread result found error"
 tmpcursor.execute("USE treeoHealthDB")
 
-takenUsernames = mySQL_apptDB.returnAllPatients(cursor, cnx)
-patientList = mySQL_apptDB.searchPatientList(cursor, cnx)
+takenUsernames = mySQL_userDB.returnAllPatients(cursor, cnx)
+patientList = mySQL_userDB.searchPatientList(cursor, cnx)
 
 pwd_context = CryptContext(
         schemes=["pbkdf2_sha256"],
@@ -51,7 +53,7 @@ pwd_context = CryptContext(
 
 @app.route('/')
 def home():
-    if not (session.get('logged_in_p') or session.get('logged_in_d')):
+    if not (session.get('logged_in_p') or session.get('logged_in_d') or session.get('logged_in_a')):
         return render_template('login.html', errorMsg="")
     else:
         return displayLoggedInHome()
@@ -62,8 +64,10 @@ def displayLoggedInHome():
         docStatus = 'doctor'
         return render_template('homePageDr.html',
                                docStat = docStatus,
-                               docType= mySQL_apptDB.getDrTypeOfAcct(session['username'], cursor, cnx),
+                               docType= mySQL_userDB.getDrTypeOfAcct(session['username'], cursor, cnx),
                                name=session['name'])
+    elif(session.get('logged_in_a')):
+        return displayAdminHome()
     else:
         docStatus = 'patient'
         return render_template('homePage.html',docStat = docStatus,name=session['name'])
@@ -73,23 +77,162 @@ def displayLoggedInHome():
 
 @app.route('/login', methods=['POST','GET'])
 def check_login():
-    result = mySQL_apptDB.checkUserLogin(request.form['username'], request.form['password'],cursor, cnx)
+    if(request.form['username'] in mySQL_adminDB.getAllAdminUsers(cursor,cnx)):
+        result = mySQL_adminDB.verifyAdminLogin(request.form['username'], request.form['password'],cursor, cnx)
+        if(result==False):
+            print("WRONG PASSWORD ADMIN")
+            return render_template('login.html', errorMsg="Incorrect username or password.")
+        else:
+            info = mySQL_userDB.getAcctFromUsername(request.form['username'],cursor, cnx)
+            session['logged_in_a']=True
+            session['logged_in_p']=False
+            session['logged_in_d']=False
+            session['username'] = request.form['username']
+            session['name'] = info[2]
+            return displayAdminHome()
+    result = mySQL_userDB.checkUserLogin(request.form['username'], request.form['password'],cursor, cnx)
     
     if(result==False):
         print("WRONG PASSWORD")
         return render_template('login.html', errorMsg="Incorrect username or password.")
     else:
         #(u, dS, str(f+" "+l), e, cD)
-        info = mySQL_apptDB.getAcctFromUsername(request.form['username'],cursor, cnx)
+        info = mySQL_userDB.getAcctFromUsername(request.form['username'],cursor, cnx)
         if(info[1]=='doctor'):
             session['logged_in_d']=True
             session['logged_in_p']=False
+            session['logged_in_a']=False
         else:
             session['logged_in_p'] = True
             session['logged_in_d']=False
+            session['logged_in_a']=False
         session['username'] = request.form['username']
         session['name'] = info[2]
         return displayLoggedInHome()
+
+def displayAdminHome():
+    return render_template('adminHome.html',
+                           name = session['name'])
+    
+@app.route('/unassigned', methods=['POST','GET'])
+def adminListUnassigned():
+    listPat = mySQL_userDB.getAllUnassignedPatients(cursor, cnx)
+    if(len(listPat)==0):
+        return render_template("emptyUnassignedList.html")
+    else:
+        return render_template("unassignedList.html",
+                           options = listPat)
+
+#/assign/{{item}}
+@app.route('/assign/<username>', methods=['POST','GET'])
+def assignForm(username):
+    return render_template("assignCareTeam.html",
+                           username  = username)
+
+
+@app.route('/assignCareTeam', methods=['POST','GET'])
+def assignTeam(): #submit update form
+    dr1 = request.form['dietician'].split(" - ")[0]
+    dr2 = request.form['physician'].split(" - ")[0]
+    dr3 = request.form['healthcoach'].split(" - ")[0]
+    if(mySQL_userDB.isDrDietician(dr1, cursor, cnx)==False):
+        return render_template("assignCareTeam.html",
+                            errorMsg = "Invalid dietician user.",
+                           username  = request.form['username'],
+                           dietician = dr1,
+                           physician = dr2,
+                           healthcoach=dr3)
+    elif(mySQL_userDB.isDrPhysician(dr2, cursor, cnx)==False):
+        return render_template("assignCareTeam.html",
+                            errorMsg = "Invalid physician user.",
+                           username  = request.form['username'],
+                           dietician = dr1,
+                           physician = dr2,
+                           healthcoach=dr3)
+    elif mySQL_userDB.isDrHealthCoach(dr3, cursor, cnx)==False:
+        return render_template("assignCareTeam.html",
+                            errorMsg = "Invalid health coach user.",
+                           username  = request.form['username'],
+                           dietician = dr1,
+                           physician = dr2,
+                           healthcoach=dr3)     
+    else:
+        mySQL_userDB.assignPatientCareTeam(request.form['username'], dr1, dr2, dr3, cursor, cnx) 
+        emailBody = "Hello,\r\nYou have been assigned a care team.\r\nDietician: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr1,cursor, cnx)+" ("+dr1+")\r\nPhysician: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr2,cursor, cnx)+" ("+dr2+")\r\nHealth Coach: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr3,cursor, cnx)+" ("+dr3+")\r\n"
+        emailBody = emailBody+"\r\nPlease reach out with any questions or concerns.\r\nSincerely,\r\n    Your Treeo Team"
+        sendAutomatedMsg(request.form['username'],"Care Team Assignment",emailBody) 
+        return patientAcct(request.form['username'])
+
+
+@app.route("/dieticianList")
+def dAutocomplete():
+   jsonSuggest = []
+   query = request.args.get('query')
+   listDr=mySQL_userDB.getAllDrDietician(cursor, cnx)
+   for username in listDr:
+       if(query in username):
+           jsonSuggest.append({'value':username,'data':username})
+   return jsonify({"suggestions":jsonSuggest})
+
+@app.route("/physicianList")
+def pAutocomplete():
+   jsonSuggest = []
+   query = request.args.get('query')
+   listDr=mySQL_userDB.getAllDrPhysician(cursor, cnx)
+   for username in listDr:
+       if(query in username):
+           jsonSuggest.append({'value':username,'data':username})
+   return jsonify({"suggestions":jsonSuggest})
+
+@app.route("/healthcoachList")
+def hcAutocomplete():
+   jsonSuggest = []
+   query = request.args.get('query')
+   listDr=mySQL_userDB.getAllDrHealth(cursor, cnx)
+   for username in listDr:
+       if(query in username):
+           jsonSuggest.append({'value':username,'data':username})
+   return jsonify({"suggestions":jsonSuggest})
+
+@app.route('/renderNewAdmin', methods=['POST','GET'])
+def createAdminPg():
+    return render_template('createAdminAcct.html')
+
+@app.route('/registerNewAdmin', methods=['POST','GET'])
+def createNewAdmin():
+    reply = mySQL_adminDB.createAdminUser(request.form['username'], 
+                            request.form['password'], 
+                            request.form['fname'], 
+                            request.form['lname'], 
+                            cursor, cnx)
+    if(reply=="success"):
+        return render_template('adminHome.html',
+                               name = session['name'],
+                               confirmMsg="CREATED new admin account successfully")
+    else:
+        if reply=="weak password":
+            return render_template('createAdminAcct.html',
+                                   errorMsg="Password must be min length 8, 1 upper case, and 1 number.",
+                                    username = request.form['username'],
+                                   password = request.form['password'],
+                                   fname = request.form['fname'],
+                                   lname = request.form['lname']
+                                   )
+        else:
+            return render_template('createAdminAcct.html',
+                                   errorMsg="Username taken. TRY AGAIN.",
+                                   username = request.form['username'],
+                                   password = request.form['password'],
+                                   fname = request.form['fname'],
+                                   lname = request.form['lname']
+                                   )
+        
+    return
+    
+
 
 @app.route('/registerrender', methods=['POST','GET'])
 def regPg():
@@ -97,7 +240,7 @@ def regPg():
 
 @app.route('/register', methods=['POST','GET'])
 def new_register():
-    if(mySQL_apptDB.isUsernameTaken(request.form['username'],cursor, cnx)):
+    if(mySQL_userDB.isUsernameTaken(request.form['username'],cursor, cnx)):
         return render_template('register.html',
                                errorMsg="Username is already taken. Please use a different one.",
                                username = request.form['username'],
@@ -117,7 +260,7 @@ def new_register():
     reply = ""
     if(docStatus!='patient'):
         docType = request.form['drType']
-        reply = mySQL_apptDB.insertDoctor(request.form['username'], 
+        reply = mySQL_userDB.insertDoctor(request.form['username'], 
                             request.form['password'], 
                             request.form['email'], 
                             request.form['fname'], 
@@ -125,7 +268,7 @@ def new_register():
                             docType,
                             cursor, cnx)
     else:
-        reply = mySQL_apptDB.insertPatient(request.form['username'], 
+        reply = mySQL_userDB.insertPatient(request.form['username'], 
                             request.form['password'], 
                             request.form['email'], 
                             request.form['fname'], 
@@ -140,9 +283,11 @@ def new_register():
         if(docStatus=='doctor'):
             session['logged_in_d']=True
             session['logged_in_p']=False
+            session['logged_in_a']=False
         else:
             session['logged_in_p'] = True
             session['logged_in_d']=False
+            session['logged_in_a']=False
         session['username'] = request.form['username']
         session['name'] = request.form['fname']+" "+request.form['lname']
         print(reply,  session['logged_in_p'],  session['logged_in_d'], session['username'])
@@ -283,7 +428,7 @@ def accessDenied():
 def createPg():
     if session['logged_in_p']:
         return accessDenied()
-    listStr = mySQL_apptDB.returnAllPatients(cursor, cnx)
+    listStr = mySQL_userDB.returnAllPatients(cursor, cnx)
     listStr.sort()
     return render_template('create_mtg.html',
                            errorMsg = "",
@@ -303,7 +448,7 @@ def createWithUsername(username):
 def createUserSearch():
     jsonSuggest = []
     query = request.args.get('query')
-    listPatients=mySQL_apptDB.searchPatientList(cursor, cnx)
+    listPatients=mySQL_userDB.searchPatientList(cursor, cnx)
     for username in listPatients:
         if(query in username):
             jsonSuggest.append({'value':username,'data':username.split(" - ")[0]})#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
@@ -326,7 +471,7 @@ def create_mtg():
         date=time[:10]
         finalStr = ""
     except:    
-        listStr = mySQL_apptDB.returnAllPatients(cursor, cnx)
+        listStr = mySQL_userDB.returnAllPatients(cursor, cnx)
         listStr.sort()
         return render_template('create_mtg.html',
                                errorMsg = "ERROR. Could not create meeting.",
@@ -459,10 +604,10 @@ def editSubmit():
 @app.route('/acctdetails', methods=['POST','GET'])
 def acct_details():     
     #(u, dS, str(f+" "+l), e, cD)
-    info = mySQL_apptDB.getAcctFromUsername(str(session['username']),cursor, cnx)
+    info = mySQL_userDB.getAcctFromUsername(str(session['username']),cursor, cnx)
     return render_template('ownAcctPg.html', 
                            username=info[0],
-                           docstatus= (info[1] if info[1] == 'patient' else str(info[1]+" - "+mySQL_apptDB.getDrTypeOfAcct(session['username'], cursor, cnx))),
+                           docstatus= (info[1] if info[1] == 'patient' else str(info[1]+" - "+mySQL_userDB.getDrTypeOfAcct(session['username'], cursor, cnx))),
                            nm=info[2],
                            email=info[3],
                            createDate = info[4]
@@ -471,7 +616,7 @@ def acct_details():
 @app.route('/acctEditrender/', methods=['POST','GET'])
 def editAcctRender():
     #(emailAdd,fn, ln,passw)
-    info = mySQL_apptDB.userAcctInfo(str(request.form['username']),cursor, cnx)
+    info = mySQL_userDB.userAcctInfo(str(request.form['username']),cursor, cnx)
     return render_template('editProfile.html',
                            errorMsg="",
                            username=session['username'],
@@ -489,7 +634,7 @@ def editAcctDetails():
     newPw1 = str(request.form['pwordNew1'])
     newPw2 = str(request.form['pwordNew2'])
     #(emailAdd,fn, ln,passw)
-    info = mySQL_apptDB.userAcctInfo(str(request.form['username']),cursor, cnx)
+    info = mySQL_userDB.userAcctInfo(str(request.form['username']),cursor, cnx)
     pwUpdate = False
     errMsg=""
     errFlag=False
@@ -564,10 +709,10 @@ def editAcctDetails():
     print("UPDATE CALL")
     #if it's gotten past here, we know password is fine (or not being updated), email is fine, f and l name are fine
     if(pwUpdate==False):
-        response = mySQL_apptDB.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], "",cursor, cnx)
+        response = mySQL_userDB.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], "",cursor, cnx)
         print("1", response)
     else:
-        response = mySQL_apptDB.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], newPw1,cursor, cnx)
+        response = mySQL_userDB.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], newPw1,cursor, cnx)
         print("2", response)
     session['name']=str(request.form['fname'])+" "+str(request.form['lname'])
     return acct_details()
@@ -580,18 +725,32 @@ def patientAcct(username):
     ##this is where medical details will eventually be rendered
     print("PATIENT USER")
     #(u, dS, str(f+" "+l), e, cD)
-    info = mySQL_apptDB.getAcctFromUsername(str(username),cursor, cnx)
+    info = mySQL_userDB.getAcctFromUsername(str(username),cursor, cnx)
+    drs = mySQL_userDB.getCareTeamOfUser(str(username),cursor, cnx)
+    
+    docArr = []
+    if(len(drs)==1 and "help" in drs[0]):
+        docArr.append("Not assigned")
+        docArr.append("Not assigned")
+        docArr.append("Not assigned")
+    else:
+        docArr.append(drs[0])
+        docArr.append(drs[1])
+        docArr.append(drs[2])
+    
     return render_template('patientAcctDetails.html', 
                            username=username,
-                           docstatus=info[1],
                            nm=info[2],
                            email=info[3],
+                           drOne=docArr[0],
+                           drTwo=docArr[1],
+                           drThree=docArr[2],
                            createDate = info[4]
                            )
 
 @app.route('/patients', methods=['POST','GET'])
 def list_patients():
-    listStr = mySQL_apptDB.returnAllPatients(cursor, cnx)
+    listStr = mySQL_userDB.returnAllPatients(cursor, cnx)
     listStr.sort()
     patientPages = []
     currPg=0
@@ -606,7 +765,7 @@ def search_patients():
 def search_page():
     query = request.form['names']
     if(query==""): #if the form is empty, return all of the usernames
-        listStr = mySQL_apptDB.returnAllPatients(cursor, cnx)
+        listStr = mySQL_userDB.returnAllPatients(cursor, cnx)
 ##        listStr = ["alpha","beta","chi","delta",
 ##              "eta","epsilon","gamma","iota",
 ##              "kappa", "lambda","mu","nu",
@@ -620,14 +779,28 @@ def search_page():
         #return render_template('picture.html', options=listStr) #THIS
     
     actualUsername = (query.split(" - "))[0] #username - last name, first name
-    info = mySQL_apptDB.getAcctFromUsername(actualUsername,cursor, cnx)
+    info = mySQL_userDB.getAcctFromUsername(actualUsername,cursor, cnx)
     
-    if(len(query.split(" - "))==2 and mySQL_apptDB.isUsernameTaken(actualUsername,cursor, cnx)):
+    if(len(query.split(" - "))==2 and mySQL_userDB.isUsernameTaken(actualUsername,cursor, cnx)):
             #if the username exists and the user used the autocomplete -> take them to the account page directly
+        drs = mySQL_userDB.getCareTeamOfUser(str(actualUsername),cursor, cnx)
+    
+        docArr = []
+        if(len(drs)==1 and "help" in drs[0]):
+            docArr.append("Not assigned")
+            docArr.append("Not assigned")
+            docArr.append("Not assigned")
+        else:
+            docArr.append(drs[0])
+            docArr.append(drs[1])
+            docArr.append(drs[2])
         return render_template('patientAcctDetails.html', 
                             username=info[0],
                            nm=info[2],
                            email=info[3],
+                           drOne=docArr[0],
+                           drTwo=docArr[1],
+                           drThree=docArr[2],
                            createDate = info[4]
                            )
     
@@ -879,7 +1052,7 @@ def formatEmail():
     #               "0"
     #               )
     actualUsername = (query.split(" - "))[0] #username - last name, first name
-    response = mySQL_apptDB.getAcctFromUsername(actualUsername, cursor, cnx)
+    response = mySQL_userDB.getAcctFromUsername(actualUsername, cursor, cnx)
         #(u, dS, str(f+" "+l), e, cD)
     if(len(query.split(" - "))==2): #if they chose from dropdown
        insertMessage(request.form['sender_username'],
@@ -888,7 +1061,7 @@ def formatEmail():
            request.form['email_body'],
                  "0"
                  )
-    elif(mySQL_apptDB.isUsernameTaken(query, cursor, cnx)): #if it is a raw usern (not from dropdown)
+    elif(mySQL_userDB.isUsernameTaken(query, cursor, cnx)): #if it is a raw usern (not from dropdown)
        insertMessage(request.form['sender_username'],
            request.form['reciever_username'],
            request.form['subject'],
@@ -1108,7 +1281,13 @@ def selectOption():
 
     return openInbox()
 
-
+def sendAutomatedMsg(reciever,subject,msgBody):
+    insertMessage("TreeoNotification",
+           reciever,
+           subject,
+           msgBody,
+                 "0"
+                 )
 
 def getAllMessagesPaged(username, pgNum): #page to be rendered
 #<MYSQL FUNCTIONAL>
@@ -1215,15 +1394,19 @@ def selectSent():
                 return sentFolder()
 
 
+
+
 @app.route("/emailsearch/<string:box>")
 def usernameSearch(box):
    jsonSuggest = []
    query = request.args.get('query')
    listPatients=[]
    if(session['logged_in_d']==True):
-        listPatients= mySQL_apptDB.allSearchUsers(cursor, cnx)
+        listPatients= mySQL_userDB.allSearchUsers(cursor, cnx)
+   elif (session['logged_in_a']==True):
+       listPatients = mySQL_adminDB.adminAllSearchUsers(cursor, cnx)
    else:
-        listPatients= mySQL_apptDB.getCareTeamOfUser(session['username'],cursor, cnx)
+        listPatients= mySQL_userDB.getCareTeamOfUser(session['username'],cursor, cnx)
    for username in listPatients:
        if(query in username):
            jsonSuggest.append({'value':username,'data':username})
@@ -1325,7 +1508,7 @@ def insertMessage(sender, reciever, subject,body, convoID):
 @app.route('/newEmail', methods=['POST','GET'])
 def newEmail():
     if(session['logged_in_p']==True):
-        unassigned = mySQL_apptDB.getAllUnassignedPatients(cursor, cnx)
+        unassigned = mySQL_userDB.getAllUnassignedPatients(cursor, cnx)
         if(session['username'] in unassigned):
             return render_template("newEmail.html",
                           inboxUnread =countUnreadInInbox(session['username']),
@@ -1517,8 +1700,8 @@ def getAllMsgsInConvo(convoID):
     convoList = []
     for (send_date, send_time,sender, subject, messageID, msgbody, reciever) in cursor:
         dateWhole = str(send_date + "   " +send_time)
-        send = str(sender+ " - " + mySQL_apptDB.getNameFromUsername(sender,tmpcursor, cnx))
-        recieve = str(reciever+ " - " + mySQL_apptDB.getNameFromUsername(reciever,tmpcursor, cnx))
+        send = str(sender+ " - " + mySQL_userDB.getNameFromUsername(sender,tmpcursor, cnx))
+        recieve = str(reciever+ " - " + mySQL_userDB.getNameFromUsername(reciever,tmpcursor, cnx))
         #print(send, recieve)
         convoList.append([dateWhole,messageID,send, recieve, subject, msgbody])
        
@@ -1599,6 +1782,7 @@ def openInbox():
 def logout():
     session['logged_in_p'] = False
     session['logged_in_d'] = False
+    session['logged_in_a'] = False
     return home()
 
 if __name__ == "__main__":

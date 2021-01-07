@@ -208,3 +208,26 @@ color: #444;
 display: block;
 margin-top: 12px;
 }
+
+.assign-username{
+	margin-top: 10px;
+	padding:5px;
+	padding-top: 15px;
+
+}
+
+.emptyFolder
+{
+	width:100%;
+	background-color:#EEE;
+	color:#b0b0b0;
+	text-align:center;
+	font-size:150%;
+  border-radius: 5px;
+  padding-top:15px;
+  padding-bottom:15px;
+}
+
+.assign-username a{
+	font-size: medium;
+}

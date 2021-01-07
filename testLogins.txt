@@ -9,3 +9,7 @@ doctor3 --- DOCTOR33
 doctor4 --- DOCTOR44
 doctor5 --- DOCTOR55
 doctor6 --- DOCTOR66
+ADMIN -> TreeoHealth --- TreeoHealth12
+ADMIN -> TreeoNotification --- CalvinH12
+ADMIN -> adminTest --- adminTEST12
+fourth_user --- 4TH_Us3r

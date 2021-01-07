@@ -5,6 +5,7 @@ import datetime
 from datetime import date, datetime,timezone
 import time
 import mySQL_apptDB
+import mySQL_userDB
 
 import mysql.connector
 from mysql.connector import errorcode
@@ -35,7 +36,7 @@ def formatEmail():
     #               "0"
     #               )
     actualUsername = (query.split(" - "))[0] #username - last name, first name
-    response = mySQL_apptDB.getAcctFromUsername(actualUsername, cursor, cnx)
+    response = mySQL_userDB.getAcctFromUsername(actualUsername, cursor, cnx)
         #(u, dS, str(f+" "+l), e, cD)
     if(len(query.split(" - "))==2): #if they chose from dropdown
        insertMessage(request.form['sender_username'],
@@ -44,7 +45,7 @@ def formatEmail():
            request.form['email_body'],
                  "0"
                  )
-    elif(mySQL_apptDB.isUsernameTaken(query, cursor, cnx)): #if it is a raw usern (not from dropdown)
+    elif(mySQL_userDB.isUsernameTaken(query, cursor, cnx)): #if it is a raw usern (not from dropdown)
        insertMessage(request.form['sender_username'],
            request.form['reciever_username'],
            request.form['subject'],
@@ -375,9 +376,9 @@ def process(box):
    jsonSuggest = []
    query = request.args.get('query')
    if(session['docStatus']=='doctor'):
-        listPatients= mySQL_apptDB.allSearchUsers(cursor, cnx)
+        listPatients= mySQL_userDB.allSearchUsers(cursor, cnx)
    else:
-        listPatients= mySQL_apptDB.searchDoctorList(cursor, cnx)
+        listPatients= mySQL_userDB.searchDoctorList(cursor, cnx)
    for username in listPatients:
        if(query in username):
            jsonSuggest.append({'value':username,'data':username})
@@ -664,8 +665,8 @@ def getAllMsgsInConvo(convoID):
     convoList = []
     for (send_date, send_time,sender, subject, messageID, msgbody, reciever) in cursor:
         dateWhole = str(send_date + "   " +send_time)
-        send = str(sender+ " - " + mySQL_apptDB.getNameFromUsername(sender,tmpcursor, cnx))
-        recieve = str(reciever+ " - " + mySQL_apptDB.getNameFromUsername(reciever,tmpcursor, cnx))
+        send = str(sender+ " - " + mySQL_userDB.getNameFromUsername(sender,tmpcursor, cnx))
+        recieve = str(reciever+ " - " + mySQL_userDB.getNameFromUsername(reciever,tmpcursor, cnx))
         #print(send, recieve)
         convoList.append([dateWhole,messageID,send, recieve, subject, msgbody])
        
@@ -874,44 +875,55 @@ if __name__ == '__main__':
 #- DONE :) -fix own acct detail pg styling
 #- DONE :) -include inbox link in nav bar pages
 #- DONE :) -FIX QUERY (rn doctor1 has admin's appt on his calendar)
+#TODO - DONE :) - make a sendAutomatedMsg(username, msgBody)
+    #when we send an automated msg, always send it from TreeoNotification
+
 
 #FIX MYSQL TIMEOUT ERRORS -- what acct is the server on??
-
-#fix all calendar styling
-#when querying, delete all appts that happened before the current day 
-    #when editing an appt, if curr time>end time do not let them edit
-    #(have an archive for past appts/appt history) -- not deleted appts
-
-#when appt is created -> notify patient with automated msg
-   
 #in the function where patients and drs are mixed, figure out how to distinguish them
     #conditional formatting of the dropdown (CSS)
 
 
-
-  
-    
-    #- DONE :) -when they are a patient user, the dropdown should only have THEIR doctors
+    #- TODO test -when they are a patient user, the dropdown should only have THEIR doctors
 #--TEST ALL ABOVE FUNCTIONALITY (via apptest.py) + DEBUG
-#--make an ADMIN dashboard -- view all unassigned patients
-    #-make another type of acct (not p/d but admin) -- need other admins to make them into admins? (how to make admins)
+#TODO -- remove the links of admin inbox to calendar/etc
+#TODO -- fix spacing of TreeoNotification messages
+    
+#--make an ADMIN dashboard 
+#   -- view all unassigned patients + update admin data + delete + inbox
+
+    #-make another type of acct (not p/d but admin)
+        #-DO ALL UTILITY FUNCTIONS (create/update/delete)
+        #make ANOTHER table for just admin users?
+            #-part of admin dashboard = make new admin acct
+            #-make ADMIN "TreeoHelp" account that they can msg even if they don't have a care team yet
+            #- DONE :) -MAKE SURE TO HANDLE THE "No assigned care team" message so it is not treated as a username -> crash
     #if the user type is admin, go to admin dashboard
     #-show error message when <3 drs assigned (or incorrect username used)
     #-hook up 3 dropdown autocompletes for the 3 types of drs 
         #   (only allow the dr to be assigned if it is in that dropdown/is that type of dr)
     #-assign 1 dr of each type to unassigned patient
     #-send automated msg to inbox of patient telling them they have been assigned to a care team
-    #-make a "TreeoHelp" account that they can msg even if they don't have a care team yet
-        #- DONE :) -MAKE SURE TO HANDLE THE "No assigned care team" message so it is not treated as a username -> crash
+    
+    
 
+#fix all calendar styling
+#when querying, delete all appts that happened before the current day 
+    #when editing an appt, if curr time>end time do not let them edit
+    #(have an archive table for past appts/appt history ????? ) -- not deleted appts, only appts that passed and we removed ourselves
+#when appt is created/updated/deleted -> notify patient with automated msg
+    
     
 #fix stupid implementation of "paging" in search results
+#list/search ALL users (search + see user accts including drs)
+#On user acct page/in search result have a "send message" button that takes you to a pre-filled out inbox page
 #*--add search bar (mid top of inbox)
 #--STYLING 
 #--redo msgDB schema with FK to user tables
 #--[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
     #-tbd how to handle a dr being deleted when they are on patient care team
 #*--put inbox unread tally icon in nav bar
+#--eventually - give admin way to delete/ban patient users
 
 
 
