@@ -891,7 +891,7 @@ def index():
     #- DONE :) -do the deescription on hover
 #*- DONE :) -make autocomplete for usernames (user cannot enter an invalid username)
 
-#--in the sent folder, change the sender to who the recipient is
+#- DONE :) -in the sent folder, change the sender to who the recipient is
 
 #WRITE QUERY FOR SELECTIVE RETURNS
     #when they are a patient user, the dropdown should only have doctors

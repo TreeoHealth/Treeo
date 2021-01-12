@@ -12,4 +12,6 @@ doctor6 --- DOCTOR66
 ADMIN -> TreeoHealth --- TreeoHealth12
 ADMIN -> TreeoNotification --- CalvinH12
 ADMIN -> adminTest --- adminTEST12
+ADMIN -> TreeoCalendar --- TreeoCalendar12
 fourth_user --- 4TH_Us3r
+sixth_user --- 6TH_Us3r

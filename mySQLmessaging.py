@@ -876,54 +876,87 @@ if __name__ == '__main__':
 #- DONE :) -include inbox link in nav bar pages
 #- DONE :) -FIX QUERY (rn doctor1 has admin's appt on his calendar)
 #TODO - DONE :) - make a sendAutomatedMsg(username, msgBody)
-    #when we send an automated msg, always send it from TreeoNotification
+    #- DONE :) -when we send an automated msg, always send it from TreeoNotification
+#- DONE :) -TODO test -when they are a patient user, the dropdown should only have THEIR doctors
+#- DONE :) -TEST ALL ABOVE FUNCTIONALITY (via apptest.py) + DEBUG
 
+#-DONE :) --make an ADMIN dashboard 
+#-- DONE :) -- view all unassigned patients + update admin data + delete + inbox
+#-- DONE :) -make another type of acct (not p/d but admin)
+    #-- DONE :) -DO ALL UTILITY FUNCTIONS (create/update/delete)
+    #- DONE :) -make ANOTHER table for just admin users?
+        #-- DONE :) -part of admin dashboard = make new admin acct
+        #-- DONE :) -make ADMIN "TreeoHelp" account that they can msg even if they don't have a care team yet
+        #- DONE :) -MAKE SURE TO HANDLE THE "No assigned care team" message so it is not treated as a username -> crash
+#- DONE :) -if the user type is admin, go to admin dashboard
+#-- DONE :) -show error message when <3 drs assigned (or incorrect username used)
+#-- DONE :) -hook up 3 dropdown autocompletes for the 3 types of drs 
+    #  - DONE :) -(only allow the dr to be assigned if it is in that dropdown/is that type of dr)
+#-- DONE :) -assign 1 dr of each type to unassigned patient
+#-- DONE :) -send automated msg to inbox of patient telling them they have been assigned to a care team
 
-#FIX MYSQL TIMEOUT ERRORS -- what acct is the server on??
+#TODO -DONE :)- fix spacing of TreeoNotification messages
+#- DONE :) -FIX MYSQL TIMEOUT ERRORS -- what acct is the server on??
+
 #in the function where patients and drs are mixed, figure out how to distinguish them
     #conditional formatting of the dropdown (CSS)
-
-
-    #- TODO test -when they are a patient user, the dropdown should only have THEIR doctors
-#--TEST ALL ABOVE FUNCTIONALITY (via apptest.py) + DEBUG
-#TODO -- remove the links of admin inbox to calendar/etc
-#TODO -- fix spacing of TreeoNotification messages
-    
-#--make an ADMIN dashboard 
-#   -- view all unassigned patients + update admin data + delete + inbox
-
-    #-make another type of acct (not p/d but admin)
-        #-DO ALL UTILITY FUNCTIONS (create/update/delete)
-        #make ANOTHER table for just admin users?
-            #-part of admin dashboard = make new admin acct
-            #-make ADMIN "TreeoHelp" account that they can msg even if they don't have a care team yet
-            #- DONE :) -MAKE SURE TO HANDLE THE "No assigned care team" message so it is not treated as a username -> crash
-    #if the user type is admin, go to admin dashboard
-    #-show error message when <3 drs assigned (or incorrect username used)
-    #-hook up 3 dropdown autocompletes for the 3 types of drs 
-        #   (only allow the dr to be assigned if it is in that dropdown/is that type of dr)
-    #-assign 1 dr of each type to unassigned patient
-    #-send automated msg to inbox of patient telling them they have been assigned to a care team
-    
-    
-
 #fix all calendar styling
 #when querying, delete all appts that happened before the current day 
     #when editing an appt, if curr time>end time do not let them edit
-    #(have an archive table for past appts/appt history ????? ) -- not deleted appts, only appts that passed and we removed ourselves
+    #(have an archive table for past appts/appt history ) -- not deleted appts, only appts that passed and we removed ourselves
+    #only store patient/dr/date/time
+    #on patient acct deletion, GO INTO ARCHIVE AND DELETE ALL APPTS
+    #allow patients to view summary/access dr notes
 #when appt is created/updated/deleted -> notify patient with automated msg
+
+
+#TODO -- remove the links of admin inbox to calendar/etc (make seperate admin pages)
+    #-all malibox? (or just remove nav on all mailbox except inbox + only have sep inbox?)
+    #-patient acct detail pg
+
+
+#FIX ZOOM Api call tokens (jwt)
+#TODO -- send automsg to drsx3 and patient when assigned
+#TODO -- send other automated messages (acct creation/acct update/appt create/appt change/appt delete)
+    #--acct stuff -> TreeoNotification
+        #care team assignment x4
+        #account create x1
+        #account update x1
+    #--appt Stuff -> TreeoCalendar
+        #appt create x2
+        #appt cancelled x2
+        #appt updated x2
+        #appt requested x1 (patient req so only notify dr)
+    #make an option fo patients to cancel an appt through mtg detail page
+#CHANGE how delte is done (no form, just run delete when they hit the cancel btn)
     
+
+    
+   #when there is an error in register, do not dewfault to dietician/patient
+# TODO -- unapproved drs in admin dashboard
+    #-- send email to registered email when they are approved
+    #-- do not let them log in until they are approved
+
+
+
+#--[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
+    #-tbd how to handle a dr being deleted when they are on patient care team
+    
+#give patient the ability to cancel appt (<24h = fee warning) -> notify dr + update calendar
+#start putting "are you sure?" warnings on bigger actions
     
 #fix stupid implementation of "paging" in search results
+    #make sure when there are 0 results the page counter doesn't start with 1
 #list/search ALL users (search + see user accts including drs)
 #On user acct page/in search result have a "send message" button that takes you to a pre-filled out inbox page
 #*--add search bar (mid top of inbox)
 #--STYLING 
 #--redo msgDB schema with FK to user tables
-#--[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
-    #-tbd how to handle a dr being deleted when they are on patient care team
+
+
 #*--put inbox unread tally icon in nav bar
 #--eventually - give admin way to delete/ban patient users
+    #--when patients are inappropriate on messaging, give notif to admin
 
 
 

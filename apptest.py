@@ -158,12 +158,21 @@ def assignTeam(): #submit update form
                            healthcoach=dr3)     
     else:
         mySQL_userDB.assignPatientCareTeam(request.form['username'], dr1, dr2, dr3, cursor, cnx) 
-        emailBody = "Hello,\r\nYou have been assigned a care team.\r\nDietician: "
-        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr1,cursor, cnx)+" ("+dr1+")\r\nPhysician: "
-        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr2,cursor, cnx)+" ("+dr2+")\r\nHealth Coach: "
+        emailBody = "Hello,\r\nYou have been assigned a care team.\r\n\r\n\tDietician: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr1,cursor, cnx)+" ("+dr1+")\r\n\tPhysician: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr2,cursor, cnx)+" ("+dr2+")\r\n\tHealth Coach: "
         emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr3,cursor, cnx)+" ("+dr3+")\r\n"
         emailBody = emailBody+"\r\nPlease reach out with any questions or concerns.\r\nSincerely,\r\n    Your Treeo Team"
-        sendAutomatedMsg(request.form['username'],"Care Team Assignment",emailBody) 
+        sendAutomatedAcctMsg(request.form['username'],"Care Team Assignment",emailBody) 
+        
+        emailBody = "Hello,\r\nYou have been assigned to a patient. Here is your team:\r\n\r\n\tDietician: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr1,cursor, cnx)+" ("+dr1+")\r\n\tPhysician: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr2,cursor, cnx)+" ("+dr2+")\r\n\tHealth Coach: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr3,cursor, cnx)+" ("+dr3+")\r\n"
+        emailBody = emailBody+"\r\nPlease reach out with any questions or concerns.\r\nSincerely,\r\n    Your Treeo Admins"
+        sendAutomatedAcctMsg(dr1,"Care Team Assignment",emailBody) 
+        sendAutomatedAcctMsg(dr2,"Care Team Assignment",emailBody) 
+        sendAutomatedAcctMsg(dr3,"Care Team Assignment",emailBody) 
         return patientAcct(request.form['username'])
 
 
@@ -280,17 +289,25 @@ def new_register():
     
     print(reply)
     if reply=="success":
+        session['username'] = request.form['username']
+        session['name'] = request.form['fname']+" "+request.form['lname']
+        emailBody=""
         if(docStatus=='doctor'):
             session['logged_in_d']=True
             session['logged_in_p']=False
             session['logged_in_a']=False
+            emailBody = "Hello "+session['name']+",\r\nWelcome to Treeo!\r\nYou are not approved as a care provider yet, but we'll get right on verification. Let us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
+            
         else:
             session['logged_in_p'] = True
             session['logged_in_d']=False
             session['logged_in_a']=False
-        session['username'] = request.form['username']
-        session['name'] = request.form['fname']+" "+request.form['lname']
-        print(reply,  session['logged_in_p'],  session['logged_in_d'], session['username'])
+            emailBody = "Hello "+session['name']+",\r\nWelcome to Treeo!\r\nYou do not have a care team assigned yet, but we'll get one to you ASAP. Let us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
+            
+        
+        sendAutomatedAcctMsg(request.form['username'],"Welcome to Treeo!",emailBody) 
+        
+        
         return displayLoggedInHome()
     elif reply=="bad email or domain":
         return render_template('register.html',
@@ -465,9 +482,11 @@ def create_mtg():
         if len(request.form['patientUser'].split(" - "))>1:
             username = request.form['patientUser'].split(" - ")[0]
             jsonResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], username, cursor, cnx)
-#session['username'] == doctor
+            print(jsonResp)
+    #session['username'] == doctor
         else:
             jsonResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'],cursor, cnx)
+            print(jsonResp)
         date=time[:10]
         finalStr = ""
     except:    
@@ -477,12 +496,17 @@ def create_mtg():
                                errorMsg = "ERROR. Could not create meeting.",
                                options=listStr)
 #ADD PATIENT FIELD
-    
     else:
+        emailBody="Hello "+request.form['patientUser'].split(" - ")[0]+",\r\n\r\nAn appointment has been created for you by "+mySQL_userDB.getNameFromUsername(session['username'], cursor, cnx)+" ("+session['username']+"). \r\n\r\n\t"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:-1]+"\r\nJoin URL: "+(mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)[5])+"\r\n\r\nLet us know if there are any issures or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+        sendAutomatedApptMsg(request.form['patientUser'].split(" - ")[0],"New Appointment Scheduled",emailBody)
+        emailBody="Hello "+session['username']+",\r\nYou have created an appointment for "+mySQL_userDB.getNameFromUsername(request.form['patientUser'].split(" - ")[0], cursor, cnx)+" ("+request.form['patientUser'].split(" - ")[0]+"). \r\n\r\n\t"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+date+"\r\n\r\nTime: "+time[11:-1]+"\r\nJoin URL: "+(mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)[5])+"\r\n\r\nLet us know if there are any issures or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+        sendAutomatedApptMsg(session['username'],"New Appointment Scheduled",emailBody)
         return render_template('apptDetail.html',
                                mtgnum=str(jsonResp.get("id")),
                                doctor =session['username'],
-                               patient = request.form['patientUser'],
+                               patient = request.form['patientUser'].split(" - ")[0],
                                mtgname=str(jsonResp.get("topic")),
                                mtgtime=str(time[11:-1]),
                                mtgdate=str(date))
@@ -509,18 +533,22 @@ def return_data():
     mtgList = []
     finalStr = ""
     for item in arrOfMtgs:
-        #[mI, mN, sT]
-        time = str(item[2])
-        mtgid = str(item[0])
-        if(time[-1]=='Z'):
-            time = time[:-1] #takes off the 'z'
-        if(len(time[11:].split(":"))>=4): #catches any times with extra :00s
-            time = time[:19]
-        end_time = int(float(time[11:13]))+1
-        strend = time[:11]+str(end_time)+time[13:]
-        if(end_time<=9): #catches any times <9 that would be single digit
-            strend = time[:11]+"0"+str(end_time)+time[13:]
-        
+        if(item[0]=="None" or len(item[0])!=11): #skip invalid items that will crash the calendar
+            continue
+        else:
+            #[mI, mN, sT]
+            time = str(item[2])
+            print(type(time),time)
+            mtgid = str(item[0])
+            if(time[-1]=='Z'):
+                time = time[:-1] #takes off the 'z'
+            if(len(time[11:].split(":"))>=4): #catches any times with extra :00s
+                time = time[:19]
+            end_time = int(float(time[11:13]))+1
+            strend = time[:11]+str(end_time)+time[13:]
+            if(end_time<=9): #catches any times <9 that would be single digit
+                strend = time[:11]+"0"+str(end_time)+time[13:]
+            
         mtgObj = {"title":str(item[1]), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
         mtgList.append(mtgObj)
     #BADDDD (change this)
@@ -587,12 +615,20 @@ def editSubmit():
     jsonResp= zoomtest_post.getMtgFromMtgID(str(request.form['mtgnum']))
     time=str(jsonResp.get("start_time"))
 
-    apptDetail = mySQL_apptDB.getApptFromMtgId(str(request.form['mtgnum']), cursor, cnx)
+    mtgDetails = mySQL_apptDB.getApptFromMtgId(str(request.form['mtgnum']), cursor, cnx)
         #(mI, d, p, mN, sT, jU)
     #split and display
     date=time[:10]
-    docUser = apptDetail[1]
-    patUser = apptDetail[2]
+    docUser = mtgDetails[1]
+    patUser = mtgDetails[2]
+    
+    emailBody="Hello "+mtgDetails[2]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[1], cursor, cnx)+" ("+mtgDetails[1]+") has been updated. \r\n\r\n\t"
+    emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:-1]+"\r\nJoinURL: "+mtgDetails[5]+"\r\n\r\nThis has been changed in your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+    sendAutomatedApptMsg(mtgDetails[2],"Appointment Updated",emailBody)
+    emailBody="Hello "+mtgDetails[1]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[2], cursor, cnx)+" ("+mtgDetails[2]+") has been updated. \r\n\r\n\t"
+    emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:-1]+"\r\nJoinURL: "+mtgDetails[5]+"\r\n\r\nThis has been changed your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+    sendAutomatedApptMsg(mtgDetails[1],"Appointment Updated",emailBody)
+    
     return render_template('apptDetailDrOptions.html',
                        mtgnum=str(request.form['mtgnum']),
                        doctor =docUser,
@@ -714,6 +750,8 @@ def editAcctDetails():
     else:
         response = mySQL_userDB.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], newPw1,cursor, cnx)
         print("2", response)
+    emailBody = "Hello "+session['username']+",\r\nYour account details have been changed.\r\nIf this was not you, please let us know immediately.\r\nSincerely,\r\n\tYour Treeo Team"
+    sendAutomatedAcctMsg(session['username'], "Account Updated", emailBody)
     session['name']=str(request.form['fname'])+" "+str(request.form['lname'])
     return acct_details()
 
@@ -1023,19 +1061,44 @@ def deletePg():
 
 @app.route("/deleteRenderNum/", methods=['POST','GET']) 
 def deletePgNum():
-    if session['logged_in_p']:
-        return accessDenied()
+    return autoDeleteMtg(str(request.form['mtgnum']))
     mtgid = str(request.form['mtgnum'])
     return render_template('delete.html', mtg=mtgid)
 
 
+def autoDeleteMtg(mtgid):
+   
+    if (mySQL_apptDB.isMeetingIDValid(str(mtgid), cursor, cnx)==True):
+        mtgDetails = mySQL_apptDB.getApptFromMtgId(str(mtgid), cursor, cnx)
+            #(mI, d, p, mN, sT, jU)
+        emailBody="Hello "+mtgDetails[2]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[1], cursor, cnx)+" ("+mtgDetails[1]+") has been cancelled. \r\n\r\n\t"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:-1]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
+        sendAutomatedApptMsg(mtgDetails[2],"Appointment Cancelled",emailBody)
+        emailBody="Hello "+mtgDetails[1]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[2], cursor, cnx)+" ("+mtgDetails[2]+") has been cancelled. \r\n\r\n\t"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:-1]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
+        sendAutomatedApptMsg(mtgDetails[1],"Appointment Cancelled",emailBody)
+        
+        zoomtest_post.deleteMtgFromID(str(mtgid), cursor, cnx)
+        
+        return render_template('deleteConfirm.html', mtgnum=str(mtgid))
+    else:
+        return deletePg()
+
 @app.route("/deletemtg", methods=['POST','GET'])
 def deleteMtg():
-    if session['logged_in_p']:
-        return accessDenied()
    
     if (mySQL_apptDB.isMeetingIDValid(str(request.form['mtgID']), cursor, cnx)==True):
+        mtgDetails = mySQL_apptDB.getApptFromMtgId(str(request.form['mtgID']), cursor, cnx)
+            #(mI, d, p, mN, sT, jU)
+        emailBody="Hello "+mtgDetails[2]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[1], cursor, cnx)+" ("+mtgDetails[1]+") has been cancelled. \r\n\r\n\t"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:-1]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
+        sendAutomatedApptMsg(mtgDetails[2],"Appointment Cancelled",emailBody)
+        emailBody="Hello "+mtgDetails[1]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[2], cursor, cnx)+" ("+mtgDetails[2]+") has been cancelled. \r\n\r\n\t"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:-1]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
+        sendAutomatedApptMsg(mtgDetails[1],"Appointment Cancelled",emailBody)
+        
         zoomtest_post.deleteMtgFromID(str(request.form['mtgID']), cursor, cnx)
+        
         return render_template('deleteConfirm.html', mtgnum=str(request.form['mtgID']))
     else:
         return deletePg()
@@ -1281,8 +1344,16 @@ def selectOption():
 
     return openInbox()
 
-def sendAutomatedMsg(reciever,subject,msgBody):
+def sendAutomatedAcctMsg(reciever,subject,msgBody):
     insertMessage("TreeoNotification",
+           reciever,
+           subject,
+           msgBody,
+                 "0"
+                 )
+    
+def sendAutomatedApptMsg(reciever,subject,msgBody):
+    insertMessage("TreeoCalendar",
            reciever,
            subject,
            msgBody,

@@ -14,13 +14,29 @@
 import http.client
 import json
 #from OpenSSL import SSL
+import jwt   # pip install pyjwt
+import datetime
+
 import mySQL_apptDB
 #from aws_appt import getAllApptsFromUsername,createApptAWS, deleteApptAWS,getApptFromMtgId #updateApptAWS,
 conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
 
-headerKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE2MDk3MzQyNTksImlhdCI6MTYwOTEyOTQ1N30.j_v2lfEWoOSlcTLVTEhbfXE00oJUzrHmWGqq3R2ZCg4'
+api_key = 'oURxTkQkTL6USazzprxmuw'
+api_sec = 'aN9ShhzoaxLX0BCJwLpjNOpAK1pd8lkVWkax'
 
-headers = { 'authorization': "Bearer "+headerKey }
+# generate JWT
+payload = {
+'iss': api_key,
+'exp': datetime.datetime.now() + datetime.timedelta(hours=7)
+}
+jwt_encoded = jwt.encode(payload, api_sec)
+
+headerKey = str(jwt_encoded)[2:-1]#'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6Im9VUnhUa1FrVEw2VVNhenpwcnhtdXciLCJleHAiOjE2MDk3MzQyNTksImlhdCI6MTYwOTEyOTQ1N30.j_v2lfEWoOSlcTLVTEhbfXE00oJUzrHmWGqq3R2ZCg4'
+
+headers = {
+'authorization': "Bearer "+str(jwt_encoded)[2:-1],
+'content-type': "application/json"
+}
 
 def addParticipant(mtgID, firstName, lastName, email):
     #conn = http.client.HTTPSConnection("api.zoom.us", context = ssl._create_unverified_context())
@@ -70,17 +86,18 @@ def createMtg(topic, time, password, doctor, patient, cursor, cnx):
         'content-type': "application/json",
         'authorization': "Bearer "+headerKey
         }
+    print("1")
 
     conn.request("POST", "/v2/users/HE1A37EjRIiGjh_wekf90A/meetings", json.dumps(payload), headers)##HE1A37EjRIiGjh_wekf90A
     ##urllib.request.urlopen({api_url}, data=bytes(json.dumps(headers), encoding="utf-8"))
-
+    print("2")
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     
     #createAppt(mtgName, mtgid, doctor, patient, start_time, joinURL, cursor, cnx)
     mySQL_apptDB.createAppt(topic, str(data.get("id")), doctor, patient, str(data.get("start_time")), str(data.get("join_url")), cursor, cnx)
-    
+    print(data)
     conn.close()
     return data
 
