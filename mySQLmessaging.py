@@ -897,54 +897,70 @@ if __name__ == '__main__':
 
 #TODO -DONE :)- fix spacing of TreeoNotification messages
 #- DONE :) -FIX MYSQL TIMEOUT ERRORS -- what acct is the server on??
+# DONE :) FIX ZOOM Api call tokens (jwt)
+#TODO -DONE :)- send automsg to drsx3 and patient when assigned
+#TODO -DONE :)- send other automated messages (acct creation/acct update/appt create/appt change/appt delete)
+    #-DONE :)-acct stuff -> TreeoNotification
+        #DONE :)care team assignment x4
+        #DONE :)account create x1
+        #DONE :)account update x1
+    #-DONE :)-appt Stuff -> TreeoCalendar
+        #DONE :)appt create x2
+        #DONE :)appt cancelled x2
+        #DONE :)appt updated x2
+        
+    #DONE :)make an option fo patients to cancel an appt through mtg detail page
+#DONE :)CHANGE how delte is done (no form, just run delete when they hit the cancel btn)
+#DONE :) when appt is created/updated/deleted -> notify patient with automated msg
+# TODO -DONE :)- unapproved drs in admin dashboard
+    #-DONE :)- send email to registered email when they are approved
+    #-DONE :)- do not let them log in until they are approved
+#-DONE :)- make a way for the dr to be unapproved by an admin
+#-DONE :)- give patient the ability to cancel appt (<24h = fee warning) -> notify dr + update calendar
+#-DONE :)- make utility function to allow drs to view all patients they are assigned to/are on the care team for
+    #-DONE :)- make a page in the dr portal for it
+#-DONE :)-when deleting, check if it is from a notification account 
+   #-DONE :)-(if it is, permadelete immediately so dtb is not inflated with delted notification msgs)
+
+
+#--fix all calendar styling (wrapper-c id children)
+
 
 #in the function where patients and drs are mixed, figure out how to distinguish them
     #conditional formatting of the dropdown (CSS)
-#fix all calendar styling
-#when querying, delete all appts that happened before the current day 
-    #when editing an appt, if curr time>end time do not let them edit
+
+
+
+#--[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
+    #--treat msgs from that dummy "deletedAcct" like notif (permadelete if the other person deletes)
+    #-tbd how to handle a dr being deleted when they are on patient care team
+
+
+#Calendar -> when querying, remove all appts that happened before the current day 
+    #when editing an appt, if curr time>end time do not let them edit (same day)
+#Archive
     #(have an archive table for past appts/appt history ) -- not deleted appts, only appts that passed and we removed ourselves
     #only store patient/dr/date/time
     #on patient acct deletion, GO INTO ARCHIVE AND DELETE ALL APPTS
     #allow patients to view summary/access dr notes
-#when appt is created/updated/deleted -> notify patient with automated msg
+#make appt requested option + do automated message x1 (patient req so only notify dr)
+    #what mechnaism for requests?? - form for requesting a range on a certian day? just req a certain day? 
+    #make an availability window potion of the appts db for drs, allow patients to request an appt at any point that is not booked
+    #(unbooked appts still block out that time until accepted or rejected so the requests don't overlap)
 
+
+
+#when there is an error in register, do not dewfault to dietician/patient
+#start putting "are you sure?" warnings on bigger actions
+    #cancel appt
+    #approve dr
 
 #TODO -- remove the links of admin inbox to calendar/etc (make seperate admin pages)
     #-all malibox? (or just remove nav on all mailbox except inbox + only have sep inbox?)
     #-patient acct detail pg
 
 
-#FIX ZOOM Api call tokens (jwt)
-#TODO -- send automsg to drsx3 and patient when assigned
-#TODO -- send other automated messages (acct creation/acct update/appt create/appt change/appt delete)
-    #--acct stuff -> TreeoNotification
-        #care team assignment x4
-        #account create x1
-        #account update x1
-    #--appt Stuff -> TreeoCalendar
-        #appt create x2
-        #appt cancelled x2
-        #appt updated x2
-        #appt requested x1 (patient req so only notify dr)
-    #make an option fo patients to cancel an appt through mtg detail page
-#CHANGE how delte is done (no form, just run delete when they hit the cancel btn)
-    
 
-    
-   #when there is an error in register, do not dewfault to dietician/patient
-# TODO -- unapproved drs in admin dashboard
-    #-- send email to registered email when they are approved
-    #-- do not let them log in until they are approved
-
-
-
-#--[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
-    #-tbd how to handle a dr being deleted when they are on patient care team
-    
-#give patient the ability to cancel appt (<24h = fee warning) -> notify dr + update calendar
-#start putting "are you sure?" warnings on bigger actions
-    
 #fix stupid implementation of "paging" in search results
     #make sure when there are 0 results the page counter doesn't start with 1
 #list/search ALL users (search + see user accts including drs)
@@ -952,7 +968,8 @@ if __name__ == '__main__':
 #*--add search bar (mid top of inbox)
 #--STYLING 
 #--redo msgDB schema with FK to user tables
-
+#--make login limit (5 tries before locking acct)
+#--empty trash folder every 2 wks
 
 #*--put inbox unread tally icon in nav bar
 #--eventually - give admin way to delete/ban patient users

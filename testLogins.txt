@@ -3,6 +3,9 @@ admin --- helpME123
 first_user --- 1ST_Us3r
 second_user --- 2ND_Us3r
 third_user --- 3RD_Us3r
+fourth_user --- 4TH_Us3r
+fifth_user --- 5TH_Us3r
+sixth_user --- 6TH_Us3r
 doctor1 --- DOCTOR11
 doctor2 --- DOCTOR22
 doctor3 --- DOCTOR33
@@ -13,5 +16,3 @@ ADMIN -> TreeoHealth --- TreeoHealth12
 ADMIN -> TreeoNotification --- CalvinH12
 ADMIN -> adminTest --- adminTEST12
 ADMIN -> TreeoCalendar --- TreeoCalendar12
-fourth_user --- 4TH_Us3r
-sixth_user --- 6TH_Us3r

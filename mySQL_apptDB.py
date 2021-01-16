@@ -65,6 +65,18 @@ def deleteAppt(mtgid, cursor, cnx):
     cnx.commit()
     # for item in cursor:
     #     return "deleted "+mtgid
+
+def archiveAppt(mtgid, cursor, cnx):
+    apptDetails=getApptFromMtgId(mtgid,cursor,cnx)
+        #(mI, d, p, mN, sT, jU)
+    formatInsert = ("INSERT INTO archiveApptTable "
+                   "(mtgID, patient,doctor,"
+                    "startTime) "
+                   "VALUES (%s, %s,%s, %s)") #NOTE: use %s even with numbers
+    insertContent = (apptDetails[0], apptDetails[2], apptDetails[1], apptDetails[4])
+    cursor.execute(formatInsert, insertContent)
+    cnx.commit()
+    deleteAppt(mtgid,cursor,cnx)
     
 
 def updateAppt(mtgName, mtgid,start_time, cursor, cnx): 

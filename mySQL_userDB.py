@@ -55,9 +55,9 @@ def insertDoctor(username, password, email, fname, lname, drType, cursor, cnx):
 
     formatInsert = ("INSERT INTO doctorTable "
                    "(username, password,email,fname,"
-                    "lname,drType,creationDate) "
-                   "VALUES (%s, %s,%s, %s,%s, %s,%s)") #NOTE: use %s even with numbers
-    insertContent = (username, pwd_context.hash(password), email, fname, lname, drType, str(date.today().strftime("%B %d, %Y")))
+                    "lname,drType,creationDate, verified) "
+                   "VALUES (%s, %s,%s, %s,%s, %s,%s, %s)") #NOTE: use %s even with numbers
+    insertContent = (username, pwd_context.hash(password), email, fname, lname, drType, str(date.today().strftime("%B %d, %Y")), "0")
     cursor.execute(formatInsert, insertContent)
     cnx.commit()
 
@@ -176,6 +176,14 @@ def checkUserLogin(username, pwrd, cursor, cnx): #fix SQL DONE
 def returnAllPatients(cursor, cnx): 
     query = ("SELECT username FROM patientTable")         #BETWEEN %s AND %s")
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    patientArr = []
+    for un in cursor:
+        patientArr.append(un[0])
+    return patientArr
+
+def returnPatientsAssignedToDr(username, cursor, cnx): 
+    query = ("SELECT username FROM patientTable WHERE drOne = %s OR drTwo = %s OR drThree = %s")         #BETWEEN %s AND %s")
+    cursor.execute(query, (username,username,username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
     for un in cursor:
         patientArr.append(un[0])
@@ -305,6 +313,38 @@ def getAllDrHealth(cursor, cnx):
         docArr.append(tmp)
     return docArr
 
+def getAllUnapprovedDrs(cursor, cnx):
+    query = ("SELECT username, fname FROM doctorTable WHERE verified=%s")         #BETWEEN %s AND %s")
+    cursor.execute(query, ("0",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    docArr = []
+    for un,fn in cursor:
+        docArr.append(un)
+    return docArr
+
+def getAllApprovedDrs(cursor, cnx):
+    query = ("SELECT username, fname FROM doctorTable WHERE verified=%s")         #BETWEEN %s AND %s")
+    cursor.execute(query, ("1",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    docArr = []
+    for un,fn in cursor:
+        docArr.append(un)
+    return docArr
+
+def verifyDoctor(username, cursor, cnx):
+    update_test = (
+                "UPDATE doctorTable SET verified = %s "
+                "WHERE username = %s")
+    cursor.execute(update_test, ("1",username ))
+    cnx.commit()
+    return "success"
+
+def unverifyDoctor(username, cursor, cnx):
+    update_test = (
+                "UPDATE doctorTable SET verified = %s "
+                "WHERE username = %s")
+    cursor.execute(update_test, ("0",username ))
+    cnx.commit()
+    return "success"
+    
 def getNameFromUsername(username, cursor, cnx): 
     #the 2 queries need to have the same # of attributes in the select for a union
     query = ("SELECT fname, lname FROM doctorTable WHERE username = %s " ) #always check drTable 1st (smaller)

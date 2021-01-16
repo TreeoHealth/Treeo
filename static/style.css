@@ -11,13 +11,22 @@ background-color: #3498DB;
 padding: 50px;
 }
 .login {
-margin: 20px auto;
-width: 300px;
+	width: 300px;
+	margin: 20px auto;
+
+}
+.listwhitespace
+{
+	margin-top: 20px;
+	margin-left:22%;
+	width: 300px;
+
 }
 .login-screen {
 background-color: #FFF;
 padding: 20px;
-border-radius: 5px
+border-radius: 5px;
+min-width:400px;
 }
 
 .app-title {
@@ -166,6 +175,20 @@ box-shadow: none;
 	margin-bottom: 300px;
 	padding-bottom:25px;
 }
+#wrapper-c
+{
+	border:1px solid white;
+	min-width:700px;
+	max-width:1024px;
+	box-shadow: 5px 5px #828282;
+	background-image:none;
+	background-color:white;
+	width: 50%;
+	margin-right: auto;
+	margin-left: auto;
+	margin-bottom: 300px;
+	padding-bottom:25px;
+}
 
 .btn {
 border: 2px solid transparent;
@@ -199,7 +222,10 @@ background-color: #2980B9;
 
 .apptbutton{
 	float:right;
-	width:100px;
+	width:125px;
+	height:50px;
+	text-align: center;
+	font-size: small;
 }
 
 .login-link {

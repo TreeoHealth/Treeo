@@ -33,16 +33,25 @@ cursor.execute("USE {}".format(DB_NAME))
 # cursor.execute("DROP TABLE IF EXISTS userTable;")
 # cursor.execute("DROP TABLE IF EXISTS doctorTable;")
 # cursor.execute("DROP TABLE IF EXISTS patientTable;")
+cursor.execute("DROP TABLE IF EXISTS archiveApptTable;")
 # print("Finished dropping table (if existed).")
-cursor.execute("CREATE TABLE adminTable ("
-       "  username varchar(30) NOT NULL,"
-       "  password varchar(100) NOT NULL,"
-       "  fname varchar(30) NOT NULL,"
-       "  lname varchar(30) NOT NULL,"
-       "  creationDate varchar(50) NOT NULL,"
-       "  PRIMARY KEY (username), UNIQUE KEY username (username)"
+cursor.execute("CREATE TABLE archiveApptTable ("
+       "  mtgID varchar(30) NOT NULL,"
+       "  patient varchar(30) NOT NULL,"
+       "  doctor varchar(30) NOT NULL,"
+       "  start_time varchar(50) NOT NULL,"
+       "  PRIMARY KEY (mtgID), UNIQUE KEY mtgID (mtgID)"
        ") ENGINE=InnoDB"
    )
+# cursor.execute("CREATE TABLE adminTable ("
+#        "  username varchar(30) NOT NULL,"
+#        "  password varchar(100) NOT NULL,"
+#        "  fname varchar(30) NOT NULL,"
+#        "  lname varchar(30) NOT NULL,"
+#        "  creationDate varchar(50) NOT NULL,"
+#        "  PRIMARY KEY (username), UNIQUE KEY username (username)"
+#        ") ENGINE=InnoDB"
+#    )
 # cursor.execute("CREATE TABLE doctorTable ("
 #        "  username varchar(30) NOT NULL,"
 #        "  password varchar(100) NOT NULL,"
@@ -51,6 +60,7 @@ cursor.execute("CREATE TABLE adminTable ("
 #        "  lname varchar(30) NOT NULL,"
 #        "  drType varchar(30) NOT NULL,"
 #        "  creationDate varchar(50) NOT NULL,"
+#        "  verified varchar(10) NOT NULL,"
 #        "  PRIMARY KEY (username), UNIQUE KEY username (username)"
 #        ") ENGINE=InnoDB"
 #    )

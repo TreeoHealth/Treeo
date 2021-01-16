@@ -1,0 +1,32 @@
+<link rel="stylesheet" href="/static/style.css" type="text/css">
+<!--&#123;% block body %&#125;-->
+<div id="wrapper">
+<div id = "navwrapper">
+<nav> 
+	&nbsp;<a href="{{ url_for('home') }}">Home</a>
+	<a href="{{ url_for('show_mtg') }}">Calendar</a>
+	<a href="{{ url_for('acct_details') }}">Account Details</a>
+	<a href="{{ url_for('openInbox') }}">Inbox</a>
+	<a href="{{ url_for('logout') }}">Logout</a>
+</nav>
+</div>
+<div class="login">
+<div class="login-screen">
+<div class="app-title">
+<h1>Admin Approval Confirmation Page</h1>
+</div>
+<div class="login-form">
+<div class="control-group">
+	<label class="login-field-icon fui-user" for="login-name">Successfully Approved Doctor</label>
+	<input readonly type="text" class="login-field" value="{{drname}}" name="drname">
+</div>
+<a href="{{ url_for('adminListUnapproved') }}" class="btn btn-primary btn-large btn-block">Unapproved Doctors</a>
+<br>
+<a href="{{ url_for('displayLoggedInHome') }}" class="btn btn-primary btn-large btn-block">Home</a>
+<br>
+</div>
+</div>
+</div>
+</div>
+
+</div>

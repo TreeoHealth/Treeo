@@ -99,6 +99,8 @@ def check_login():
         #(u, dS, str(f+" "+l), e, cD)
         info = mySQL_userDB.getAcctFromUsername(request.form['username'],cursor, cnx)
         if(info[1]=='doctor'):
+            if(request.form['username'] in mySQL_userDB.getAllUnapprovedDrs(cursor, cnx)):
+                return render_template('login.html', errorMsg="You have not been verified. Check your email for updates.")
             session['logged_in_d']=True
             session['logged_in_p']=False
             session['logged_in_a']=False
@@ -122,12 +124,53 @@ def adminListUnassigned():
     else:
         return render_template("unassignedList.html",
                            options = listPat)
+        
+@app.route('/unapproved', methods=['POST','GET'])
+def adminListUnapproved():
+    listPat = mySQL_userDB.getAllUnapprovedDrs(cursor, cnx)
+    if(len(listPat)==0):
+        return render_template("emptyUnapprovedList.html")
+    else:
+        return render_template("unapprovedList.html",
+                           options = listPat)
+        
+@app.route('/approved', methods=['POST','GET'])
+def adminListApproved():
+    listPat = mySQL_userDB.getAllApprovedDrs(cursor, cnx)
+    if(len(listPat)==0):
+        return render_template("emptyApprovedList.html")
+    else:
+        return render_template("approvedList.html",
+                           options = listPat)
 
 #/assign/{{item}}
 @app.route('/assign/<username>', methods=['POST','GET'])
 def assignForm(username):
     return render_template("assignCareTeam.html",
                            username  = username)
+    
+
+
+@app.route('/approve/<username>', methods=['POST','GET'])
+def approveForm(username):
+    mySQL_userDB.verifyDoctor(username, cursor, cnx)
+    emailBody = "Hello "+mySQL_userDB.getNameFromUsername(username, cursor, cnx)+",\r\nWelcome to Treeo!\r\nYou are now approved as a care provider!\r\n\r\nWelcome to the team! Let us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
+    sendAutomatedAcctMsg(username,"Treeo Approval - Welcome",emailBody) 
+    emailBody = "Hello "+session['name']+",\r\nYou have approved "+mySQL_userDB.getNameFromUsername(username, cursor, cnx)+ " (" +username+") as a care provider. If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
+    sendAutomatedAcctMsg(session['username'],"Provider Approved",emailBody) 
+    return render_template("approveConfirmation.html",
+                           drname  = str(username + " - " +mySQL_userDB.getNameFromUsername(username, cursor, cnx)))
+
+@app.route('/removeapproval/<username>', methods=['POST','GET'])
+def unapproveForm(username):
+    mySQL_userDB.unverifyDoctor(username, cursor, cnx)
+    emailBody = "Hello "+mySQL_userDB.getNameFromUsername(username, cursor, cnx)+",\r\You have been suspended from being a care provider temporarily.\r\n\r\nLet us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
+    sendAutomatedAcctMsg(username,"Provider Account Suspended",emailBody) 
+    emailBody = "Hello "+session['name']+",\r\nYou have removed provider approval for "+mySQL_userDB.getNameFromUsername(username, cursor, cnx)+ " (" +username+"). If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
+    sendAutomatedAcctMsg(session['username'],"Provider Approval Revoked",emailBody) 
+    return render_template("unapproveConfirmation.html",
+                           drname  = str(username + " - " +mySQL_userDB.getNameFromUsername(username, cursor, cnx)))
+
 
 
 @app.route('/assignCareTeam', methods=['POST','GET'])
@@ -293,10 +336,13 @@ def new_register():
         session['name'] = request.form['fname']+" "+request.form['lname']
         emailBody=""
         if(docStatus=='doctor'):
+            emailBody = "Hello "+session['name']+",\r\nWelcome to Treeo!\r\nYou are not approved as a care provider yet, but we'll get right on verification. Let us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
+            sendAutomatedAcctMsg(request.form['username'],"Welcome to Treeo!",emailBody) 
+            return render_template('login.html', errorMsg="You have not been verified. Check your email for updates.")
+            
             session['logged_in_d']=True
             session['logged_in_p']=False
             session['logged_in_a']=False
-            emailBody = "Hello "+session['name']+",\r\nWelcome to Treeo!\r\nYou are not approved as a care provider yet, but we'll get right on verification. Let us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
             
         else:
             session['logged_in_p'] = True
@@ -789,6 +835,15 @@ def patientAcct(username):
 @app.route('/patients', methods=['POST','GET'])
 def list_patients():
     listStr = mySQL_userDB.returnAllPatients(cursor, cnx)
+    listStr.sort()
+    patientPages = []
+    currPg=0
+    return displayPagedSearch(listStr, 10)
+    #return render_template('picture.html', options=listStr) #THIS
+
+@app.route('/patientsAssigned', methods=['POST','GET'])
+def list_assigned_patients():
+    listStr = mySQL_userDB.returnPatientsAssignedToDr(session['username'], cursor, cnx)
     listStr.sort()
     patientPages = []
     currPg=0
@@ -1337,11 +1392,14 @@ def selectOption():
                         if(str(check)!='mar.x' and str(check)!='mar.y' and str(check)!='selectAll'):
                              markAsRead(str(check))
                 except:
-                    x = str(request.form['mau.x'])
-                    for check in request.form:
-                        if(str(check)!='mau.x' and str(check)!='mau.y' and str(check)!='selectAll'):
-                            markAsUnread(str(check))
-
+                    try:
+                        x = str(request.form['mau.x'])
+                        for check in request.form:
+                            if(str(check)!='mau.x' and str(check)!='mau.y' and str(check)!='selectAll'):
+                                markAsUnread(str(check))
+                    except:
+                        openInbox()
+    
     return openInbox()
 
 def sendAutomatedAcctMsg(reciever,subject,msgBody):
@@ -1519,11 +1577,14 @@ def emptyTrash():
                     if(str(check)!='permdel.x' and str(check)!='permdel.y' and str(check)!='selectAll'):
                         permenantDel(str(check), session['username'])
             except:
-                x = str(request.form['undotrash.x'])
-                for check in request.form:
-                    if(str(check)!='undotrash.x' and str(check)!='undotrash.y' and str(check)!='selectAll'):
-                        undoTrash(str(check), session['username'])
-
+                try:
+                    x = str(request.form['undotrash.x'])
+                    for check in request.form:
+                        if(str(check)!='undotrash.x' and str(check)!='undotrash.y' and str(check)!='selectAll'):
+                            undoTrash(str(check), session['username'])
+                except:
+                    return trashFolder()
+    
     return trashFolder()
 
    
@@ -1673,6 +1734,8 @@ def permenantDel(msgID, del_username):
             perm_del = 'sr'
         elif reciever == del_username and perm_del=='n':
             perm_del = 'r'
+            if(sender=="TreeoNotification" or sender=="TreeoCalendar"):
+                perm_del = 'sr'
         elif reciever == del_username and perm_del=='s':
             perm_del = 'sr'
         else:
