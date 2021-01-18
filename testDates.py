@@ -5,7 +5,7 @@ from pytz import timezone
 
 
 def testDates(strDate):
-    if(datetime.now().strftime('%Y-%m-%d')>strDate):
+    if(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")>strDate):
         return True
     else:
         return False
@@ -30,7 +30,8 @@ def convert(strDate):
     eastern = timezone('US/Eastern')
     loc_dt = eastern.localize(strDate)
     print(loc_dt)
-    
-print(convert_datetime_timezone("2020-01-15T02:56:53",'UTC' ,"US/Eastern"))
-print(convert_datetime_timezone("2021-01-14T02:56:53",'UTC' ,"US/Eastern"))
-print(convert_datetime_timezone("2021-01-16T02:56:53",'UTC' ,"US/Eastern"))
+
+print(testDates("2021-01-18T12:54:00"))
+# print(convert_datetime_timezone("2020-01-15T02:56:53",'UTC' ,"US/Eastern"))
+# print(convert_datetime_timezone("2021-01-14T02:56:53",'UTC' ,"US/Eastern"))
+# print(convert_datetime_timezone("2021-01-16T02:56:53",'UTC' ,"US/Eastern"))

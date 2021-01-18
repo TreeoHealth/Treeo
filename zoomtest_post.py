@@ -74,14 +74,15 @@ def convert_datetime_timezone(dt, tz1, tz2):
     return dt
 
 #----post below
-def createMtg(topic, time, password, doctor, patient, cursor, cnx):
+def createMtg(time, password, doctor, patient, cursor, cnx):
     #add 5 hrs to time
     #zoomAdjustedTime = convert_datetime_timezone(time, "US/Eastern",'UTC')
     #'2021-01-16T02:56:53Z'
     #print("adjusted create time (UTC) ->", zoomAdjustedTime)
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
+    topic = doctor+" + "+patient+" appt"
     payload={
-      "topic": topic,
+      "topic":topic,
       "type": 2,
       "start_time": time, #zoom automatically adds 5 hrs to time
       "duration": 40,
@@ -122,12 +123,11 @@ def createMtg(topic, time, password, doctor, patient, cursor, cnx):
 
 def updateMtg(mtgid, topic, time, cursor, cnx):
     zoomResp = getMtgFromMtgID(mtgid)
-    
-    #zoomAdjustedTime = convert_datetime_timezone(time, "US/Eastern",'UTC')
+    print("Time before adjust = ", time)
     payload={
       "topic": topic,
       "type": 2,
-      "start_time": time, #zoom automatically sends +5
+      "start_time":time, #zoom automatically sends +5, don't convert
       "duration": 40,
       "timezone": "Eastern Time (US and Canada)",
       "password": zoomResp.get('password'), #keep the password the same by querying what it already is
@@ -149,11 +149,11 @@ def updateMtg(mtgid, topic, time, cursor, cnx):
     
     res = conn.getresponse()
     raw_data = res.read()
-    data = json.loads(raw_data.decode("utf-8"))
-    print("UPDATE",data)
-    
-    #convert the UTC time to +5 for storing
+    #convert the UTC time to -5 for storing
+    data = getMtgFromMtgID(mtgid)
+    print("Time after update (UTC) = ",str(data.get("start_time"))[:-1])
     zoomAdjustedTime = convert_datetime_timezone(str(data.get("start_time"))[:-1], 'UTC',"US/Eastern")
+    print("Time after update (EST) = ",zoomAdjustedTime)
     mySQL_apptDB.updateAppt(topic, mtgid,zoomAdjustedTime, cursor, cnx)
     conn.close()
     return getMtgFromMtgID(mtgid)

@@ -45,11 +45,20 @@ def isMeetingIDValid(mtgid, cursor, cnx):
     return False
 
 def getApptFromMtgId(mtgid, cursor, cnx):
-    query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable")         #BETWEEN %s AND %s")
-    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable WHERE mtgID = %s")         #BETWEEN %s AND %s")
+    cursor.execute(query, (mtgid,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
     for mI, d, p, mN, sT, jU in cursor:            
         return (mI, d, p, mN, sT, jU)
+    
+def isMtgStartTimePassed(mtgID, cursor, cnx):
+    print("NOW",datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), "APPT TIME:", getApptFromMtgId(mtgID, cursor, cnx)[4])
+    if(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")>getApptFromMtgId(mtgID, cursor, cnx)[4]):
+        print("NOW is AFTER mtg start time")
+        #if the start time of the mtg is past the current time, this will return true
+        return True
+    print("NOW IS BEFORE mtg start time")
+    return False
 
 def createAppt(mtgName, mtgid, doctor, patient, start_time, joinURL, cursor, cnx):
     formatInsert = ("INSERT INTO apptTable "

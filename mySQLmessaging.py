@@ -927,36 +927,44 @@ if __name__ == '__main__':
     #- DONE :) -fix trash - sent
     #- DONE :) -fix undo trash
     #- DONE :) -fix perma trash
-    #- DONE :) -heck all other functionality
-
+    #- DONE :) -check all other functionality
+#NOTE: CALENDAR -- appts are set in time + 5h in zoom API
+    #DONE :) store Zoom time -5h (EST) in apptTable
+    #DONE :) add +5 to the time BEFORE sending to zoom API (NO - Zoom adds 5 to go to UTC automatically)
+    #DONE :) show apptTable time when showing appt details
+    #DONE :) show apptTable time in calendar positioning
+#-DONE :)-Calendar -> when querying, remove all appts that happened before the current day 
+    #-DONE :)-when editing an appt, if curr time>end time do not let them edit (same day)
+#-DONE :)-AUTO SET title of meeting (do not let dr set)
+#-DONE :)-make autocomplete noncase sensitive
+#-DONE :)-check/fix username check on register
+    
+    
 #--fix all calendar styling (wrapper-c id children)
-
+    #fix tiny formatting issues with search page/all info forms
 #in the function where patients and drs are mixed, figure out how to distinguish them
     #conditional formatting of the dropdown (CSS)
-#make autocomplete noncase sensitive
+
+#CLEAN UP ALL COMMENTS
+#Split apptest.py into smaller files
 
 
 #--[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
     #--treat msgs from that dummy "deletedAcct" like notif (permadelete if the other person deletes)
     #-tbd how to handle a dr being deleted when they are on patient care team
 
+#EVENTUALLY - can store user's time zone in the db for easier adjustment
+    
 
 
 
-#NOTE: CALENDAR -- appts are set in time + 5h in zoom API
-    #store Zoom time -5h in apptTable
-    #add +5 to the time BEFORE sending to zoom API
-    #show apptTable time when showing appt details
-    #show apptTable time in calendar positioning
-    #EVENTUALLY - can store user's time zone in the db for easier adjustment
-#Calendar -> when querying, remove all appts that happened before the current day 
-    #when editing an appt, if curr time>end time do not let them edit (same day)
 
 #Archive
-    #(have an archive table for past appts/appt history ) -- not deleted appts, only appts that passed and we removed ourselves
-    #only store patient/dr/date/time
+    #-DONE :)-(have an archive table for past appts/appt history ) -- not deleted appts, only appts that passed and we removed ourselves
+    #-DONE :)-only store patient/dr/date/time
     #on patient acct deletion, GO INTO ARCHIVE AND DELETE ALL APPTS
     #allow patients to view summary/access dr notes
+    
 #make appt requested option + do automated message x1 (patient req so only notify dr)
     #what mechnaism for requests?? - form for requesting a range on a certian day? just req a certain day? 
     #make an availability window potion of the appts db for drs, allow patients to request an appt at any point that is not booked

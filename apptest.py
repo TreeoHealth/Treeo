@@ -41,7 +41,7 @@ cursor.execute("USE treeoHealthDB")
 tmpcursor = cnx.cursor(buffered=True) #THIS IS TO FIX "Unread result found error"
 tmpcursor.execute("USE treeoHealthDB")
 
-takenUsernames = mySQL_userDB.returnAllPatients(cursor, cnx)
+takenUsernames = mySQL_userDB.returnAllTakenUsernames(cursor, cnx)
 patientList = mySQL_userDB.searchPatientList(cursor, cnx)
 
 pwd_context = CryptContext(
@@ -225,7 +225,7 @@ def dAutocomplete():
    query = request.args.get('query')
    listDr=mySQL_userDB.getAllDrDietician(cursor, cnx)
    for username in listDr:
-       if(query in username):
+       if(query.lower() in username.lower()):
            jsonSuggest.append({'value':username,'data':username})
    return jsonify({"suggestions":jsonSuggest})
 
@@ -235,7 +235,7 @@ def pAutocomplete():
    query = request.args.get('query')
    listDr=mySQL_userDB.getAllDrPhysician(cursor, cnx)
    for username in listDr:
-       if(query in username):
+       if(query.lower() in username.lower()):
            jsonSuggest.append({'value':username,'data':username})
    return jsonify({"suggestions":jsonSuggest})
 
@@ -245,7 +245,7 @@ def hcAutocomplete():
    query = request.args.get('query')
    listDr=mySQL_userDB.getAllDrHealth(cursor, cnx)
    for username in listDr:
-       if(query in username):
+       if(query.lower() in username.lower()):
            jsonSuggest.append({'value':username,'data':username})
    return jsonify({"suggestions":jsonSuggest})
 
@@ -352,7 +352,7 @@ def new_register():
             
         
         sendAutomatedAcctMsg(request.form['username'],"Welcome to Treeo!",emailBody) 
-        
+        takenUsernames.append(request.form['username'])
         
         return displayLoggedInHome()
     elif reply=="bad email or domain":
@@ -513,7 +513,7 @@ def createUserSearch():
     query = request.args.get('query')
     listPatients=mySQL_userDB.searchPatientList(cursor, cnx)
     for username in listPatients:
-        if(query in username):
+        if(query.lower() in username.lower()):
             jsonSuggest.append({'value':username,'data':username.split(" - ")[0]})#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
         #suggestions = [{'value': 'joe','data': 'joe'}, {'value': 'jim','data': 'jim'}]
     return jsonify({"suggestions":jsonSuggest})
@@ -529,11 +529,11 @@ def create_mtg():
     try:
         if len(request.form['patientUser'].split(" - "))>1:
             username = request.form['patientUser'].split(" - ")[0]
-            jsonResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], username, cursor, cnx)
+            jsonResp = zoomtest_post.createMtg(time,str(request.form['password']),session['username'], username, cursor, cnx)
             print(jsonResp)
     #session['username'] == doctor
         else:
-            jsonResp = zoomtest_post.createMtg(str(request.form['mtgname']), time,str(request.form['password']),session['username'], request.form['patientUser'],cursor, cnx)
+            jsonResp = zoomtest_post.createMtg(time,str(request.form['password']),session['username'], request.form['patientUser'],cursor, cnx)
             print(jsonResp)
         date=time[:10]
         finalStr = ""
@@ -617,7 +617,6 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
     date=time[:10]
     if(time[-1]=='Z'):
         time = time[:-1] #takes off the 'z'
-    print("TIME -> ",time[11:])
     docUser = apptDetail[1]
     patUser = apptDetail[2]
     if(session.get('logged_in_p')):
@@ -629,7 +628,16 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
                                mtgtime=str(time[11:]),
                                mtgdate=str(date))
     elif(session.get('logged_in_d')):
-        return render_template('apptDetailDrOptions.html',
+        if(mySQL_apptDB.isMtgStartTimePassed(mtgid, cursor, cnx)==True): #if it is passed so it should not be edited
+            return render_template('apptDetail.html',
+                               mtgnum=mtgid,
+                               doctor=docUser,
+                               patient = patUser,
+                               mtgname=str(apptDetail[3]),
+                               mtgtime=str(time[11:]),
+                               mtgdate=str(date))
+        else:
+            return render_template('apptDetailDrOptions.html',
                        mtgnum=mtgid,
                        doctor =docUser,
                        patient = patUser,
@@ -645,7 +653,8 @@ def editPgFromID():
     jsonResp = zoomtest_post.getMtgFromMtgID(request.form['mtgnum'])
 
     #mtgname, pword, mtgtime, mtgdate
-    time=str(jsonResp.get("start_time"))
+    # time=str(jsonResp.get("start_time"))
+    time = mySQL_apptDB.getApptFromMtgId(request.form['mtgnum'], cursor, cnx)[4]
     #split and display
     date=time[:10]
     if(time[-1]=='Z'):
@@ -662,7 +671,7 @@ def editPgFromID():
 def editSubmit():
     if session['logged_in_p']:
         return accessDenied()
-    time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
+    time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
     jsonResp = zoomtest_post.updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,cursor, cnx)
 
     jsonResp= zoomtest_post.getMtgFromMtgID(str(request.form['mtgnum']))
@@ -683,8 +692,16 @@ def editSubmit():
     emailBody="Hello "+mtgDetails[1]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[2], cursor, cnx)+" ("+mtgDetails[2]+") has been updated. \r\n\r\n\t"
     emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails[5]+"\r\n\r\nThis has been changed your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
     sendAutomatedApptMsg(mtgDetails[1],"Appointment Updated",emailBody)
-    
-    return render_template('apptDetailDrOptions.html',
+    if(mySQL_apptDB.isMtgStartTimePassed(request.form['mtgnum'], cursor, cnx)==True): #if it is passed so it should not be edited
+        return render_template('apptDetail.html',
+                               mtgnum=str(request.form['mtgnum']),
+                               doctor=docUser,
+                               patient = patUser,
+                               mtgname=str(jsonResp.get("topic")),
+                               mtgtime=str(time[11:]),
+                               mtgdate=str(date))
+    else:
+        return render_template('apptDetailDrOptions.html',
                        mtgnum=str(request.form['mtgnum']),
                        doctor =docUser,
                        patient = patUser,
@@ -910,7 +927,7 @@ def search_page():
     listStr=[]
     listPatients=patientList
     for username in listPatients:
-        if(query in username):
+        if(query.lower() in username.lower()):
             jsonSuggest.append({'value':username,'data':username})
             actualUsername = (username.split(" - "))[0]
             listStr.append(actualUsername)
@@ -1107,7 +1124,7 @@ def process(box):
     query = request.args.get('query')
     listPatients=patientList
     for username in listPatients:
-        if(query in username):
+        if(query.lower() in username.lower()):
             jsonSuggest.append({'value':username,'data':username})
     return jsonify({"suggestions":jsonSuggest})
 
@@ -1549,7 +1566,7 @@ def usernameSearch(box):
    else:
         listPatients= mySQL_userDB.getCareTeamOfUser(session['username'],cursor, cnx)
    for username in listPatients:
-       if(query in username):
+       if(query.lower() in username.lower()): #match regardless of case
            jsonSuggest.append({'value':username,'data':username})
    return jsonify({"suggestions":jsonSuggest})
 

@@ -181,6 +181,25 @@ def returnAllPatients(cursor, cnx):
         patientArr.append(un[0])
     return patientArr
 
+def returnAllTakenUsernames(cursor, cnx): 
+    query = ("SELECT username FROM patientTable")         #BETWEEN %s AND %s")
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    userArr = []
+    for un in cursor:
+        userArr.append(un[0])
+        
+    query = ("SELECT username FROM doctorTable")         #BETWEEN %s AND %s")
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    for un in cursor:
+        userArr.append(un[0])
+    
+    query = ("SELECT username FROM adminTable")         #BETWEEN %s AND %s")
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    for un in cursor:
+        userArr.append(un[0])
+        
+    return userArr
+
 def returnPatientsAssignedToDr(username, cursor, cnx): 
     query = ("SELECT username FROM patientTable WHERE drOne = %s OR drTwo = %s OR drThree = %s")         #BETWEEN %s AND %s")
     cursor.execute(query, (username,username,username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
