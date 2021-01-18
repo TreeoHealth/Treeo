@@ -940,21 +940,45 @@ if __name__ == '__main__':
 #-DONE :)-check/fix username check on register
     
     
-#--fix all calendar styling (wrapper-c id children)
-    #fix tiny formatting issues with search page/all info forms
-#in the function where patients and drs are mixed, figure out how to distinguish them
-    #conditional formatting of the dropdown (CSS)
 
-#CLEAN UP ALL COMMENTS
-#Split apptest.py into smaller files
+
+
+
 
 
 #--[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
     #--treat msgs from that dummy "deletedAcct" like notif (permadelete if the other person deletes)
     #-tbd how to handle a dr being deleted when they are on patient care team
+    #on patient acct deletion, GO INTO ARCHIVE AND DELETE ALL APPTS? -- only if both accts are deleted
+        #on patient acct delteion, change name of patient to username+"[deleted]" so if that username is signed up for again, those appts won't show as that user's
 
-#EVENTUALLY - can store user's time zone in the db for easier adjustment
+#CLEAN UP ALL COMMENTS
+#Split apptest.py into smaller files
     
+#ADMIN - list/search ALL users (search + see user accts including drs)
+#On user acct page/in search result have a "send message" button that takes you to a pre-filled out inbox page
+
+#make appt requested option + do automated message x1 (patient req so only notify dr)
+    #what mechnaism for requests?? - form for requesting a range on a certian day? just req a certain day? 
+    #make an availability window potion of the appts db for drs, allow patients to request an appt at any point that is not booked
+    #(unbooked appts still block out that time until accepted or rejected so the requests don't overlap)
+
+#Maintenence/QOL
+    #--fix all calendar styling (wrapper-c id children)
+        #fix tiny formatting issues with search page/all info forms
+    #in the function where patients and drs are mixed, figure out how to distinguish them
+        #conditional formatting of the dropdown (CSS)
+    #when there is an error in register, do not dewfault to dietician/patient
+    #start putting "are you sure?" warnings on bigger actions
+        #cancel appt
+        #approve dr
+        #permadelete msgs
+    #TODO -- remove the links of admin inbox to calendar/etc (make seperate admin pages)
+        #-all malibox? (or just remove nav on all mailbox except inbox + only have sep inbox?)
+        #-patient acct detail pg
+
+
+
 
 
 
@@ -962,38 +986,21 @@ if __name__ == '__main__':
 #Archive
     #-DONE :)-(have an archive table for past appts/appt history ) -- not deleted appts, only appts that passed and we removed ourselves
     #-DONE :)-only store patient/dr/date/time
-    #on patient acct deletion, GO INTO ARCHIVE AND DELETE ALL APPTS
-    #allow patients to view summary/access dr notes
-    
-#make appt requested option + do automated message x1 (patient req so only notify dr)
-    #what mechnaism for requests?? - form for requesting a range on a certian day? just req a certain day? 
-    #make an availability window potion of the appts db for drs, allow patients to request an appt at any point that is not booked
-    #(unbooked appts still block out that time until accepted or rejected so the requests don't overlap)
+    #allow patients/drs to view summary/access dr notes
+    #EVENTUALLY -- allow drs to upload docs/make notes on appt (***HIPAA***)
+#EVENTUALLY - can store user's time zone in the db for easier adjustment  
 
 
-
-#when there is an error in register, do not dewfault to dietician/patient
-#start putting "are you sure?" warnings on bigger actions
-    #cancel appt
-    #approve dr
-
-#TODO -- remove the links of admin inbox to calendar/etc (make seperate admin pages)
-    #-all malibox? (or just remove nav on all mailbox except inbox + only have sep inbox?)
-    #-patient acct detail pg
-
-
-
-#fix stupid implementation of "paging" in search results
-    #make sure when there are 0 results the page counter doesn't start with 1
-#list/search ALL users (search + see user accts including drs)
-#On user acct page/in search result have a "send message" button that takes you to a pre-filled out inbox page
 #*--add search bar (mid top of inbox)
-#--STYLING 
-#--redo msgDB schema with FK to user tables
+#*--put inbox unread tally icon in nav bar
 #--make login limit (5 tries before locking acct)
 #--empty trash folder every 2 wks
+#fix stupid implementation of "paging" in search results
+    #make sure when there are 0 results the page counter doesn't start with 1
+#--STYLING 
+#--redo msgDB schema with FK to user tables
 
-#*--put inbox unread tally icon in nav bar
+
 #--eventually - give admin way to delete/ban patient users
     #--when patients are inappropriate on messaging, give notif to admin
 
