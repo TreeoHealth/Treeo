@@ -25,12 +25,16 @@ pwd_context = CryptContext(
     )
 
 
-def getAllApptsFromUsername(username, cursor, cnx):
+def getAllApptsFromUsername(username, tempcursor, cursor, cnx):
     query = ("SELECT mtgID, mtgName, startTime FROM apptTable WHERE doctor = %s OR patient = %s")         #BETWEEN %s AND %s")
     cursor.execute(query, (username, username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
     for mI, mN, sT in cursor:
-        patientArr.append([mI, mN, sT])
+        startDate= sT.split('T')[0]
+        if(datetime.now().strftime('%Y-%m-%d')>startDate): #if the date of the appt is past todays date FULLY, archive it
+            archiveAppt(mI, tempcursor, cnx)
+        else: #else it's today or later so keep it in the calendar
+            patientArr.append([mI, mN, sT]) 
     return patientArr
 
 def isMeetingIDValid(mtgid, cursor, cnx):
@@ -44,7 +48,7 @@ def getApptFromMtgId(mtgid, cursor, cnx):
     query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable")         #BETWEEN %s AND %s")
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
-    for mI, d, p, mN, sT, jU in cursor:
+    for mI, d, p, mN, sT, jU in cursor:            
         return (mI, d, p, mN, sT, jU)
 
 def createAppt(mtgName, mtgid, doctor, patient, start_time, joinURL, cursor, cnx):
@@ -71,7 +75,7 @@ def archiveAppt(mtgid, cursor, cnx):
         #(mI, d, p, mN, sT, jU)
     formatInsert = ("INSERT INTO archiveApptTable "
                    "(mtgID, patient,doctor,"
-                    "startTime) "
+                    "start_time) "
                    "VALUES (%s, %s,%s, %s)") #NOTE: use %s even with numbers
     insertContent = (apptDetails[0], apptDetails[2], apptDetails[1], apptDetails[4])
     cursor.execute(formatInsert, insertContent)

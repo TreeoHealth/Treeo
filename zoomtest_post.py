@@ -16,6 +16,8 @@ import json
 #from OpenSSL import SSL
 import jwt   # pip install pyjwt
 import datetime
+from datetime import date, datetime,timezone, timedelta
+from pytz import timezone
 
 import mySQL_apptDB
 #from aws_appt import getAllApptsFromUsername,createApptAWS, deleteApptAWS,getApptFromMtgId #updateApptAWS,
@@ -27,7 +29,7 @@ api_sec = 'aN9ShhzoaxLX0BCJwLpjNOpAK1pd8lkVWkax'
 # generate JWT
 payload = {
 'iss': api_key,
-'exp': datetime.datetime.now() + datetime.timedelta(hours=7)
+'exp': datetime.now() + timedelta(hours=7)
 }
 jwt_encoded = jwt.encode(payload, api_sec)
 
@@ -60,14 +62,28 @@ def addParticipant(mtgID, firstName, lastName, email):
     conn.close()
     #return data
 
+def convert_datetime_timezone(dt, tz1, tz2):
+    tz1 = timezone(tz1)
+    tz2 = timezone(tz2)
+
+    dt = datetime.strptime(dt,"%Y-%m-%dT%H:%M:%S")
+    dt = tz1.localize(dt)
+    dt = dt.astimezone(tz2)
+    dt = dt.strftime("%Y-%m-%dT%H:%M:%S")
+
+    return dt
 
 #----post below
 def createMtg(topic, time, password, doctor, patient, cursor, cnx):
+    #add 5 hrs to time
+    #zoomAdjustedTime = convert_datetime_timezone(time, "US/Eastern",'UTC')
+    #'2021-01-16T02:56:53Z'
+    #print("adjusted create time (UTC) ->", zoomAdjustedTime)
     conn = http.client.HTTPSConnection("api.zoom.us")#, context = ssl._create_unverified_context())
     payload={
       "topic": topic,
       "type": 2,
-      "start_time": time,
+      "start_time": time, #zoom automatically adds 5 hrs to time
       "duration": 40,
       "timezone": "Eastern Time (US and Canada)",
       "password": password,
@@ -86,27 +102,32 @@ def createMtg(topic, time, password, doctor, patient, cursor, cnx):
         'content-type': "application/json",
         'authorization': "Bearer "+headerKey
         }
-    print("1")
 
     conn.request("POST", "/v2/users/HE1A37EjRIiGjh_wekf90A/meetings", json.dumps(payload), headers)##HE1A37EjRIiGjh_wekf90A
     ##urllib.request.urlopen({api_url}, data=bytes(json.dumps(headers), encoding="utf-8"))
-    print("2")
+    
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
     
     #createAppt(mtgName, mtgid, doctor, patient, start_time, joinURL, cursor, cnx)
-    mySQL_apptDB.createAppt(topic, str(data.get("id")), doctor, patient, str(data.get("start_time")), str(data.get("join_url")), cursor, cnx)
-    print(data)
+    #change time to zoom time -5h but take off the 'z' to match the format
+    zoomAdjustedTime = convert_datetime_timezone(str(data.get("start_time"))[:-1], 'UTC',"US/Eastern")
+    print("zoom time:",str(data.get("start_time"))[:-1])
+    print("adjusted create time -5 (EST) ->", zoomAdjustedTime)
+    mySQL_apptDB.createAppt(topic, str(data.get("id")), doctor, patient, zoomAdjustedTime, str(data.get("join_url")), cursor, cnx)
+    print("CREATE" , data)
     conn.close()
     return data
 
 def updateMtg(mtgid, topic, time, cursor, cnx):
     zoomResp = getMtgFromMtgID(mtgid)
+    
+    #zoomAdjustedTime = convert_datetime_timezone(time, "US/Eastern",'UTC')
     payload={
       "topic": topic,
       "type": 2,
-      "start_time": time,
+      "start_time": time, #zoom automatically sends +5
       "duration": 40,
       "timezone": "Eastern Time (US and Canada)",
       "password": zoomResp.get('password'), #keep the password the same by querying what it already is
@@ -123,11 +144,17 @@ def updateMtg(mtgid, topic, time, cursor, cnx):
         }
 
     conn.request("PATCH", "/v2/meetings/"+str(mtgid), json.dumps(payload), headers)
-    mySQL_apptDB.updateAppt(topic, mtgid,time, cursor, cnx)
+    #TODO -- send zoom time -5h here
+    #change time to zoom time -5h but take off the 'z' to match the format
+    
     res = conn.getresponse()
     raw_data = res.read()
-    print(raw_data)
-
+    data = json.loads(raw_data.decode("utf-8"))
+    print("UPDATE",data)
+    
+    #convert the UTC time to +5 for storing
+    zoomAdjustedTime = convert_datetime_timezone(str(data.get("start_time"))[:-1], 'UTC',"US/Eastern")
+    mySQL_apptDB.updateAppt(topic, mtgid,zoomAdjustedTime, cursor, cnx)
     conn.close()
     return getMtgFromMtgID(mtgid)
 
@@ -137,7 +164,7 @@ def deleteMtgFromID(mtgID, cursor, cnx):
     res = conn.getresponse()
     mySQL_apptDB.deleteAppt(mtgID, cursor, cnx)
     raw_data = res.read()
-    print(raw_data)
+    print("DELETE",raw_data)
     conn.close()
     #response is not JSON like the rest
 
@@ -188,7 +215,6 @@ def mtgInfoToJSON():
         strend = time[:11]+str(end_time)+time[13:]
         mtgObj = {"title":str(item.get("topic")), "start": time, "end":strend}
         arrOfMtgs.append(mtgObj)
-
 
 
 #print(createMtg("topic", "2020-12-31T10:30:00Z", "abc", "doctor", "patient"))

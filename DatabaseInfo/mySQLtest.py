@@ -33,16 +33,30 @@ cursor.execute("USE {}".format(DB_NAME))
 # cursor.execute("DROP TABLE IF EXISTS userTable;")
 # cursor.execute("DROP TABLE IF EXISTS doctorTable;")
 # cursor.execute("DROP TABLE IF EXISTS patientTable;")
-cursor.execute("DROP TABLE IF EXISTS archiveApptTable;")
-# print("Finished dropping table (if existed).")
-cursor.execute("CREATE TABLE archiveApptTable ("
+# cursor.execute("DROP TABLE IF EXISTS archiveApptTable;")
+
+cursor.execute("DROP TABLE IF EXISTS apptTable;")
+print("Finished dropping table (if existed).")
+
+cursor.execute("CREATE TABLE apptTable ("
        "  mtgID varchar(30) NOT NULL,"
-       "  patient varchar(30) NOT NULL,"
        "  doctor varchar(30) NOT NULL,"
-       "  start_time varchar(50) NOT NULL,"
+       "  patient varchar(30) NOT NULL,"
+       "  mtgName varchar(50) NOT NULL,"
+       "  startTime varchar(50) NOT NULL,"
+       "  joinURL varchar(100) NOT NULL,"
        "  PRIMARY KEY (mtgID), UNIQUE KEY mtgID (mtgID)"
        ") ENGINE=InnoDB"
    )
+
+# cursor.execute("CREATE TABLE archiveApptTable ("
+#        "  mtgID varchar(30) NOT NULL,"
+#        "  patient varchar(30) NOT NULL,"
+#        "  doctor varchar(30) NOT NULL,"
+#        "  start_time varchar(50) NOT NULL,"
+#        "  PRIMARY KEY (mtgID), UNIQUE KEY mtgID (mtgID)"
+#        ") ENGINE=InnoDB"
+#    )
 # cursor.execute("CREATE TABLE adminTable ("
 #        "  username varchar(30) NOT NULL,"
 #        "  password varchar(100) NOT NULL,"

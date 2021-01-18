@@ -922,13 +922,18 @@ if __name__ == '__main__':
 #-DONE :)-when deleting, check if it is from a notification account 
    #-DONE :)-(if it is, permadelete immediately so dtb is not inflated with delted notification msgs)
 
+#- DONE :) -messaging patch
+    #- DONE :) -fix trash - inbox
+    #- DONE :) -fix trash - sent
+    #- DONE :) -fix undo trash
+    #- DONE :) -fix perma trash
+    #- DONE :) -heck all other functionality
 
 #--fix all calendar styling (wrapper-c id children)
 
-
 #in the function where patients and drs are mixed, figure out how to distinguish them
     #conditional formatting of the dropdown (CSS)
-
+#make autocomplete noncase sensitive
 
 
 #--[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
@@ -936,8 +941,17 @@ if __name__ == '__main__':
     #-tbd how to handle a dr being deleted when they are on patient care team
 
 
+
+
+#NOTE: CALENDAR -- appts are set in time + 5h in zoom API
+    #store Zoom time -5h in apptTable
+    #add +5 to the time BEFORE sending to zoom API
+    #show apptTable time when showing appt details
+    #show apptTable time in calendar positioning
+    #EVENTUALLY - can store user's time zone in the db for easier adjustment
 #Calendar -> when querying, remove all appts that happened before the current day 
     #when editing an appt, if curr time>end time do not let them edit (same day)
+
 #Archive
     #(have an archive table for past appts/appt history ) -- not deleted appts, only appts that passed and we removed ourselves
     #only store patient/dr/date/time

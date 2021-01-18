@@ -522,8 +522,10 @@ def createUserSearch():
 def create_mtg():
     if session['logged_in_p']:
         return accessDenied()
-    time = str(request.form['day'])+'T'+ str(request.form['time'])+':00Z'
+    time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
     #need to ensure that what is entered is either autocorrect, or valid
+    
+    
     try:
         if len(request.form['patientUser'].split(" - "))>1:
             username = request.form['patientUser'].split(" - ")[0]
@@ -544,17 +546,17 @@ def create_mtg():
 #ADD PATIENT FIELD
     else:
         emailBody="Hello "+request.form['patientUser'].split(" - ")[0]+",\r\n\r\nAn appointment has been created for you by "+mySQL_userDB.getNameFromUsername(session['username'], cursor, cnx)+" ("+session['username']+"). \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:-1]+"\r\nJoin URL: "+(mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)[5])+"\r\n\r\nLet us know if there are any issures or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoin URL: "+(mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)[5])+"\r\n\r\nLet us know if there are any issures or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
         sendAutomatedApptMsg(request.form['patientUser'].split(" - ")[0],"New Appointment Scheduled",emailBody)
         emailBody="Hello "+session['username']+",\r\nYou have created an appointment for "+mySQL_userDB.getNameFromUsername(request.form['patientUser'].split(" - ")[0], cursor, cnx)+" ("+request.form['patientUser'].split(" - ")[0]+"). \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+date+"\r\n\r\nTime: "+time[11:-1]+"\r\nJoin URL: "+(mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)[5])+"\r\n\r\nLet us know if there are any issures or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+date+"\r\n\r\nTime: "+time[11:]+"\r\nJoin URL: "+(mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)[5])+"\r\n\r\nLet us know if there are any issures or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
         sendAutomatedApptMsg(session['username'],"New Appointment Scheduled",emailBody)
         return render_template('apptDetail.html',
                                mtgnum=str(jsonResp.get("id")),
                                doctor =session['username'],
                                patient = request.form['patientUser'].split(" - ")[0],
                                mtgname=str(jsonResp.get("topic")),
-                               mtgtime=str(time[11:-1]),
+                               mtgtime=str(time[11:]),
                                mtgdate=str(date))
     ##make a joinURL field on this AND the mtg detail page
 
@@ -570,7 +572,7 @@ def create_mtg():
 
 @app.route('/data')
 def return_data():
-    arrOfMtgs =mySQL_apptDB.getAllApptsFromUsername(session['username'], cursor, cnx)
+    arrOfMtgs =mySQL_apptDB.getAllApptsFromUsername(session['username'], tmpcursor, cursor, cnx)
     #[{ "title": "Meeting",
     #"start": "2014-09-12T10:30:00-05:00",
     #"end": "2014-09-12T12:30:00-05:00",
@@ -590,7 +592,8 @@ def return_data():
                 time = time[:-1] #takes off the 'z'
             if(len(time[11:].split(":"))>=4): #catches any times with extra :00s
                 time = time[:19]
-            end_time = int(float(time[11:13]))+1
+            end_time = (int(float(time[11:13]))%24)+1
+                          
             strend = time[:11]+str(end_time)+time[13:]
             if(end_time<=9): #catches any times <9 that would be single digit
                 strend = time[:11]+"0"+str(end_time)+time[13:]
@@ -609,9 +612,12 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
     jsonResp = zoomtest_post.getMtgFromMtgID(str(mtgid))
     apptDetail = mySQL_apptDB.getApptFromMtgId(str(mtgid), cursor, cnx)
         #(mI, d, p, mN, sT, jU)
-    time=str(jsonResp.get("start_time"))
+    time=apptDetail[4]#str(jsonResp.get("start_time"))
     #split and display
     date=time[:10]
+    if(time[-1]=='Z'):
+        time = time[:-1] #takes off the 'z'
+    print("TIME -> ",time[11:])
     docUser = apptDetail[1]
     patUser = apptDetail[2]
     if(session.get('logged_in_p')):
@@ -620,7 +626,7 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
                                doctor=docUser,
                                patient = session['username'],
                                mtgname=str(apptDetail[3]),
-                               mtgtime=str(time[11:-1]),
+                               mtgtime=str(time[11:]),
                                mtgdate=str(date))
     elif(session.get('logged_in_d')):
         return render_template('apptDetailDrOptions.html',
@@ -628,7 +634,7 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
                        doctor =docUser,
                        patient = patUser,
                        mtgname=str(apptDetail[3]),
-                       mtgtime=str(time[11:-1]),
+                       mtgtime=str(time[11:]),
                        mtgdate=str(date))
 
 @app.route("/editrender/", methods=['POST','GET'])
@@ -642,12 +648,13 @@ def editPgFromID():
     time=str(jsonResp.get("start_time"))
     #split and display
     date=time[:10]
-
+    if(time[-1]=='Z'):
+        time = time[:-1] #takes off the 'z'
     return render_template('edit.html',
                            mtgnum=mtgid,
                            mtgname=str(jsonResp.get("topic")),
                            pword=str(jsonResp.get("password")),
-                           mtgtime=str(time[11:-1]),
+                           mtgtime=str(time[11:]),
                            mtgdate=str(date))
 
 
@@ -659,20 +666,22 @@ def editSubmit():
     jsonResp = zoomtest_post.updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,cursor, cnx)
 
     jsonResp= zoomtest_post.getMtgFromMtgID(str(request.form['mtgnum']))
-    time=str(jsonResp.get("start_time"))
+    #str(jsonResp.get("start_time"))
 
     mtgDetails = mySQL_apptDB.getApptFromMtgId(str(request.form['mtgnum']), cursor, cnx)
+    time=mtgDetails[4]
         #(mI, d, p, mN, sT, jU)
     #split and display
     date=time[:10]
     docUser = mtgDetails[1]
     patUser = mtgDetails[2]
-    
+    if(time[-1]=='Z'):
+        time = time[:-1] #takes off the 'z'
     emailBody="Hello "+mtgDetails[2]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[1], cursor, cnx)+" ("+mtgDetails[1]+") has been updated. \r\n\r\n\t"
-    emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:-1]+"\r\nJoinURL: "+mtgDetails[5]+"\r\n\r\nThis has been changed in your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+    emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails[5]+"\r\n\r\nThis has been changed in your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
     sendAutomatedApptMsg(mtgDetails[2],"Appointment Updated",emailBody)
     emailBody="Hello "+mtgDetails[1]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[2], cursor, cnx)+" ("+mtgDetails[2]+") has been updated. \r\n\r\n\t"
-    emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:-1]+"\r\nJoinURL: "+mtgDetails[5]+"\r\n\r\nThis has been changed your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+    emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails[5]+"\r\n\r\nThis has been changed your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
     sendAutomatedApptMsg(mtgDetails[1],"Appointment Updated",emailBody)
     
     return render_template('apptDetailDrOptions.html',
@@ -680,7 +689,7 @@ def editSubmit():
                        doctor =docUser,
                        patient = patUser,
                        mtgname=str(jsonResp.get("topic")),
-                       mtgtime=str(time[11:-1]),
+                       mtgtime=str(time[11:]),
                        mtgdate=str(date))
 
 @app.route('/acctdetails', methods=['POST','GET'])
@@ -1127,10 +1136,10 @@ def autoDeleteMtg(mtgid):
         mtgDetails = mySQL_apptDB.getApptFromMtgId(str(mtgid), cursor, cnx)
             #(mI, d, p, mN, sT, jU)
         emailBody="Hello "+mtgDetails[2]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[1], cursor, cnx)+" ("+mtgDetails[1]+") has been cancelled. \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:-1]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
         sendAutomatedApptMsg(mtgDetails[2],"Appointment Cancelled",emailBody)
         emailBody="Hello "+mtgDetails[1]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[2], cursor, cnx)+" ("+mtgDetails[2]+") has been cancelled. \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:-1]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
         sendAutomatedApptMsg(mtgDetails[1],"Appointment Cancelled",emailBody)
         
         zoomtest_post.deleteMtgFromID(str(mtgid), cursor, cnx)
@@ -1146,10 +1155,10 @@ def deleteMtg():
         mtgDetails = mySQL_apptDB.getApptFromMtgId(str(request.form['mtgID']), cursor, cnx)
             #(mI, d, p, mN, sT, jU)
         emailBody="Hello "+mtgDetails[2]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[1], cursor, cnx)+" ("+mtgDetails[1]+") has been cancelled. \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:-1]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
         sendAutomatedApptMsg(mtgDetails[2],"Appointment Cancelled",emailBody)
         emailBody="Hello "+mtgDetails[1]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[2], cursor, cnx)+" ("+mtgDetails[2]+") has been cancelled. \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:-1]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
         sendAutomatedApptMsg(mtgDetails[1],"Appointment Cancelled",emailBody)
         
         zoomtest_post.deleteMtgFromID(str(request.form['mtgID']), cursor, cnx)
@@ -1382,9 +1391,12 @@ def selectOption():
         except:
             try:
                 x = str(request.form['trash.x'])
+                msgs = []
                 for check in request.form:
-                    if(str(check)!='trash.x' and str(check)!='trash.y' and str(check)!='selectAll'):
-                        moveToTrash(str(check), session['username'])
+                    if(str(check)!='trash.x' and str(check)!='trash.y'and str(check)!='selectAll' and str(check)!="currPageNum"):
+                        #trash.x, trash.y and selectAll are values in the list of msgIDs that get returned so ifnore them
+                        msgs.append(str(check))
+                moveToTrash(msgs, session['username'])
             except:
                 try:
                     x = str(request.form['mar.x'])
@@ -1399,7 +1411,6 @@ def selectOption():
                                 markAsUnread(str(check))
                     except:
                         openInbox()
-    
     return openInbox()
 
 def sendAutomatedAcctMsg(reciever,subject,msgBody):
@@ -1514,10 +1525,11 @@ def selectSent():
         except:
             try:
                 x = str(request.form['trash.x'])
+                msgs = []
                 for check in request.form:
-                    print(check)
-                    if(str(check)!='trash.x' and str(check)!='trash.y'and str(check)!='selectAll'):
-                        moveToTrash(str(check), session['username'])
+                    if(str(check)!='trash.x' and str(check)!='trash.y'and str(check)!='selectAll' and str(check)!="currPageNum"):
+                        msgs.append(str(check))
+                moveToTrash(msgs, session['username'])
                 return sentFolder()
             except:
                 return sentFolder()
@@ -1573,15 +1585,19 @@ def emptyTrash():
         except:
             try:
                 x = str(request.form['permdel.x'])
+                msgs = []
                 for check in request.form:
-                    if(str(check)!='permdel.x' and str(check)!='permdel.y' and str(check)!='selectAll'):
-                        permenantDel(str(check), session['username'])
+                    if(str(check)!='permdel.x' and str(check)!='permdel.y' and str(check)!='selectAll' and str(check)!='currPageNum'):
+                        msgs.append(str(check))
+                permenantDel(msgs, session['username'])        
             except:
                 try:
                     x = str(request.form['undotrash.x'])
+                    msgs=[]
                     for check in request.form:
-                        if(str(check)!='undotrash.x' and str(check)!='undotrash.y' and str(check)!='selectAll'):
-                            undoTrash(str(check), session['username'])
+                        if(str(check)!='undotrash.x' and str(check)!='undotrash.y' and str(check)!='selectAll' and str(check)!='currPageNum'):
+                            msgs.append(str(check))
+                    undoTrash(msgs, session['username'])
                 except:
                     return trashFolder()
     
@@ -1590,28 +1606,35 @@ def emptyTrash():
    
 
 
-def undoTrash(msgID, username):
+def undoTrash(msgIDList, username):
     #if it is in the trash and the sender == current username -> move it to sent folder
     #else move it to inbox
 #<MYSQL FUNCTIONAL>
     sender_loc='sent_folder'
     reciever_loc='inbox'
-
-    query = ("SELECT sender, reciever FROM messageDB "
-             "WHERE messageID = %s")  
-    cursor.execute(query, (msgID,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-
-    for (sender, reciever) in cursor:
-        if sender == username:
-            updateFormat = ("UPDATE messageDB SET sender_loc = %s "
-                                "WHERE messageID = %s")
-            cursor.execute(updateFormat, (sender_loc,msgID))
-            cnx.commit()
-        else:
-            updateFormat = ("UPDATE messageDB SET reciever_loc = %s "
-                                "WHERE messageID = %s")
-            cursor.execute(updateFormat, (reciever_loc,msgID))
-            cnx.commit()
+    for msgID in msgIDList:
+        try:
+            query = ("SELECT sender, reciever FROM messageDB "
+                     "WHERE messageID = %s")  
+            cursor.execute(query, (msgID,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+            
+            for (sender, reciever) in cursor:
+                if sender == username:
+                    updateFormat = ("UPDATE messageDB SET sender_loc = %s "
+                                        "WHERE messageID = %s")
+                    cursor.execute(updateFormat, (sender_loc,msgID))
+                    cnx.commit()
+                else:
+                    updateFormat = ("UPDATE messageDB SET reciever_loc = %s "
+                                        "WHERE messageID = %s")
+                    cursor.execute(updateFormat, (reciever_loc,msgID))
+                    try:
+                        cnx.commit()
+                    except Exception as e:
+                        print("TEST", e)
+                break
+        except Exception as e:
+            print("error in undo trash --> ", e)
 
 
 
@@ -1721,60 +1744,72 @@ def markAsUnread(msgID):
         return "ERROR. Could not mark as unread."
     
 
-def permenantDel(msgID, del_username):
+def permenantDel(msgIDList, del_username):
 #<MYSQL FUNCITIONAL>
-    query = ("SELECT sender, reciever, perm_del FROM messageDB "
-             "WHERE messageID = %s")  
-    cursor.execute(query, (msgID,))
-    perm_del = "n"
-    for (sender, reciever, perm_del) in cursor:
-        if sender == del_username and perm_del=='n':
-            perm_del = 's'
-        elif sender == del_username and perm_del=='r':
-            perm_del = 'sr'
-        elif reciever == del_username and perm_del=='n':
-            perm_del = 'r'
-            if(sender=="TreeoNotification" or sender=="TreeoCalendar"):
-                perm_del = 'sr'
-        elif reciever == del_username and perm_del=='s':
-            perm_del = 'sr'
-        else:
-            perm_del = 'n'
+    for msgID in msgIDList:
+        try:
+            query = ("SELECT sender, reciever, perm_del FROM messageDB "
+                     "WHERE messageID = %s")  
+            cursor.execute(query, (msgID,))
+            perm_del = "n"
+            for (sender, reciever, perm_del) in cursor:
+                if sender == del_username and perm_del=='n':
+                    perm_del = 's'
+                elif sender == del_username and perm_del=='r':
+                    perm_del = 'sr'
+                elif reciever == del_username and perm_del=='n':
+                    perm_del = 'r'
+                    if(sender=="TreeoNotification" or sender=="TreeoCalendar"):
+                        perm_del = 'sr'
+                elif reciever == del_username and perm_del=='s':
+                    perm_del = 'sr'
+                else:
+                    perm_del = 'n'
 
-        if perm_del == 'sr':    
-            delete_test = (
-                "DELETE FROM messageDB " #table name NOT db name
-                "WHERE messageID = %s")
-            cursor.execute(delete_test, (msgID,))
-            cnx.commit()
-        else:
-            updateFormat = ("UPDATE messageDB SET perm_del = %s "
-                                "WHERE messageID = %s")
-            cursor.execute(updateFormat, (perm_del,msgID))
-            cnx.commit()
+                if perm_del == 'sr':    
+                    delete_test = (
+                        "DELETE FROM messageDB " #table name NOT db name
+                        "WHERE messageID = %s")
+                    cursor.execute(delete_test, (msgID,))
+                    cnx.commit()
+                else:
+                    updateFormat = ("UPDATE messageDB SET perm_del = %s "
+                                        "WHERE messageID = %s")
+                    cursor.execute(updateFormat, (perm_del,msgID))
+                    cnx.commit()
+                break
+        except Exception as e:
+            print("error in perma delete --> ", e)
 
     
-def moveToTrash(msgID, del_username):
+def moveToTrash(msgIDList, del_username):
 #<MYSQL FUNCTIONAL>
     sender_loc='trash'
     reciever_loc='trash'
-
-    query = ("SELECT sender, reciever FROM messageDB "
-             "WHERE messageID = %s")  
-    cursor.execute(query, (msgID,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-
-    for (sender, reciever) in cursor:
-        if sender == del_username:
-            updateFormat = ("UPDATE messageDB SET sender_loc = %s "
-                                "WHERE messageID = %s")
-            cursor.execute(updateFormat, (sender_loc,msgID))
-            cnx.commit()
-        else:
-            updateFormat = ("UPDATE messageDB SET reciever_loc = %s "
-                                "WHERE messageID = %s")
-            cursor.execute(updateFormat, (reciever_loc,msgID))
-            cnx.commit()
-
+    try:
+        for msgID in msgIDList:
+            query = ("SELECT sender FROM messageDB "
+                     "WHERE messageID = %s")  
+            cursor.execute(query, (msgID,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+            
+            try:
+                for (sender) in cursor:
+                    if sender[0] == del_username:
+                        updateFormat = ("UPDATE messageDB SET sender_loc = %s "
+                                            "WHERE messageID = %s")
+                        cursor.execute(updateFormat, (sender_loc,msgID))
+                        cnx.commit()
+                    else:
+                        updateFormat = ("UPDATE messageDB SET reciever_loc = %s "
+                                            "WHERE messageID = %s")
+                        cursor.execute(updateFormat, (reciever_loc,msgID))
+                        cnx.commit()
+                    break
+            except Exception as e:
+                print("error in move to trash --> ",e)
+    except Exception as e:
+        print(e)
+        
 
 def getAllTrashMessages(username):
 #<MYSQL FUNCTIONAL>
