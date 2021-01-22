@@ -1,7 +1,7 @@
 
 import mysql.connector
 from mysql.connector import errorcode
-
+from classFile import patientUserClass, adminUserClass, doctorUserClass
 from password_strength import PasswordPolicy
 from passlib.context import CryptContext
 import email_validator
@@ -159,19 +159,7 @@ def checkUserLogin(username, pwrd, cursor, cnx): #fix SQL DONE
     
     print("bad username")
     return False
-        
-    # query = ("SELECT username, password FROM doctorTable WHERE username = %s")   
-    # cursor.execute(query, (username, ))
-    
-    # for usern, password in cursor: #this loop will not be entered if it does not exist in the doctorDB
-    #     if( False==(pwd_context.verify(pwrd, password))):
-    #         print("WRONG PASSWORD")
-    #         return False
-    #     else:
-    #         return True
-    # print("bad username")
-    # return False
-    
+
 
 def returnAllPatients(cursor, cnx): 
     query = ("SELECT username FROM patientTable")         #BETWEEN %s AND %s")
@@ -244,20 +232,25 @@ def getCareTeamOfUser(username, cursor, cnx):
             docArr.append("TreeoHelp - help, treeo") #let them message a help account
         else: #dr team is assigned so they can be in the dropdown
             u1 = d1
+            r1 = userAcctInfo(u1, cursor, cnx)
+            if(r1!=None):
+                docArr.append(str(u1+" - "+r1[2]+", "+r1[1]))
+            
             u2 = d2
+            r2 = userAcctInfo(u2, cursor, cnx)
+            if(r2!=None):
+                docArr.append(str(u2+" - "+r2[2]+", "+r2[1]))
+            
             u3 = d3
             #(e,f,l,p)
-            r1 = userAcctInfo(u1, cursor, cnx)
-            r2 = userAcctInfo(u2, cursor, cnx)
             r3 = userAcctInfo(u3, cursor, cnx)
-            docArr.append(str(u1+" - "+r1[2]+", "+r1[1]))
-            docArr.append(str(u2+" - "+r2[2]+", "+r2[1]))
-            docArr.append(str(u3+" - "+r3[2]+", "+r3[1]))
+            if(r3!=None):
+                docArr.append(str(u3+" - "+r3[2]+", "+r3[1]))
+            
             docArr.append("TreeoHelp - help, treeo")
     return docArr
 
 def assignPatientCareTeam(patientUser, dr1User, dr2User, dr3User, cursor, cnx):
-    # currCare = getCareTeamOfUser(patientUser, cursor, cnx)
     # if("N/A" in currCare): #if any of the drs are unassigned
         update_test = (
                 "UPDATE patientTable SET drOne=%s, drTwo=%s, drThree=%s"
@@ -393,33 +386,70 @@ def getAllUnassignedPatients(cursor, cnx):
         unassigned.append(un)
     return unassigned
 
+def getDieticianOfPatient(username, cursor, cnx):
+    query = ("SELECT drOne, creationDate FROM patientTable WHERE username = %s" )
+    cursor.execute(query, (username,))
+    for dr1, cd in cursor:
+        return dr1
+    return ""
+
+def getPhysicianOfPatient(username, cursor, cnx):
+    query = ("SELECT drTwo, creationDate FROM patientTable WHERE username = %s" )
+    cursor.execute(query, (username,))
+    for dr2, cd in cursor:
+        return dr2
+    return ""
+
+def getHealthcoachOfPatient(username, cursor, cnx):
+    query = ("SELECT drThree, creationDate FROM patientTable WHERE username = %s" )
+    cursor.execute(query, (username,))
+    for dr3, cd in cursor:
+        return dr3
+    return ""
+
 def getAcctFromUsername(username, cursor, cnx):
-    query = ("SELECT username, fname, lname, email, creationDate FROM doctorTable WHERE username = %s")   
+    query = ("SELECT username, password, fname, lname, email, creationDate, drType FROM doctorTable WHERE username = %s")   
     cursor.execute(query, (username, ))
-    for u, f, l, e, cD in cursor:
+    for u,p, f, l, e, cD, dT in cursor:
+        drClassObj = doctorUserClass( u, p, e, f, l, cD, dT)
+        return drClassObj
+    #TODO -- phase out/replace all calls to this
         return (u, "doctor",str(f+" "+l), e, cD)
     
-    query = ("SELECT username, fname, lname, email, creationDate FROM patientTable WHERE username = %s")   
+    query = ("SELECT username, password, fname, lname, email, creationDate, drOne, drTwo, drThree FROM patientTable WHERE username = %s")   
     cursor.execute(query, (username, ))
-    for u, f, l, e, cD in cursor:
+    for u, p,f, l, e, cD, d1, d2, d3 in cursor:
+        patientClassObj = patientUserClass(u,p,e, f, l, cD, 
+                                            d1, d2, d3)
+        return patientClassObj
+    #TODO -- phase out/replace all calls to this
         return (u, "patient",str(f+" "+l), e, cD)
     
-    query = ("SELECT username, fname, lname, creationDate FROM adminTable WHERE username = %s")   
+    query = ("SELECT username, password, fname, lname, creationDate FROM adminTable WHERE username = %s")   
     cursor.execute(query, (username, ))
-    for u, f, l, cD in cursor:
+    for u, p, f, l, cD in cursor:
+        adminClassObj = adminUserClass(u, p, f, l, cD)
+        return adminClassObj
+    #TODO -- phase out/replace all calls to this
         return (u, "admin",str(f+" "+l), cD)
     return
 
 def userAcctInfo(user, cursor, cnx):
-    query = ("SELECT email, fname, lname, password FROM doctorTable WHERE username = %s")   
+    query = ("SELECT username, password, fname, lname, email, creationDate, doctorType FROM doctorTable WHERE username = %s")   
     cursor.execute(query, (user, ))
-    for emailAdd,fn, ln,passw in cursor:
-        return (emailAdd,fn, ln,passw)
+    for u,p, f, l, e, cD, dT in cursor:
+        drClassObj = doctorUserClass( u, p, e, f, l, cD, dT)
+        return drClassObj
+    #TODO -- phase out/replace all calls to this
+        return (e,f, l,p)
     
-    query = ("SELECT email, fname, lname, password FROM patientTable WHERE username = %s")   
+    query = ("SELECT username, password, fname, lname, email, creationDate, drOne, drTwo, drThree FROM patientTable WHERE username = %s")   
     cursor.execute(query, (user, ))
-    for emailAdd,fn, ln,passw in cursor:
-        return (emailAdd,fn, ln,passw)
+    for u, p,f, l, e, cD, d1, d2, d3 in cursor:
+        patientClassObj = patientUserClass(u,p,e, f, l, cD, 
+                                            d1, d2, d3)
+        return patientClassObj
+        return (e,f, l,p)
 
     return
     
@@ -435,7 +465,7 @@ def updateUserAcct(user, emailAdd,fn, ln,passw, cursor, cnx):
             return "short name error"
         
         result = getAcctFromUsername(user, cursor, cnx)
-        if(result[1]=='doctor'):
+        if(type(result)==doctorUserClass):
             update_test = (
                 "UPDATE doctorTable SET email=%s, fname=%s, lname=%s"
                 "WHERE username = %s")
@@ -491,13 +521,13 @@ def updateUserAcct(user, emailAdd,fn, ln,passw, cursor, cnx):
 
 def deleteUserAcct(username, cursor, cnx):
     result = getAcctFromUsername(username, cursor, cnx)
-    if(result[1]=='doctor'):
+    if(type(result)==doctorUserClass):
         delete_test = (
             "DELETE FROM doctorTable " #table name NOT db name
             "WHERE username = %s")
         cursor.execute(delete_test, (username,))
         cnx.commit()
-    elif result[1]=='admin':
+    elif type(result)==adminUserClass:
         delete_test = (
             "DELETE FROM adminTable " #table name NOT db name
             "WHERE username = %s")
@@ -511,6 +541,15 @@ def deleteUserAcct(username, cursor, cnx):
         cnx.commit()
     return "deleted "+username
 
-
+#patient deletion
+    #1->cancel all appts they are a part of (do not archive)
+    #2->update all msgs to/from them to be to/from "deletedAccount"
+        #BUT if they are notif, perma delete    
+    #Do not allow reply to msg + implement perma delete from dtb
+    #3->update all archive appts to be dr + [deactivated] patient
+    
+#doctor deletion
+    #how to handle patients with a gap in their car team (notify an admin to reassign them)
+    
 cursor.close()
 cnx.close()

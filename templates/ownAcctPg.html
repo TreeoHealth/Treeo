@@ -41,9 +41,25 @@
 <input type="submit" value="Edit Account Details" class="btn btn-primary btn-large btn-block">
 </form>
 
+<form action='/acctDelete' method = "POST">
+	<input type="hidden" value={{username}} name="username">
+	<input type="submit" onClick="confSubmit(this.form);" value="Delete Account" class="btn btn-primary btn-large btn-block">
+</form>
+
 </div>
 </div>
 </div>
 </div>
 
 </div>
+
+<script type="text/javascript">
+	function confSubmit(form) {
+		if (confirm("Are you sure you want to submit the form?")) {
+			form.submit();
+		}
+		else {
+			alert("You decided to not submit the form!");
+		}
+	}
+</script>

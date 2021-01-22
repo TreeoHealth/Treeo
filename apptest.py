@@ -19,6 +19,7 @@ import mySQL_apptDB
 import mySQL_userDB
 import mySQL_adminDB
 
+from classFile import adminUserClass, apptObjectClass, patientUserClass, doctorUserClass
 
 app = Flask(__name__)
 
@@ -83,12 +84,12 @@ def check_login():
             print("WRONG PASSWORD ADMIN")
             return render_template('login.html', errorMsg="Incorrect username or password.")
         else:
-            info = mySQL_userDB.getAcctFromUsername(request.form['username'],cursor, cnx)
+            acct_info = mySQL_userDB.getAcctFromUsername(request.form['username'],cursor, cnx)
             session['logged_in_a']=True
             session['logged_in_p']=False
             session['logged_in_d']=False
             session['username'] = request.form['username']
-            session['name'] = info[2]
+            session['name'] = acct_info.fname+" "+acct_info.lname
             return displayAdminHome()
     result = mySQL_userDB.checkUserLogin(request.form['username'], request.form['password'],cursor, cnx)
     
@@ -96,9 +97,8 @@ def check_login():
         print("WRONG PASSWORD")
         return render_template('login.html', errorMsg="Incorrect username or password.")
     else:
-        #(u, dS, str(f+" "+l), e, cD)
-        info = mySQL_userDB.getAcctFromUsername(request.form['username'],cursor, cnx)
-        if(info[1]=='doctor'):
+        acct_info = mySQL_userDB.getAcctFromUsername(request.form['username'],cursor, cnx)
+        if(type(acct_info)==doctorUserClass):
             if(request.form['username'] in mySQL_userDB.getAllUnapprovedDrs(cursor, cnx)):
                 return render_template('login.html', errorMsg="You have not been verified. Check your email for updates.")
             session['logged_in_d']=True
@@ -109,7 +109,7 @@ def check_login():
             session['logged_in_d']=False
             session['logged_in_a']=False
         session['username'] = request.form['username']
-        session['name'] = info[2]
+        session['name'] = acct_info.fname+" "+acct_info.lname
         return displayLoggedInHome()
 
 def displayAdminHome():
@@ -154,22 +154,24 @@ def assignForm(username):
 @app.route('/approve/<username>', methods=['POST','GET'])
 def approveForm(username):
     mySQL_userDB.verifyDoctor(username, cursor, cnx)
-    emailBody = "Hello "+mySQL_userDB.getNameFromUsername(username, cursor, cnx)+",\r\nWelcome to Treeo!\r\nYou are now approved as a care provider!\r\n\r\nWelcome to the team! Let us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
+    drAcctName = mySQL_userDB.getNameFromUsername(username, cursor, cnx)
+    emailBody = "Hello "+drAcctName+",\r\nWelcome to Treeo!\r\nYou are now approved as a care provider!\r\n\r\nWelcome to the team! Let us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
     sendAutomatedAcctMsg(username,"Treeo Approval - Welcome",emailBody) 
-    emailBody = "Hello "+session['name']+",\r\nYou have approved "+mySQL_userDB.getNameFromUsername(username, cursor, cnx)+ " (" +username+") as a care provider. If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
+    emailBody = "Hello "+session['name']+",\r\nYou have approved "+drAcctName+ " (" +username+") as a care provider. If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
     sendAutomatedAcctMsg(session['username'],"Provider Approved",emailBody) 
     return render_template("approveConfirmation.html",
-                           drname  = str(username + " - " +mySQL_userDB.getNameFromUsername(username, cursor, cnx)))
+                           drname  = str(username + " - " +drAcctName))
 
 @app.route('/removeapproval/<username>', methods=['POST','GET'])
 def unapproveForm(username):
     mySQL_userDB.unverifyDoctor(username, cursor, cnx)
-    emailBody = "Hello "+mySQL_userDB.getNameFromUsername(username, cursor, cnx)+",\r\You have been suspended from being a care provider temporarily.\r\n\r\nLet us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
+    drAcctName = mySQL_userDB.getNameFromUsername(username, cursor, cnx)
+    emailBody = "Hello "+drAcctName+",\r\You have been suspended from being a care provider temporarily.\r\n\r\nLet us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
     sendAutomatedAcctMsg(username,"Provider Account Suspended",emailBody) 
-    emailBody = "Hello "+session['name']+",\r\nYou have removed provider approval for "+mySQL_userDB.getNameFromUsername(username, cursor, cnx)+ " (" +username+"). If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
+    emailBody = "Hello "+session['name']+",\r\nYou have removed provider approval for "+drAcctName+ " (" +username+"). If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
     sendAutomatedAcctMsg(session['username'],"Provider Approval Revoked",emailBody) 
     return render_template("unapproveConfirmation.html",
-                           drname  = str(username + " - " +mySQL_userDB.getNameFromUsername(username, cursor, cnx)))
+                           drname  = str(username + " - " +drAcctName))
 
 
 
@@ -208,11 +210,12 @@ def assignTeam(): #submit update form
         emailBody = emailBody+"\r\nPlease reach out with any questions or concerns.\r\nSincerely,\r\n    Your Treeo Team"
         sendAutomatedAcctMsg(request.form['username'],"Care Team Assignment",emailBody) 
         
-        emailBody = "Hello,\r\nYou have been assigned to a patient. Here is your team:\r\n\r\n\tDietician: "
+        emailBody = "Hello,\r\nYou have been assigned to a patient: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(request.form['username'],cursor, cnx)+" ("+request.form['username'] +")\r\n Here is your team:\r\n\r\n\tDietician: "
         emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr1,cursor, cnx)+" ("+dr1+")\r\n\tPhysician: "
         emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr2,cursor, cnx)+" ("+dr2+")\r\n\tHealth Coach: "
         emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr3,cursor, cnx)+" ("+dr3+")\r\n"
-        emailBody = emailBody+"\r\nPlease reach out with any questions or concerns.\r\nSincerely,\r\n    Your Treeo Admins"
+        emailBody =emailBody+"\r\nPlease reach out with any questions or concerns.\r\nSincerely,\r\n    Your Treeo Admins"
         sendAutomatedAcctMsg(dr1,"Care Team Assignment",emailBody) 
         sendAutomatedAcctMsg(dr2,"Care Team Assignment",emailBody) 
         sendAutomatedAcctMsg(dr3,"Care Team Assignment",emailBody) 
@@ -340,10 +343,6 @@ def new_register():
             sendAutomatedAcctMsg(request.form['username'],"Welcome to Treeo!",emailBody) 
             return render_template('login.html', errorMsg="You have not been verified. Check your email for updates.")
             
-            session['logged_in_d']=True
-            session['logged_in_p']=False
-            session['logged_in_a']=False
-            
         else:
             session['logged_in_p'] = True
             session['logged_in_d']=False
@@ -393,12 +392,8 @@ def new_register():
                                    ) 
     
 
-
-        
-
 @app.route('/usernamecheck', methods=['POST','GET'])
 def usernamecheck():
-    #print("in UC", request)
     text = request.args.get('jsdata')
     if(text in takenUsernames):
         text=""
@@ -434,7 +429,6 @@ def emailcheck():
 
 @app.route('/nameLengthCheck', methods=['POST','GET'])
 def namecheck():
-    #print("in UC", request)
     text = request.args.get('jsdata')
     if(len(text)<2):
         text=""
@@ -443,8 +437,6 @@ def namecheck():
 
 @app.route('/pwStrengthCheck', methods=['POST','GET'])
 def pwStrCheck():
-    #print(request.form['jsdata'])
-    #print(request.args)
     text = request.form.get('jsdata')
     policy = PasswordPolicy.from_names(
             length=8,  # min length: 8
@@ -455,7 +447,6 @@ def pwStrCheck():
     isEnough = policy.test(str(text))
     text=""
     if len(isEnough):
-        #print(type(isEnough[0]))
         if len(isEnough)==1:
             if type(isEnough[0])==password_strength.tests.Length:
                 return "<8 characters"
@@ -491,21 +482,16 @@ def accessDenied():
 def createPg():
     if session['logged_in_p']:
         return accessDenied()
-    listStr = mySQL_userDB.returnAllPatients(cursor, cnx)
-    listStr.sort()
     return render_template('create_mtg.html',
-                           errorMsg = "",
-                           options=listStr)
+                           errorMsg = "")
 
 @app.route('/createrender/<username>', methods=['POST','GET'])
 def createWithUsername(username):
     if session['logged_in_p']:
         return accessDenied()
-    listStr = []
-    listStr.append(username)
+
     return render_template('create_mtg.html',
-                           errorMsg = "",
-                           options=listStr)
+                           errorMsg = "")
 
 @app.route('/create_search', methods=['POST','GET'])
 def createUserSearch():
@@ -514,8 +500,8 @@ def createUserSearch():
     listPatients=mySQL_userDB.searchPatientList(cursor, cnx)
     for username in listPatients:
         if(query.lower() in username.lower()):
-            jsonSuggest.append({'value':username,'data':username.split(" - ")[0]})#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
-        #suggestions = [{'value': 'joe','data': 'joe'}, {'value': 'jim','data': 'jim'}]
+            jsonSuggest.append({'value':username,'data':username.split(" - ")[0]})
+            
     return jsonify({"suggestions":jsonSuggest})
 
 @app.route('/createmtg', methods=['POST','GET'])
@@ -538,24 +524,23 @@ def create_mtg():
         date=time[:10]
         finalStr = ""
     except:    
-        listStr = mySQL_userDB.returnAllPatients(cursor, cnx)
-        listStr.sort()
         return render_template('create_mtg.html',
-                               errorMsg = "ERROR. Could not create meeting.",
-                               options=listStr)
+                               errorMsg = "ERROR. Could not create meeting.")
 #ADD PATIENT FIELD
     else:
-        emailBody="Hello "+request.form['patientUser'].split(" - ")[0]+",\r\n\r\nAn appointment has been created for you by "+mySQL_userDB.getNameFromUsername(session['username'], cursor, cnx)+" ("+session['username']+"). \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoin URL: "+(mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)[5])+"\r\n\r\nLet us know if there are any issures or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
-        sendAutomatedApptMsg(request.form['patientUser'].split(" - ")[0],"New Appointment Scheduled",emailBody)
-        emailBody="Hello "+session['username']+",\r\nYou have created an appointment for "+mySQL_userDB.getNameFromUsername(request.form['patientUser'].split(" - ")[0], cursor, cnx)+" ("+request.form['patientUser'].split(" - ")[0]+"). \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+date+"\r\n\r\nTime: "+time[11:]+"\r\nJoin URL: "+(mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)[5])+"\r\n\r\nLet us know if there are any issures or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+        apptClassObj = mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)
+        patientUsername = request.form['patientUser'].split(" - ")[0]
+        emailBody="Hello "+patientUsername+",\r\n\r\nAn appointment has been created for you by "+mySQL_userDB.getNameFromUsername(session['username'], cursor, cnx)+" ("+session['username']+"). \r\n\r\n\t"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoin URL: "+apptClassObj.joinURL+"\r\n\r\nLet us know if there are any issures or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+        sendAutomatedApptMsg(patientUsername,"New Appointment Scheduled",emailBody)
+        emailBody="Hello "+session['username']+",\r\nYou have created an appointment for "+mySQL_userDB.getNameFromUsername(patientUsername, cursor, cnx)+" ("+patientUsername+"). \r\n\r\n\t"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+date+"\r\n\r\nTime: "+time[11:]+"\r\nJoin URL: "+apptClassObj.joinURL+"\r\n\r\nLet us know if there are any issures or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
         sendAutomatedApptMsg(session['username'],"New Appointment Scheduled",emailBody)
         return render_template('apptDetail.html',
-                               mtgnum=str(jsonResp.get("id")),
+                               mtgnum=apptClassObj.meetingID,
                                doctor =session['username'],
-                               patient = request.form['patientUser'].split(" - ")[0],
-                               mtgname=str(jsonResp.get("topic")),
+                               patient = patientUsername,
+                               mtgname=apptClassObj.meetingName,
                                mtgtime=str(time[11:]),
                                mtgdate=str(date))
     ##make a joinURL field on this AND the mtg detail page
@@ -580,14 +565,14 @@ def return_data():
     
     mtgList = []
     finalStr = ""
-    for item in arrOfMtgs:
-        if(item[0]=="None" or len(item[0])!=11): #skip invalid items that will crash the calendar
+    for apptClassItem in arrOfMtgs:
+        if(apptClassItem.meetingID=="None" or len(apptClassItem.meetingID)!=11): #skip invalid items that will crash the calendar
             continue
         else:
             #[mI, mN, sT]
-            time = str(item[2])
+            time = str(apptClassItem.startTime)
             print(type(time),time)
-            mtgid = str(item[0])
+            mtgid = str(apptClassItem.meetingID)
             if(time[-1]=='Z'):
                 time = time[:-1] #takes off the 'z'
             if(len(time[11:].split(":"))>=4): #catches any times with extra :00s
@@ -598,8 +583,8 @@ def return_data():
             if(end_time<=9): #catches any times <9 that would be single digit
                 strend = time[:11]+"0"+str(end_time)+time[13:]
             
-        mtgObj = {"title":str(item[1]), "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
-        mtgList.append(mtgObj)
+        jsonMtgObj = {"title":apptClassItem.meetingName, "start": time, "end":strend, "url":("/showmtgdetail/"+mtgid)}
+        mtgList.append(jsonMtgObj)
     #BADDDD (change this)
     with open('appts.json', 'w') as outfile:
         json.dump(mtgList, outfile)
@@ -611,20 +596,19 @@ def return_data():
 def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
     jsonResp = zoomtest_post.getMtgFromMtgID(str(mtgid))
     apptDetail = mySQL_apptDB.getApptFromMtgId(str(mtgid), cursor, cnx)
-        #(mI, d, p, mN, sT, jU)
-    time=apptDetail[4]#str(jsonResp.get("start_time"))
+    time=apptDetail.startTime
     #split and display
     date=time[:10]
     if(time[-1]=='Z'):
         time = time[:-1] #takes off the 'z'
-    docUser = apptDetail[1]
-    patUser = apptDetail[2]
+    docUser = apptDetail.doctor
+    patUser = apptDetail.patient
     if(session.get('logged_in_p')):
         return render_template('apptDetail.html',
                                mtgnum=mtgid,
                                doctor=docUser,
                                patient = session['username'],
-                               mtgname=str(apptDetail[3]),
+                               mtgname=str(apptDetail.meetingName),
                                mtgtime=str(time[11:]),
                                mtgdate=str(date))
     elif(session.get('logged_in_d')):
@@ -633,7 +617,7 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
                                mtgnum=mtgid,
                                doctor=docUser,
                                patient = patUser,
-                               mtgname=str(apptDetail[3]),
+                               mtgname=str(apptDetail.meetingName),
                                mtgtime=str(time[11:]),
                                mtgdate=str(date))
         else:
@@ -641,7 +625,7 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
                        mtgnum=mtgid,
                        doctor =docUser,
                        patient = patUser,
-                       mtgname=str(apptDetail[3]),
+                       mtgname=str(apptDetail.meetingName),
                        mtgtime=str(time[11:]),
                        mtgdate=str(date))
 
@@ -654,7 +638,7 @@ def editPgFromID():
 
     #mtgname, pword, mtgtime, mtgdate
     # time=str(jsonResp.get("start_time"))
-    time = mySQL_apptDB.getApptFromMtgId(request.form['mtgnum'], cursor, cnx)[4]
+    time = mySQL_apptDB.getApptFromMtgId(request.form['mtgnum'], cursor, cnx).startTime
     #split and display
     date=time[:10]
     if(time[-1]=='Z'):
@@ -678,20 +662,20 @@ def editSubmit():
     #str(jsonResp.get("start_time"))
 
     mtgDetails = mySQL_apptDB.getApptFromMtgId(str(request.form['mtgnum']), cursor, cnx)
-    time=mtgDetails[4]
-        #(mI, d, p, mN, sT, jU)
+    time=mtgDetails.startTime
+    
     #split and display
     date=time[:10]
-    docUser = mtgDetails[1]
-    patUser = mtgDetails[2]
+    docUser = mtgDetails.doctor
+    patUser = mtgDetails.patient
     if(time[-1]=='Z'):
         time = time[:-1] #takes off the 'z'
-    emailBody="Hello "+mtgDetails[2]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[1], cursor, cnx)+" ("+mtgDetails[1]+") has been updated. \r\n\r\n\t"
-    emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails[5]+"\r\n\r\nThis has been changed in your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
-    sendAutomatedApptMsg(mtgDetails[2],"Appointment Updated",emailBody)
-    emailBody="Hello "+mtgDetails[1]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[2], cursor, cnx)+" ("+mtgDetails[2]+") has been updated. \r\n\r\n\t"
+    emailBody="Hello "+mtgDetails.patient+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails.patient, cursor, cnx)+" ("+mtgDetails.doctor+") has been updated. \r\n\r\n\t"
+    emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails.joinURL+"\r\n\r\nThis has been changed in your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+    sendAutomatedApptMsg(mtgDetails.patient,"Appointment Updated",emailBody)
+    emailBody="Hello "+mtgDetails.doctor+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails.patient, cursor, cnx)+" ("+mtgDetails.patient+") has been updated. \r\n\r\n\t"
     emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails[5]+"\r\n\r\nThis has been changed your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
-    sendAutomatedApptMsg(mtgDetails[1],"Appointment Updated",emailBody)
+    sendAutomatedApptMsg(mtgDetails.doctor,"Appointment Updated",emailBody)
     if(mySQL_apptDB.isMtgStartTimePassed(request.form['mtgnum'], cursor, cnx)==True): #if it is passed so it should not be edited
         return render_template('apptDetail.html',
                                mtgnum=str(request.form['mtgnum']),
@@ -711,29 +695,27 @@ def editSubmit():
 
 @app.route('/acctdetails', methods=['POST','GET'])
 def acct_details():     
-    #(u, dS, str(f+" "+l), e, cD)
-    info = mySQL_userDB.getAcctFromUsername(str(session['username']),cursor, cnx)
+    acct_info = mySQL_userDB.getAcctFromUsername(str(session['username']),cursor, cnx)
     return render_template('ownAcctPg.html', 
-                           username=info[0],
-                           docstatus= (info[1] if info[1] == 'patient' else str(info[1]+" - "+mySQL_userDB.getDrTypeOfAcct(session['username'], cursor, cnx))),
-                           nm=info[2],
-                           email=info[3],
-                           createDate = info[4]
+                           username=acct_info.username,
+                           docstatus= ("patient" if type(acct_info) == patientUserClass else acct_info.doctorType),
+                           nm=acct_info.fname+" "+acct_info.lname,
+                           email=acct_info.email,
+                           createDate = acct_info.creationDate
                            )
 
 @app.route('/acctEditrender/', methods=['POST','GET'])
 def editAcctRender():
-    #(emailAdd,fn, ln,passw)
-    info = mySQL_userDB.userAcctInfo(str(request.form['username']),cursor, cnx)
+    acct_info = mySQL_userDB.userAcctInfo(str(request.form['username']),cursor, cnx)
     return render_template('editProfile.html',
                            errorMsg="",
                            username=session['username'],
                            pword1="",
                            pwordNew1="",
                            pwordNew2="",
-                           email=info[0],
-                           fname=info[1],
-                           lname=info[2]
+                           email=acct_info.email,
+                           fname=acct_info.fname,
+                           lname=acct_info.lname
                            )
 
 @app.route('/editacct', methods=['POST','GET'])
@@ -741,8 +723,8 @@ def editAcctDetails():
     oldPw = str(request.form['pword1'])
     newPw1 = str(request.form['pwordNew1'])
     newPw2 = str(request.form['pwordNew2'])
-    #(emailAdd,fn, ln,passw)
-    info = mySQL_userDB.userAcctInfo(str(request.form['username']),cursor, cnx)
+    
+    acct_info = mySQL_userDB.userAcctInfo(str(request.form['username']),cursor, cnx)
     pwUpdate = False
     errMsg=""
     errFlag=False
@@ -762,7 +744,7 @@ def editAcctDetails():
         errMsg=""
         errFlag=False
 #FIRST NEED TO VALIDATE THAT THE OLD PASSWORD IS RIGHT!!!
-        oldPassw = info[3]
+        oldPassw = acct_info.password
         if False==(pwd_context.verify(oldPw, oldPassw)):
             errFlag=True
             errMsg="Password entered does not match the acct's password."
@@ -784,9 +766,9 @@ def editAcctDetails():
                            pword1="",
                            pwordNew1="",
                            pwordNew2="",
-                           email=info[0],
-                           fname=info[1],
-                           lname=info[2]
+                           email=acct_info.email,
+                           fname=acct_info.fname,
+                           lname=acct_info.lname
                            )
     #if the password is fine, check names and email formatting
     if len(request.form['fname'])<2 or len(request.form['lname'])<2:
@@ -796,9 +778,9 @@ def editAcctDetails():
                            pword1="",
                            pwordNew1="",
                            pwordNew2="",
-                           email=info[0],
-                           fname=info[1],
-                           lname=info[2]
+                           email=acct_info.email,
+                           fname=acct_info.fname,
+                           lname=acct_info.lname
                            )
     emailAddr=str(request.form['email'])
     try:
@@ -810,52 +792,75 @@ def editAcctDetails():
                            pword1="",
                            pwordNew1="",
                            pwordNew2="",
-                           email=info[0],
-                           fname=info[1],
-                           lname=info[2]
+                           email=acct_info.email,
+                           fname=acct_info.fname,
+                           lname=acct_info.lname
                            )
     print("UPDATE CALL")
     #if it's gotten past here, we know password is fine (or not being updated), email is fine, f and l name are fine
     if(pwUpdate==False):
         response = mySQL_userDB.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], "",cursor, cnx)
-        print("1", response)
     else:
         response = mySQL_userDB.updateUserAcct(session['username'], str(request.form['email']),request.form['fname'], request.form['lname'], newPw1,cursor, cnx)
-        print("2", response)
     emailBody = "Hello "+session['username']+",\r\nYour account details have been changed.\r\nIf this was not you, please let us know immediately.\r\nSincerely,\r\n\tYour Treeo Team"
     sendAutomatedAcctMsg(session['username'], "Account Updated", emailBody)
     session['name']=str(request.form['fname'])+" "+str(request.form['lname'])
     return acct_details()
 
 
+@app.route('/acctDelete', methods=['POST','GET'])
+def deleteAccount():
+    allAppts = mySQL_apptDB.getAllApptsFromUsername(str(request.form['username']), tmpcursor, cursor, cnx)
+    for apptInfo in allAppts:
+        autoDeleteMtg(apptInfo.meetingID)
+    mySQL_userDB.deleteUserAcct(str(request.form['username']), cursor, cnx)
+    deactivateAllMsgsUsername(str(request.form['username']))
+    deleteAllNotifDeactive()
+    mySQL_apptDB.deactivateAllArchivedAppts(str(request.form['username']),cursor, cnx )
+    return logout()
+    
+    
+def deactivateAllMsgsUsername(oldUsername):
+    try:
+        updateFormat = ("UPDATE messageDB SET sender = %s "
+                                "WHERE sender = %s")
+        cursor.execute(updateFormat, ("<deactivatedUser>",oldUsername))
+        cnx.commit()
+        updateFormat = ("UPDATE messageDB SET reciever = %s "
+                                "WHERE reciever = %s")
+        cursor.execute(updateFormat, ("<deactivatedUser>",oldUsername))
+        cnx.commit()
+        
+    except:
+        return "ERROR. Could not mark as deactivated."
+
+def deleteAllNotifDeactive():
+    try:
+        delete_test = (
+            "DELETE FROM messageDB " #table name NOT db name
+            "WHERE (sender = %s AND reciever = %s) OR (sender = %s AND reciever = %s) "
+            "OR (sender = %s AND reciever = %s) OR (sender = %s AND reciever = %s) ")
+        cursor.execute(delete_test, ("<deactivatedUser>","TreeoCalendar", "TreeoCalendar","<deactivatedUser>", "<deactivatedUser>","TreeoNotification", "TreeoNotification","<deactivatedUser>"))
+        cnx.commit()
+        
+    except:
+        return "ERROR. Could not clean out messages."
 
 @app.route('/patients/<username>', methods=['POST','GET'])
 def patientAcct(username):
     ##dr will not be given the option to edit any details
     ##this is where medical details will eventually be rendered
-    print("PATIENT USER")
-    #(u, dS, str(f+" "+l), e, cD)
-    info = mySQL_userDB.getAcctFromUsername(str(username),cursor, cnx)
-    drs = mySQL_userDB.getCareTeamOfUser(str(username),cursor, cnx)
+    patientInfoObj = mySQL_userDB.getAcctFromUsername(str(username),cursor, cnx)
     
-    docArr = []
-    if(len(drs)==1 and "help" in drs[0]):
-        docArr.append("Not assigned")
-        docArr.append("Not assigned")
-        docArr.append("Not assigned")
-    else:
-        docArr.append(drs[0])
-        docArr.append(drs[1])
-        docArr.append(drs[2])
     
     return render_template('patientAcctDetails.html', 
                            username=username,
-                           nm=info[2],
-                           email=info[3],
-                           drOne=docArr[0],
-                           drTwo=docArr[1],
-                           drThree=docArr[2],
-                           createDate = info[4]
+                           nm=patientInfoObj.fname + patientInfoObj.lname,
+                           email=patientInfoObj.email,
+                           drOne=("Not assigned" if patientInfoObj.dietician=="N/A" else patientInfoObj.dietician),
+                           drTwo=("Not assigned" if patientInfoObj.physician=="N/A" else patientInfoObj.physician),
+                           drThree=("Not assigned" if patientInfoObj.healthcoach=="N/A" else patientInfoObj.healthcoach),
+                           createDate = patientInfoObj.creationDate
                            )
 
 @app.route('/patients', methods=['POST','GET'])
@@ -865,7 +870,6 @@ def list_patients():
     patientPages = []
     currPg=0
     return displayPagedSearch(listStr, 10)
-    #return render_template('picture.html', options=listStr) #THIS
 
 @app.route('/patientsAssigned', methods=['POST','GET'])
 def list_assigned_patients():
@@ -874,7 +878,6 @@ def list_assigned_patients():
     patientPages = []
     currPg=0
     return displayPagedSearch(listStr, 10)
-    #return render_template('picture.html', options=listStr) #THIS
 
 @app.route('/searchpgrender', methods=['POST','GET'])
 def search_patients():
@@ -885,42 +888,24 @@ def search_page():
     query = request.form['names']
     if(query==""): #if the form is empty, return all of the usernames
         listStr = mySQL_userDB.returnAllPatients(cursor, cnx)
-##        listStr = ["alpha","beta","chi","delta",
-##              "eta","epsilon","gamma","iota",
-##              "kappa", "lambda","mu","nu",
-##              "omicron","omega","pi","phi",
-##              "psi","rho","sigma","tau",
-##              "theta", "upsilon", 'xi',"zeta"]
         listStr.sort()
         patientPages = []
         currPg=0
         return displayPagedSearch(listStr,10)
-        #return render_template('picture.html', options=listStr) #THIS
     
     actualUsername = (query.split(" - "))[0] #username - last name, first name
-    info = mySQL_userDB.getAcctFromUsername(actualUsername,cursor, cnx)
+    acct_search_item = mySQL_userDB.getAcctFromUsername(actualUsername,cursor, cnx)
     
     if(len(query.split(" - "))==2 and mySQL_userDB.isUsernameTaken(actualUsername,cursor, cnx)):
             #if the username exists and the user used the autocomplete -> take them to the account page directly
-        drs = mySQL_userDB.getCareTeamOfUser(str(actualUsername),cursor, cnx)
-    
-        docArr = []
-        if(len(drs)==1 and "help" in drs[0]):
-            docArr.append("Not assigned")
-            docArr.append("Not assigned")
-            docArr.append("Not assigned")
-        else:
-            docArr.append(drs[0])
-            docArr.append(drs[1])
-            docArr.append(drs[2])
         return render_template('patientAcctDetails.html', 
-                            username=info[0],
-                           nm=info[2],
-                           email=info[3],
-                           drOne=docArr[0],
-                           drTwo=docArr[1],
-                           drThree=docArr[2],
-                           createDate = info[4]
+                           username=acct_search_item.username,
+                           nm=acct_search_item.fname + acct_search_item.lname,
+                           email=acct_search_item.email,
+                           drOne=("Not assigned" if acct_search_item.dietician=="N/A" else acct_search_item.dietician),
+                           drTwo=("Not assigned" if acct_search_item.physician=="N/A" else acct_search_item.physician),
+                           drThree=("Not assigned" if acct_search_item.healthcoach=="N/A" else acct_search_item.healthcoach),
+                           createDate = acct_search_item.creationDate
                            )
     
     jsonSuggest=[]
@@ -931,43 +916,30 @@ def search_page():
             jsonSuggest.append({'value':username,'data':username})
             actualUsername = (username.split(" - "))[0]
             listStr.append(actualUsername)
-##    listStr = ["alpha","beta","chi","delta",
-##              "eta","epsilon","gamma","iota",
-##              "kappa", "lambda","mu","nu",
-##              "omicron","omega","pi","phi",
-##              "psi","rho","sigma","tau",
-##              "theta", "upsilon", 'xi',"zeta"]
+            
     listStr.sort()
     patientPages = []
     currPg=0
     return displayPagedSearch(listStr,10)
-    #return render_template('picture.html', options=listStr) #THIS
 
 @app.route('/changePgSize', methods=['POST','GET'])
 def changePgSize():
     pageSize = int(request.form['listStatus'])
     
     pageStr = request.form['fullPagesArr']
-    #print("CHANGE SIZE TO ",pageSize,pageStr)
     allPatients = []
     pages = pageStr.split("|")
     for page in pages:
         for patient in page.split(","):
             allPatients.append(patient)
-    #print("CHANGE ALL PAT ",allPatients)
     return displayPagedSearch(allPatients, pageSize)
 
 def displayPagedSearch(patientList, listSize):
-    #the PROBLEM is that the patientPages needs to be cleared every time this is called
-    #but for some reason if it is cleared before appending, it is blank when nextPg() is triggered and tries to access the array
-    #to be solved
    patientPages = []
    numPatientsOnPg = listSize
-    #print("1-->",patientPages)
    currPg=0
    numOfPages = 0
    if(len(patientList)>listSize):
-       #patientPages = []
        numOfPages = (len(patientList)/listSize)+1
        position = 0
        tempList = []
@@ -979,7 +951,6 @@ def displayPagedSearch(patientList, listSize):
                position=0
                tempList=[]
        patientPages.append(tempList) #tacks on the last partial page
-       #print("2-->",patientPages)
        result = ""
        for page in patientPages:
            for patient in page:
@@ -1003,12 +974,10 @@ def displayPagedSearch(patientList, listSize):
                               pgSize = selectSize,
                            npgnum=currPg+1)
    else:
-        #patientPages = []
         result = ""
         for patient in patientList:
             result = result + str(patient)+","
         result = result[:-1] #take off the last ,
-        #print("3-->",patientPages)
         patientPages.append(patientList)
         selectSize = str(listSize)
         sizesList = ['5','10','20','30','50']
@@ -1040,16 +1009,11 @@ def nextPg():
         temp = []
     pageNum = len(patientPages)
     totalNumPatients = counter
-    #print("4-->",patientPages)
     
-    #rint(pageNum)
     try:
-        #print(request.form['prev'])
         currPg = int(request.form['prev'])
     except:
-        #print(request.form['next'])
         currPg = int(request.form['next'])
-    #print("CurrPg",currPg)
 
     selectSize = str(request.form['pgSize'])
     sizesList = ['5','10','20','30','50']
@@ -1102,21 +1066,6 @@ def nextPg():
                            ppgnum=currPg-1,
                             npgnum=currPg+1)
 
-    
-#UNUSED
-##@app.route("/search")
-##def processSearch():
-##    jsonSuggest = []
-##    query = request.args.get('jsdata')
-##    #query = request.args.get('query')
-##    listPatients=patientList
-##    num = 0
-##    for username in listPatients:
-##        if(query in username):
-##            num+=1#'<div style="background-color:#cccccc; text-align:left; vertical-align: middle; padding:20px 47px;">'+username+'<div>'})
-##        #suggestions = [{'value': 'joe','data': 'joe'}, {'value': 'jim','data': 'jim'}]
-##    print("HERRRRRRRRRE")
-##    return '<div class="error">BLACH</div>'#'<textarea style="height:'+str(num*25)+'px;"></textarea>'
 
 @app.route("/search/<string:box>")
 def process(box):
@@ -1132,8 +1081,7 @@ def process(box):
 def show_mtg():
     return render_template("calendar.html")
 
-#This is what is needed to be able to link to this page
-#make a get method a part of the route
+
 @app.route("/deleterender", methods=['POST','GET'])
 def deletePg():
     if session['logged_in_p']:
@@ -1143,21 +1091,19 @@ def deletePg():
 @app.route("/deleteRenderNum/", methods=['POST','GET']) 
 def deletePgNum():
     return autoDeleteMtg(str(request.form['mtgnum']))
-    mtgid = str(request.form['mtgnum'])
-    return render_template('delete.html', mtg=mtgid)
 
 
 def autoDeleteMtg(mtgid):
    
     if (mySQL_apptDB.isMeetingIDValid(str(mtgid), cursor, cnx)==True):
-        mtgDetails = mySQL_apptDB.getApptFromMtgId(str(mtgid), cursor, cnx)
-            #(mI, d, p, mN, sT, jU)
-        emailBody="Hello "+mtgDetails[2]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[1], cursor, cnx)+" ("+mtgDetails[1]+") has been cancelled. \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
-        sendAutomatedApptMsg(mtgDetails[2],"Appointment Cancelled",emailBody)
-        emailBody="Hello "+mtgDetails[1]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[2], cursor, cnx)+" ("+mtgDetails[2]+") has been cancelled. \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
-        sendAutomatedApptMsg(mtgDetails[1],"Appointment Cancelled",emailBody)
+        mtgDetailsObject = mySQL_apptDB.getApptFromMtgId(str(mtgid), cursor, cnx)
+        
+        emailBody="Hello "+mtgDetailsObject.patient+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetailsObject.doctor, cursor, cnx)+" ("+mtgDetailsObject.doctor+") has been cancelled. \r\n\r\n\t"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetailsObject.startTime[:10]+"\r\nTime: "+mtgDetailsObject.startTime[11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
+        sendAutomatedApptMsg(mtgDetailsObject.patient,"Appointment Cancelled",emailBody)
+        emailBody="Hello "+mtgDetailsObject.doctor+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetailsObject.patient, cursor, cnx)+" ("+mtgDetailsObject.patient+") has been cancelled. \r\n\r\n\t"
+        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetailsObject.startTime[:10]+"\r\nTime: "+mtgDetailsObject.startTime[11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
+        sendAutomatedApptMsg(mtgDetailsObject.doctor,"Appointment Cancelled",emailBody)
         
         zoomtest_post.deleteMtgFromID(str(mtgid), cursor, cnx)
         
@@ -1167,37 +1113,15 @@ def autoDeleteMtg(mtgid):
 
 @app.route("/deletemtg", methods=['POST','GET'])
 def deleteMtg():
-   
-    if (mySQL_apptDB.isMeetingIDValid(str(request.form['mtgID']), cursor, cnx)==True):
-        mtgDetails = mySQL_apptDB.getApptFromMtgId(str(request.form['mtgID']), cursor, cnx)
-            #(mI, d, p, mN, sT, jU)
-        emailBody="Hello "+mtgDetails[2]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[1], cursor, cnx)+" ("+mtgDetails[1]+") has been cancelled. \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
-        sendAutomatedApptMsg(mtgDetails[2],"Appointment Cancelled",emailBody)
-        emailBody="Hello "+mtgDetails[1]+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails[2], cursor, cnx)+" ("+mtgDetails[2]+") has been cancelled. \r\n\r\n\t"
-        emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetails[4][:10]+"\r\nTime: "+mtgDetails[4][11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
-        sendAutomatedApptMsg(mtgDetails[1],"Appointment Cancelled",emailBody)
-        
-        zoomtest_post.deleteMtgFromID(str(request.form['mtgID']), cursor, cnx)
-        
-        return render_template('deleteConfirm.html', mtgnum=str(request.form['mtgID']))
-    else:
-        return deletePg()
+   return autoDeleteMtg(str(request.form['mtgID']))
 
     
 @app.route('/submitEmail', methods=['POST','GET'])
 def formatEmail():
 
     query = request.form['reciever_username']
-    # insertMessage(request.form['sender_username'],
-    #         request.form['reciever_username'],
-    #         request.form['subject'],
-    #         request.form['email_body'],
-    #               "0"
-    #               )
     actualUsername = (query.split(" - "))[0] #username - last name, first name
-    response = mySQL_userDB.getAcctFromUsername(actualUsername, cursor, cnx)
-        #(u, dS, str(f+" "+l), e, cD)
+    
     if(len(query.split(" - "))==2): #if they chose from dropdown
        insertMessage(request.form['sender_username'],
            actualUsername,
@@ -1282,8 +1206,6 @@ def renderPagedSent(pgNum):
                           totalEmailNum = len(msgList),
                           msgList=msgList[pageNumber*pageSize:])
     elif(pageNumber==0 and pageSize<len(msgList)): #this is the first page and there is a next page
-        #return (False, msgList[0:pageSize-1], True)
-        #print("HERE", msgList[0:pageSize])
         return render_template("sentBox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1295,7 +1217,6 @@ def renderPagedSent(pgNum):
                           totalEmailNum = len(msgList),
                           msgList=msgList[0:pageSize])
     elif(pageNumber==0): #this is the first and only page
-        #return (False, msgList[0:], False)
         return render_template("sentBox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1307,7 +1228,6 @@ def renderPagedSent(pgNum):
                           totalEmailNum = len(msgList),
                           msgList=msgList[0:])
     else: #there is a prev and next page
-        #return (True, msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize-1)], True)
         return render_template("sentBox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1334,14 +1254,12 @@ def renderPagedTrash(pgNum):
     elif pageNumber>(len(msgList)/pageSize):
         pageNumber=(len(msgList)/pageSize) #final possible page number
 
-    if(len(msgList)==0): #if the query is empty
-        #return (False, [], False) #no prev, no next
+    if(len(msgList)==0): #if the query is empty #no prev, no next
         return render_template("emptyTrash.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = ""
                           )
     if((pageNumber*pageSize+(pageSize)>=len(msgList)) and pageNumber!=0):  #this is the final page (not not first)
-        #return (True, msgList[pageNumber*pageSize:], False)
         return render_template("trashBox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1353,8 +1271,6 @@ def renderPagedTrash(pgNum):
                           totalEmailNum = len(msgList),
                           msgList=msgList[pageNumber*pageSize:])
     elif(pageNumber==0 and pageSize<len(msgList)): #this is the first page and there is a next page
-        #return (False, msgList[0:pageSize-1], True)
-        #print("HERE", msgList[0:pageSize])
         return render_template("trashBox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1366,7 +1282,6 @@ def renderPagedTrash(pgNum):
                           totalEmailNum = len(msgList),
                           msgList=msgList[0:pageSize])
     elif(pageNumber==0): #this is the first and only page
-        #return (False, msgList[0:], False)
         return render_template("trashBox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1378,7 +1293,6 @@ def renderPagedTrash(pgNum):
                           totalEmailNum = len(msgList),
                           msgList=msgList[0:])
     else: #there is a prev and next page
-        #return (True, msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize-1)], True)
         return render_template("trashBox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1393,6 +1307,7 @@ def renderPagedTrash(pgNum):
 
 @app.route('/selectOption', methods=['POST','GET'])
 def selectOption():
+    #handling for the clicks of the picture buttons on the inbox page
     x = ""
     try:
        x = str(request.form['prevPg.x'])
@@ -1459,7 +1374,8 @@ def getAllMessagesPaged(username, pgNum): #page to be rendered
                 msgList.append([str(send_date + " - " +send_time),messageID,sender,send_date,subject,True])
             else:
                 msgList.append([str(send_date + " - " +send_time),messageID,sender,send_date,subject,False])
-
+                
+#most recent messages first
     msgList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
 
 
@@ -1470,13 +1386,11 @@ def getAllMessagesPaged(username, pgNum): #page to be rendered
         pageNumber=(len(msgList)/pageSize) #final possible page number
 
     if(len(msgList)==0): #if the query is empty
-        #return (False, [], False) #no prev, no next
         return render_template("emptyInbox.html",
                           inboxUnread ="",
                           trashUnread = countUnreadInTrash(session['username'])
                           )
     if((pageNumber*pageSize+(pageSize)>=len(msgList)) and pageNumber!=0):  #this is the final page (not not first)
-        #return (True, msgList[pageNumber*pageSize:], False)
         return render_template("messageInbox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1488,8 +1402,6 @@ def getAllMessagesPaged(username, pgNum): #page to be rendered
                           totalEmailNum = len(msgList),
                           msgList=msgList[pageNumber*pageSize:])
     elif(pageNumber==0 and pageSize<len(msgList)): #this is the first page and there is a next page
-        #return (False, msgList[0:pageSize-1], True)
-        #print("HERE", msgList[0:pageSize])
         return render_template("messageInbox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1501,7 +1413,6 @@ def getAllMessagesPaged(username, pgNum): #page to be rendered
                           totalEmailNum = len(msgList),
                           msgList=msgList[0:pageSize])
     elif(pageNumber==0): #this is the first and only page
-        #return (False, msgList[0:], False)
         return render_template("messageInbox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1513,7 +1424,6 @@ def getAllMessagesPaged(username, pgNum): #page to be rendered
                           totalEmailNum = len(msgList),
                           msgList=msgList[0:])
     else: #there is a prev and next page
-        #return (True, msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize-1)], True)
         return render_template("messageInbox.html",
                           inboxUnread =countUnreadInInbox(session['username']),
                           trashUnread = countUnreadInTrash(session['username']),
@@ -1528,6 +1438,7 @@ def getAllMessagesPaged(username, pgNum): #page to be rendered
 
 @app.route('/selectSent', methods=['POST','GET'])
 def selectSent():
+    #handling for picture icon buttons on the sent page
     try:
        x = str(request.form['prevPg.x'])
        pageNum = request.form['currPageNum']
@@ -1626,7 +1537,6 @@ def emptyTrash():
 def undoTrash(msgIDList, username):
     #if it is in the trash and the sender == current username -> move it to sent folder
     #else move it to inbox
-#<MYSQL FUNCTIONAL>
     sender_loc='sent_folder'
     reciever_loc='inbox'
     for msgID in msgIDList:
@@ -1645,11 +1555,8 @@ def undoTrash(msgIDList, username):
                     updateFormat = ("UPDATE messageDB SET reciever_loc = %s "
                                         "WHERE messageID = %s")
                     cursor.execute(updateFormat, (reciever_loc,msgID))
-                    try:
-                        cnx.commit()
-                    except Exception as e:
-                        print("TEST", e)
-                break
+                    cnx.commit()
+                break #NEED THIS OR IT CRASHES AFTER THE FIRST ONE
         except Exception as e:
             print("error in undo trash --> ", e)
 
@@ -1661,8 +1568,7 @@ def insertMessage(sender, reciever, subject,body, convoID):
     msgID= ""
     msgID= msgID+str(datetime.now().strftime('%H%M%S'))
     msgID= msgID+str(datetime.now()).split(".")[1]
-
-    #TODO -- account for convoID 0 or not
+    
     formatInsert = ("INSERT INTO messageDB "
                    "(messageID, sender,reciever,subject,"
                     "msgbody,convoID,send_time,send_date,"
@@ -1772,11 +1678,13 @@ def permenantDel(msgIDList, del_username):
             for (sender, reciever, perm_del) in cursor:
                 if sender == del_username and perm_del=='n':
                     perm_del = 's'
+                    if(reciever=="<deactivatedUser>"):
+                        perm_del = 'sr'
                 elif sender == del_username and perm_del=='r':
                     perm_del = 'sr'
                 elif reciever == del_username and perm_del=='n':
                     perm_del = 'r'
-                    if(sender=="TreeoNotification" or sender=="TreeoCalendar"):
+                    if(sender=="TreeoNotification" or sender=="TreeoCalendar" or sender=="<deactivatedUser>"):
                         perm_del = 'sr'
                 elif reciever == del_username and perm_del=='s':
                     perm_del = 'sr'
@@ -1794,7 +1702,7 @@ def permenantDel(msgIDList, del_username):
                                         "WHERE messageID = %s")
                     cursor.execute(updateFormat, (perm_del,msgID))
                     cnx.commit()
-                break
+                break #nned this or it crashes after the first one
         except Exception as e:
             print("error in perma delete --> ", e)
 
@@ -1821,7 +1729,7 @@ def moveToTrash(msgIDList, del_username):
                                             "WHERE messageID = %s")
                         cursor.execute(updateFormat, (reciever_loc,msgID))
                         cnx.commit()
-                    break
+                    break #need this or is crashes after first loop
             except Exception as e:
                 print("error in move to trash --> ",e)
     except Exception as e:
@@ -1888,7 +1796,6 @@ def getAllMsgsInConvo(convoID):
         dateWhole = str(send_date + "   " +send_time)
         send = str(sender+ " - " + mySQL_userDB.getNameFromUsername(sender,tmpcursor, cnx))
         recieve = str(reciever+ " - " + mySQL_userDB.getNameFromUsername(reciever,tmpcursor, cnx))
-        #print(send, recieve)
         convoList.append([dateWhole,messageID,send, recieve, subject, msgbody])
        
     convoList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y   %H:%M:%S"))
@@ -1907,33 +1814,66 @@ def openMsg(msgid):
         if(reciever==session['username']):
             markAsRead(msgid)
         convoList=getAllMsgsInConvo(convoID)
-        if(reciever == session['username'] and reciever_loc=='inbox'):
-            return render_template("msgInfo.html",
-                                  inbox = True,sent = False,trashbox=False,
-                          inboxUnread =countUnreadInInbox(session['username']),
-                          trashUnread = countUnreadInTrash(session['username']),
-                              headMsgID = convoID,
-                              msgList=convoList,
-                                  targetmId = str(msgid)
-                              )
-        elif(sender_loc == 'trash' or reciever_loc=='trash'):
-            return render_template("msgInfo.html",
-                                  inbox = False,sent = False,trashbox=True,
-                          inboxUnread =countUnreadInInbox(session['username']),
-                          trashUnread = countUnreadInTrash(session['username']),
-                              headMsgID = convoID,
-                              msgList=convoList,
-                                  targetmId = str(msgid)
-                              )
+        
+        if(reciever=="<deactivatedUser>" or sender == "<deactivatedUser>"):
+            if(reciever == session['username'] and reciever_loc=='inbox'):
+                return render_template("msgInfoNoReply.html",
+                                      inbox = True,sent = False,trashbox=False,
+                              inboxUnread =countUnreadInInbox(session['username']),
+                              trashUnread = countUnreadInTrash(session['username']),
+                                  headMsgID = convoID,
+                                  msgList=convoList,
+                                      targetmId = str(msgid)
+                                  )
+            elif(sender_loc == 'trash' or reciever_loc=='trash'):
+                return render_template("msgInfoNoReply.html",
+                                      inbox = False,sent = False,trashbox=True,
+                              inboxUnread =countUnreadInInbox(session['username']),
+                              trashUnread = countUnreadInTrash(session['username']),
+                                  headMsgID = convoID,
+                                  msgList=convoList,
+                                      targetmId = str(msgid)
+                                  )
+            else:
+                return render_template("msgInfoNoReply.html",
+                                      inbox = False,sent = True,trashbox=False,
+                              inboxUnread =countUnreadInInbox(session['username']),
+                              trashUnread = countUnreadInTrash(session['username']),
+                                  headMsgID = convoID,
+                                  msgList=convoList,
+                                      targetmId = str(msgid)
+                                  )
         else:
-            return render_template("msgInfo.html",
-                                  inbox = False,sent = True,trashbox=False,
-                          inboxUnread =countUnreadInInbox(session['username']),
-                          trashUnread = countUnreadInTrash(session['username']),
-                              headMsgID = convoID,
-                              msgList=convoList,
-                                  targetmId = str(msgid)
-                              )
+            if(reciever == session['username'] and reciever_loc=='inbox'):
+                return render_template("msgInfo.html",
+                                      inbox = True,sent = False,trashbox=False,
+                              inboxUnread =countUnreadInInbox(session['username']),
+                              trashUnread = countUnreadInTrash(session['username']),
+                                  headMsgID = convoID,
+                                  msgList=convoList,
+                                      targetmId = str(msgid)
+                                  )
+            elif(sender_loc == 'trash' or reciever_loc=='trash'):
+                return render_template("msgInfo.html",
+                                      inbox = False,sent = False,trashbox=True,
+                              inboxUnread =countUnreadInInbox(session['username']),
+                              trashUnread = countUnreadInTrash(session['username']),
+                                  headMsgID = convoID,
+                                  msgList=convoList,
+                                      targetmId = str(msgid)
+                                  )
+            else:
+                return render_template("msgInfo.html",
+                                      inbox = False,sent = True,trashbox=False,
+                              inboxUnread =countUnreadInInbox(session['username']),
+                              trashUnread = countUnreadInTrash(session['username']),
+                                  headMsgID = convoID,
+                                  msgList=convoList,
+                                      targetmId = str(msgid)
+                                  )
+            
+        
+        
 
 @app.route('/reply', methods=['POST','GET'])
 def reply():

@@ -20,13 +20,7 @@
     <a href="{{ url_for('sentFolder') }}" {%if sent %} class="active" {%endif%}>sent</a>
     <a href="{{ url_for('trashFolder') }}" {%if trashbox %} class="active" {%endif%}>trash {{trashUnread}}</a>
   </div>
-  
 
-  <form action="/reply" method="POST" >
-  <input hidden type = "text" value = "{{headMsgID}}" name = "headMsgID"/>
-		<input type="image" name = "reply" class = "replyBtn" value="Reply" src="/static/reply.png" title="Reply" />
-  
-  </form>
 {%for date, mID, sender_username, reciever_username, subject, email_body in msgList%}
 <div class = "msgDetail" id = "{{mID}}">
 <label >FROM: </label>

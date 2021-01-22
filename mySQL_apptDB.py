@@ -1,7 +1,7 @@
 
 import mysql.connector
 from mysql.connector import errorcode
-
+from classFile import apptObjectClass
 from password_strength import PasswordPolicy
 from passlib.context import CryptContext
 import email_validator
@@ -26,16 +26,18 @@ pwd_context = CryptContext(
 
 
 def getAllApptsFromUsername(username, tempcursor, cursor, cnx):
-    query = ("SELECT mtgID, mtgName, startTime FROM apptTable WHERE doctor = %s OR patient = %s")         #BETWEEN %s AND %s")
+    query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable WHERE doctor = %s OR patient = %s")         #BETWEEN %s AND %s")
     cursor.execute(query, (username, username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    patientArr = []
-    for mI, mN, sT in cursor:
+    apptArr = []
+    for mI, d, p, mN, sT, jU in cursor:  
+        
         startDate= sT.split('T')[0]
         if(datetime.now().strftime('%Y-%m-%d')>startDate): #if the date of the appt is past todays date FULLY, archive it
             archiveAppt(mI, tempcursor, cnx)
         else: #else it's today or later so keep it in the calendar
-            patientArr.append([mI, mN, sT]) 
-    return patientArr
+            apptArr.append(apptObjectClass (mI, d, p, mN, sT, jU) ) 
+#TODO -- change this    
+    return apptArr
 
 def isMeetingIDValid(mtgid, cursor, cnx):
     query = ("SELECT mtgID FROM apptTable WHERE mtgID = %s")         #BETWEEN %s AND %s")
@@ -48,12 +50,15 @@ def getApptFromMtgId(mtgid, cursor, cnx):
     query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable WHERE mtgID = %s")         #BETWEEN %s AND %s")
     cursor.execute(query, (mtgid,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
-    for mI, d, p, mN, sT, jU in cursor:            
+    for mI, d, p, mN, sT, jU in cursor:  
+        apptClassObj = apptObjectClass (mI, d, p, mN, sT, jU)   
+        return apptClassObj
+    #TODO -- change this    
         return (mI, d, p, mN, sT, jU)
     
 def isMtgStartTimePassed(mtgID, cursor, cnx):
-    print("NOW",datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), "APPT TIME:", getApptFromMtgId(mtgID, cursor, cnx)[4])
-    if(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")>getApptFromMtgId(mtgID, cursor, cnx)[4]):
+    print("NOW",datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), "APPT TIME:", getApptFromMtgId(mtgID, cursor, cnx).startTime)
+    if(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")>getApptFromMtgId(mtgID, cursor, cnx).startTime):
         print("NOW is AFTER mtg start time")
         #if the start time of the mtg is past the current time, this will return true
         return True
@@ -78,18 +83,32 @@ def deleteAppt(mtgid, cursor, cnx):
     cnx.commit()
     # for item in cursor:
     #     return "deleted "+mtgid
+    
+def deleteBadMsgs():
+    delete_test = (
+        "DELETE FROM messageDB " #table name NOT db name
+        "WHERE sender = %s OR reciever = %s")
+    cursor.execute(delete_test, ("deactivatedUser","deactivatedUser"))
+    cnx.commit()
 
 def archiveAppt(mtgid, cursor, cnx):
     apptDetails=getApptFromMtgId(mtgid,cursor,cnx)
-        #(mI, d, p, mN, sT, jU)
     formatInsert = ("INSERT INTO archiveApptTable "
                    "(mtgID, patient,doctor,"
                     "start_time) "
                    "VALUES (%s, %s,%s, %s)") #NOTE: use %s even with numbers
-    insertContent = (apptDetails[0], apptDetails[2], apptDetails[1], apptDetails[4])
+    insertContent = (apptDetails.meetingID, apptDetails.patient, apptDetails.doctor, apptDetails.startTime)
     cursor.execute(formatInsert, insertContent)
     cnx.commit()
     deleteAppt(mtgid,cursor,cnx)
+    
+def deactivateAllArchivedAppts(username, cursor, cnx):
+    update_test = (
+                "UPDATE archiveApptTable SET patient=%s "
+                "WHERE patient = %s")
+    cursor.execute(update_test, (str(username+" [deleted]"),username))
+    cnx.commit()
+    return "success update"
     
 
 def updateAppt(mtgName, mtgid,start_time, cursor, cnx): 

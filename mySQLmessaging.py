@@ -939,24 +939,56 @@ if __name__ == '__main__':
 #-DONE :)-make autocomplete noncase sensitive
 #-DONE :)-check/fix username check on register
     
-    
+ #-DONE :)-[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
+    #--DONE :)--treat msgs from that dummy "deletedAcct" like notif (permadelete if the other person deletes)
+        #-DONE :)-DO NOT ALLOW RESPONSES
+    #-DONE :)-on patient acct deletion, GO INTO ARCHIVE AND UPDATE ALL APPTS? -- only if both accts are deleted
+        #-DONE :)-on patient acct delteion, change name of patient to username+"[deleted]" so if that username is signed up for again, those appts won't show as that user's
+#-DONE :)-need to make functions for getting specific drs assigned to a specific user (not just a list)
+    #-DONE :)--treeo help should not appear as an assigned provider   
 
-
-
-
-
-
-#--[DELETE] allow deletion of account on acctdetails pg -> UPDATE ALL MESSAGES FROM/TO THEM 
-    #--treat msgs from that dummy "deletedAcct" like notif (permadelete if the other person deletes)
-    #-tbd how to handle a dr being deleted when they are on patient care team
-    #on patient acct deletion, GO INTO ARCHIVE AND DELETE ALL APPTS? -- only if both accts are deleted
-        #on patient acct delteion, change name of patient to username+"[deleted]" so if that username is signed up for again, those appts won't show as that user's
 
 #CLEAN UP ALL COMMENTS
-#Split apptest.py into smaller files
+#alphabetize/sort functionality in apptest.py
+#DO A SHORT DESCRIPTION OF EACH FUNCTION ABOVE IT
+
+
+
+#fix formatting on msgInfoNoReply.html (no reply btn)
+#autofill for patient (+mtg with x) no longer working -createmtg.html
+
+#-tbd how to handle a dr being deleted when they are on patient care team
+    #partial care team in admin portal
+    #how to handle a NULL dr
+    #update patient account to have a N/A
+    #update all appts in archive (if both accts are delted, perma remove)
+    #update all msgs (if both accts are delted, perma remove)
     
+
 #ADMIN - list/search ALL users (search + see user accts including drs)
+    #have a tally for # of unapproved patients/drs on home page
 #On user acct page/in search result have a "send message" button that takes you to a pre-filled out inbox page
+
+#EVENTUALLY -- make patient detail page that lists drs take you to a dr profile page (link)
+
+#Split apptest.py into smaller files
+    #cannot abstract --> T^T
+    #   flask blueprint does not support sharing global vars across mult files (cnx/cursor/session)
+        #   cnx, cursor and session are global vars in apptest
+        #   cannot use register url function (same reason we can't use url_for) - can't pass params through it
+    #   changing cnx/cursor to be handled by mySQL_ files signif impacts performance badly
+        #   cannot init and hold it in the file globally (leaving that scope loses the init value)
+    #   flask blueprint passing vars/invoking function calls not possible
+        #   routing function parameters from html url_for() calls not possible (like passing cursor from html to an enpoint in a file not in apptest)
+        #   need to import x into main for the blueprint in it but need to import from main into x to get the global vars (circular includes, not viable)
+    #apptest abstraction
+        #user/acct mgmt
+        #patient fucntions
+        #admin functions
+        #dr functions
+        #appt mgmt
+        #inbox
+
 
 #make appt requested option + do automated message x1 (patient req so only notify dr)
     #what mechnaism for requests?? - form for requesting a range on a certian day? just req a certain day? 
