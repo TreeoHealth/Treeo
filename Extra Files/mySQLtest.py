@@ -116,7 +116,7 @@ conn.close()
 ####DB_NAME = 'testDB'
 ####cursor.execute("USE {}".format(DB_NAME))
 ####query = ("SELECT msgID, msgBody FROM testDB "
-####         "WHERE msgID = %s")         #BETWEEN %s AND %s")
+####         "WHERE msgID = %s")         
 ####cursor.execute(query, (2116405525,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
 ####
 ####for (msgID, msgBody) in cursor:
@@ -126,7 +126,7 @@ conn.close()
 #scan all items in a table
 ####DB_NAME = 'testDB'
 ####cursor.execute("USE {}".format(DB_NAME))
-####query = ("SELECT * FROM testDB ")         #BETWEEN %s AND %s")
+####query = ("SELECT * FROM testDB ")         
 ####cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
 ####
 ####for item in cursor:

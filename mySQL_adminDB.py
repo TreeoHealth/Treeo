@@ -1,12 +1,8 @@
 import mysql.connector
-from mysql.connector import errorcode
-
 from password_strength import PasswordPolicy
 from passlib.context import CryptContext
 import email_validator
-from email_validator import validate_email, EmailNotValidError, EmailSyntaxError, EmailUndeliverableError
 from datetime import date, datetime,timezone
-
 import mySQL_userDB
 
 config = {

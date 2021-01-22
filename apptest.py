@@ -1,30 +1,23 @@
-from flask import Flask
-from flask import Flask, flash, redirect, render_template, request, session, abort
+
+from flask import Flask, flash, redirect, render_template, request, session, abort,jsonify
 import os
-from flask import Flask, jsonify
 import json
 import re
-import zoomtest_post
-import password_strength
-import datetime
 from datetime import date, datetime,timezone
-import email_validator
 from email_validator import validate_email, EmailNotValidError, EmailSyntaxError, EmailUndeliverableError
+import password_strength
 from password_strength import PasswordPolicy
 from passlib.context import CryptContext
-
 import mysql.connector
-from mysql.connector import errorcode
+
 import mySQL_apptDB
 import mySQL_userDB
 import mySQL_adminDB
-
 from classFile import adminUserClass, apptObjectClass, patientUserClass, doctorUserClass
+import zoomtest_post
+
 
 app = Flask(__name__)
-
-
-
 patientPages = []
 currPg=0
 

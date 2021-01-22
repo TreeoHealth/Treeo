@@ -1,11 +1,9 @@
-
 import mysql.connector
 from mysql.connector import errorcode
 from classFile import apptObjectClass
 from password_strength import PasswordPolicy
 from passlib.context import CryptContext
 import email_validator
-from email_validator import validate_email, EmailNotValidError, EmailSyntaxError, EmailUndeliverableError
 from datetime import date, datetime,timezone
 
 config = {
@@ -26,7 +24,7 @@ pwd_context = CryptContext(
 
 
 def getAllApptsFromUsername(username, tempcursor, cursor, cnx):
-    query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable WHERE doctor = %s OR patient = %s")         #BETWEEN %s AND %s")
+    query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable WHERE doctor = %s OR patient = %s")         
     cursor.execute(query, (username, username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     apptArr = []
     for mI, d, p, mN, sT, jU in cursor:  
@@ -40,14 +38,14 @@ def getAllApptsFromUsername(username, tempcursor, cursor, cnx):
     return apptArr
 
 def isMeetingIDValid(mtgid, cursor, cnx):
-    query = ("SELECT mtgID FROM apptTable WHERE mtgID = %s")         #BETWEEN %s AND %s")
+    query = ("SELECT mtgID FROM apptTable WHERE mtgID = %s")         
     cursor.execute(query, (mtgid, )) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     for item in cursor:
         return True
     return False
 
 def getApptFromMtgId(mtgid, cursor, cnx):
-    query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable WHERE mtgID = %s")         #BETWEEN %s AND %s")
+    query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable WHERE mtgID = %s")         
     cursor.execute(query, (mtgid,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
     for mI, d, p, mN, sT, jU in cursor:  
@@ -119,7 +117,7 @@ def updateAppt(mtgName, mtgid,start_time, cursor, cnx):
     cnx.commit()
     return "success update"
 
-# query = ("SELECT * FROM apptTable ")         #BETWEEN %s AND %s")
+# query = ("SELECT * FROM apptTable ")         
 # cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
 # for item in cursor:
 #    print(item) #each item = a row = a tuple

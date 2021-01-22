@@ -4,10 +4,10 @@ from mysql.connector import errorcode
 from classFile import patientUserClass, adminUserClass, doctorUserClass
 from password_strength import PasswordPolicy
 from passlib.context import CryptContext
-import email_validator
 from email_validator import validate_email, EmailNotValidError, EmailSyntaxError, EmailUndeliverableError
 from datetime import date, datetime,timezone
 
+#global declarations to connect to the database
 config = {
   'host':'treeo-server.mysql.database.azure.com',
   'user':'treeo_master@treeo-server',
@@ -18,12 +18,250 @@ cnx = mysql.connector.connect(**config)
 cursor = cnx.cursor()
 cursor.execute("USE treeoHealthDB")
 
-pwd_context = CryptContext(
+#Purpose: returns an array of the search dropdown items (username + first name + last name)
+#   for doctor and patient users 
+def allSearchUsers(cursor, cnx):
+    query=("SELECT username, fname, lname FROM patientTable")
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    nameArr = []
+    for un,fn,ln in cursor:
+        tmp = str(un+" - "+ln+", "+fn)
+        nameArr.append(tmp)
+    query=("SELECT username, fname, lname FROM doctorTable")
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    for un,fn,ln in cursor:
+        tmp = str(un+" - "+ln+", "+fn)
+        nameArr.append(tmp)
+    return nameArr
+
+#Purpose: updates a patient user's acct to be assigned the 3 dr users
+def assignPatientCareTeam(patientUser, dr1User, dr2User, dr3User, cursor, cnx):
+    update_test = (
+                "UPDATE patientTable SET drOne=%s, drTwo=%s, drThree=%s"
+                "WHERE username = %s")
+    cursor.execute(update_test, (dr1User, dr2User, dr3User, patientUser))
+    cnx.commit()
+    return "success"
+
+#Purpose: given a username and password, it checks the hash of the password and returns true if the 
+#   user can log in, false otherwise
+def checkUserLogin(username, pwrd, cursor, cnx):
+    
+    pwd_context = CryptContext(
         schemes=["pbkdf2_sha256"],
         default="pbkdf2_sha256",
-        pbkdf2_sha256__default_rounds=30000
+        pbkdf2_sha256__default_rounds=30000 #num of times it will hash before writing
     )
+    
+    query = ("SELECT username, password FROM doctorTable WHERE username = %s")
+    cursor.execute(query, (username, ))
+    for un, pw in cursor: #this loop will not be entered if it does not exist in the doctorDB
+        if( True==(pwd_context.verify(pwrd, pw))):
+            return True
+        else: #because there can only be 1 match, this query can only be run 1 time max 
+            return False
+              
+    query = ("SELECT username, password FROM patientTable WHERE username = %s")
+    cursor.execute(query, (username, ))
+    for un, pw in cursor: #this loop will not be entered if it does not exist in the patientDB
+        if( True==(pwd_context.verify(pwrd, pw))):
+            return True
+        else:
+            return False
+    return False
 
+#Purpose: remove username from the database (any user table)
+def deleteUserAcct(username, cursor, cnx):
+    result = getAcctFromUsername(username, cursor, cnx)
+    if(type(result)==doctorUserClass):
+        delete_test = (
+            "DELETE FROM doctorTable " #table name NOT db name
+            "WHERE username = %s")
+        cursor.execute(delete_test, (username,))
+        cnx.commit()
+    elif type(result)==adminUserClass:
+        delete_test = (
+            "DELETE FROM adminTable " #table name NOT db name
+            "WHERE username = %s")
+        cursor.execute(delete_test, (username,))
+        cnx.commit()
+    else:
+        delete_test = (
+            "DELETE FROM patientTable " #table name NOT db name
+            "WHERE username = %s")
+        cursor.execute(delete_test, (username,))
+        cnx.commit()
+    return "deleted "+username
+
+#Purpose: returns a class object with all database items packaged in it for any user table
+def getAcctFromUsername(username, cursor, cnx):
+    query = ("SELECT username, password, fname, lname, email, creationDate, drType FROM doctorTable WHERE username = %s")   
+    cursor.execute(query, (username, ))
+    for u,p, f, l, e, cD, dT in cursor:
+        drClassObj = doctorUserClass( u, p, e, f, l, cD, dT)
+        return drClassObj
+    
+    query = ("SELECT username, password, fname, lname, email, creationDate, drOne, drTwo, drThree FROM patientTable WHERE username = %s")   
+    cursor.execute(query, (username, ))
+    for u, p,f, l, e, cD, d1, d2, d3 in cursor:
+        patientClassObj = patientUserClass(u,p,e, f, l, cD, 
+                                            d1, d2, d3)
+        return patientClassObj
+    
+    query = ("SELECT username, password, fname, lname, creationDate FROM adminTable WHERE username = %s")   
+    cursor.execute(query, (username, ))
+    for u, p, f, l, cD in cursor:
+        adminClassObj = adminUserClass(u, p, f, l, cD)
+        return adminClassObj
+    return
+
+#Purpose: returns an array of all usernames for doctors that have been verified by an admin
+def getAllApprovedDrs(cursor, cnx):
+    query = ("SELECT username, fname FROM doctorTable WHERE verified=%s")         
+    cursor.execute(query, ("1",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    docArr = []
+    for un,fn in cursor:
+        docArr.append(un)
+    return docArr
+
+#Purpose: returns an array of the search dropdown items (username + first name + last name)
+#   for doctor users that ARE dieticians
+def getAllDrDietician(cursor, cnx):
+    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s")         
+    cursor.execute(query, ("dietician",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    docArr = []
+    for un,fn,ln in cursor:
+        tmp = str(un+" - "+ln+", "+fn)
+        docArr.append(tmp)
+    return docArr
+
+#Purpose: returns an array of the search dropdown items (username + first name + last name)
+#   for doctor users that ARE healthcoaches
+def getAllDrHealth(cursor, cnx):
+    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s")         
+    cursor.execute(query, ("healthcoach",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    docArr = []
+    for un,fn,ln in cursor:
+        tmp = str(un+" - "+ln+", "+fn)
+        docArr.append(tmp)
+    return docArr
+
+#Purpose: returns an array of the search dropdown items (username + first name + last name)
+#   for doctor users that ARE physicians
+def getAllDrPhysician(cursor, cnx):
+    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s")         
+    cursor.execute(query, ("physician",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    docArr = []
+    for un,fn,ln in cursor:
+        tmp = str(un+" - "+ln+", "+fn)
+        docArr.append(tmp)
+    return docArr
+
+#Purpose: returns an array of all usernames for doctors that have not been verified by an admin yet
+def getAllUnapprovedDrs(cursor, cnx):
+    query = ("SELECT username, fname FROM doctorTable WHERE verified=%s")         
+    cursor.execute(query, ("0",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    docArr = []
+    for un,fn in cursor:
+        docArr.append(un)
+    return docArr
+
+#Purpose: returns an array of all usernames for patients that have at least 1
+#   dr on their care team not yet assigned
+def getAllUnassignedPatients(cursor, cnx):
+    
+    query = ("SELECT username, creationDate FROM patientTable WHERE drOne = %s OR drTwo=%s OR drThree=%s" )
+    cursor.execute(query, ("N/A","N/A","N/A"))
+    unassigned = []
+    for un, cd in cursor:
+        unassigned.append(un)
+    return unassigned
+
+#Purpose: returns an array of the 3 drs that are assigned to a patient user
+#   for email recipient dropdown (so add the help account as well)
+def getCareTeamOfUser(username, cursor, cnx):
+    query = ("SELECT drOne, drTwo, drThree FROM patientTable WHERE username = %s") 
+    cursor.execute(query, (username, ))
+    docArr = []
+
+    for d1, d2, d3 in cursor:
+        print(d1, d2, d3)
+        if(d1=="N/A" or d2=="N/A" or d3=="N/A"):
+            docArr.append("TreeoHelp - help, treeo") #let them message a help account
+        else: #dr team is assigned so they can be in the dropdown
+            u1 = d1
+            r1 = userAcctInfo(u1, cursor, cnx)
+            if(r1!=None):
+                docArr.append(str(u1+" - "+r1[2]+", "+r1[1]))
+            
+            u2 = d2
+            r2 = userAcctInfo(u2, cursor, cnx)
+            if(r2!=None):
+                docArr.append(str(u2+" - "+r2[2]+", "+r2[1]))
+            
+            u3 = d3
+            #(e,f,l,p)
+            r3 = userAcctInfo(u3, cursor, cnx)
+            if(r3!=None):
+                docArr.append(str(u3+" - "+r3[2]+", "+r3[1]))
+            
+            docArr.append("TreeoHelp - help, treeo")
+    return docArr
+
+#Purpose: returns the dietician assigned to a particular patient user (N/A if patient username invalid)
+def getDieticianOfPatient(username, cursor, cnx):
+    query = ("SELECT drOne, creationDate FROM patientTable WHERE username = %s" )
+    cursor.execute(query, (username,))
+    for dr1, cd in cursor:
+        return dr1
+    return "N/A"
+
+#Purpose: returns the drType of the dr username (dietician/physician/healthcoach)
+def getDrTypeOfAcct(username, cursor, cnx):
+    query = ("SELECT drType FROM doctorTable WHERE username=%s")
+    cursor.execute(query, (username, ))
+    for dr in cursor:
+        return dr[0]
+    return
+
+#Purpose: returns the healthcoach assigned to a particular patient user (N/A if patient username invalid)
+def getHealthcoachOfPatient(username, cursor, cnx):
+    query = ("SELECT drThree, creationDate FROM patientTable WHERE username = %s" )
+    cursor.execute(query, (username,))
+    for dr3, cd in cursor:
+        return dr3
+    return "N/A"
+
+#Purpose: given a username, query any user table for and assemble  first + last name into a string and return
+#   if the username is invalid, return N/A N/A
+def getNameFromUsername(username, cursor, cnx): 
+    #the 2 queries need to have the same # of attributes in the select for a union
+    query = ("SELECT fname, lname FROM doctorTable WHERE username = %s " ) #always check drTable 1st (smaller)
+    cursor.execute(query, (username, ))
+    for f, l in cursor:
+        return str(f+" "+l)
+    
+    query = ("SELECT fname, lname FROM adminTable WHERE username = %s " ) #always check patTable 2nd (much larger)
+    cursor.execute(query, (username,))
+    for f, l in cursor:
+        return str(f+" "+l)
+    
+    query = ("SELECT fname, lname FROM patientTable WHERE username = %s " ) #always check patTable 2nd (much larger)
+    cursor.execute(query, (username,))
+    for f, l in cursor:
+        return str(f+" "+l)
+    return "N/A N/A"
+
+#Purpose: returns the physician assigned to a particular patient user (N/A if patient username invalid)
+def getPhysicianOfPatient(username, cursor, cnx):
+    query = ("SELECT drTwo, creationDate FROM patientTable WHERE username = %s" )
+    cursor.execute(query, (username,))
+    for dr2, cd in cursor:
+        return dr2
+    return "N/A"
+
+#Purpose: verifies all information given and either returns a string with an error 
+#   or inserts the item into the doctor database
 def insertDoctor(username, password, email, fname, lname, drType, cursor, cnx):
     if(isUsernameTaken(username,cursor, cnx)):
         return "taken error"
@@ -63,8 +301,8 @@ def insertDoctor(username, password, email, fname, lname, drType, cursor, cnx):
 
     return "success"
 
-
-
+#Purpose: verifies all information given and either returns a string with an error 
+#   or inserts the item into the patient database
 def insertPatient(username, password, email, fname, lname, cursor, cnx):
     if(isUsernameTaken(username,cursor, cnx)):
         return "taken error"
@@ -107,8 +345,31 @@ def insertPatient(username, password, email, fname, lname, cursor, cnx):
 
     return "success"
 
+#Purpose: checks if drType is dietician (returns true if it is, false otherwise)
+def isDrDietician(username, cursor, cnx):
+    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s")
+    cursor.execute(query, (username, "dietician"))
+    for dr in cursor:
+        return True
+    return False
 
+#Purpose: checks if drType is healthcoach (returns true if it is, false otherwise)
+def isDrHealthCoach(username, cursor, cnx):
+    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s")
+    cursor.execute(query, (username, "healthcoach"))
+    for dr in cursor:
+        return True
+    return False
 
+#Purpose: checks if drType is physician (returns true if it is, false otherwise)
+def isDrPhysician(username, cursor, cnx):
+    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s")
+    cursor.execute(query, (username, "physician"))
+    for dr in cursor:
+        return True
+    return False
+
+#Purpose: checks if username is taken by checking all 3 user databases (returns true if it is)
 def isUsernameTaken(username, cursor, cnx): #fix SQL DONE
         #the 2 queries need to have the same # of attributes in the select
     query = ("SELECT username FROM doctorTable WHERE username = %s" ) 
@@ -129,139 +390,49 @@ def isUsernameTaken(username, cursor, cnx): #fix SQL DONE
     
     return False #it was queried in both tables and neither matched
 
-
-def checkUserLogin(username, pwrd, cursor, cnx): #fix SQL DONE
-    
-    pwd_context = CryptContext(
-        schemes=["pbkdf2_sha256"],
-        default="pbkdf2_sha256",
-        pbkdf2_sha256__default_rounds=30000 #num of times it will hash before writing
-    )
-    
-    query = ("SELECT username, password FROM doctorTable WHERE username = %s")
-    cursor.execute(query, (username, ))
-    for un, pw in cursor: #this loop will not be entered if it does not exist in the doctorDB
-        if( True==(pwd_context.verify(pwrd, pw))):
-            return True
-        else: #because there can only be 1 match, this query can only be run 1 time max (not O(n^2))
-            print("WRONG PASSWORD")
-            return False
-              
-    query = ("SELECT username, password FROM patientTable WHERE username = %s")
-    cursor.execute(query, (username, ))
-    for un, pw in cursor: #this loop will not be entered if it does not exist in the patientDB
-        if( True==(pwd_context.verify(pwrd, pw))):
-            return True
-        else:
-            print("WRONG PASSWORD")
-            return False
-    
-    
-    print("bad username")
-    return False
-
-
+#Purpose: returns an array of all usernames in the patient table
 def returnAllPatients(cursor, cnx): 
-    query = ("SELECT username FROM patientTable")         #BETWEEN %s AND %s")
+    query = ("SELECT username FROM patientTable")
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
-    for un in cursor:
+    for un in cursor: #NOTE: un is (username, ) - a 1 item tuple - so i index into it
         patientArr.append(un[0])
     return patientArr
 
+#Purpose: returns an array of all usernames in all user tables
 def returnAllTakenUsernames(cursor, cnx): 
-    query = ("SELECT username FROM patientTable")         #BETWEEN %s AND %s")
+    query = ("SELECT username FROM patientTable")         
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     userArr = []
     for un in cursor:
         userArr.append(un[0])
         
-    query = ("SELECT username FROM doctorTable")         #BETWEEN %s AND %s")
+    query = ("SELECT username FROM doctorTable")         
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     for un in cursor:
         userArr.append(un[0])
     
-    query = ("SELECT username FROM adminTable")         #BETWEEN %s AND %s")
+    query = ("SELECT username FROM adminTable")         
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     for un in cursor:
         userArr.append(un[0])
         
     return userArr
 
+#Purpose: returns an array of all usernames in the patient table that have been assigned this 
+#   doctor user as part of their care team
 def returnPatientsAssignedToDr(username, cursor, cnx): 
-    query = ("SELECT username FROM patientTable WHERE drOne = %s OR drTwo = %s OR drThree = %s")         #BETWEEN %s AND %s")
+    query = ("SELECT username FROM patientTable WHERE drOne = %s OR drTwo = %s OR drThree = %s")         
     cursor.execute(query, (username,username,username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
     for un in cursor:
         patientArr.append(un[0])
     return patientArr
 
-def searchPatientList(cursor, cnx):
-    query = ("SELECT username, fname, lname FROM patientTable")         #BETWEEN %s AND %s")
-    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    patientArr = []
-    for un,fn,ln in cursor:
-        patientArr.append(str(un+" - "+ln+", "+fn))
-    return patientArr
-
-def allSearchUsers(cursor, cnx): #fix SQL DONE
-    query=("SELECT username, fname, lname FROM patientTable")
-    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    nameArr = []
-    for un,fn,ln in cursor:
-        tmp = str(un+" - "+ln+", "+fn)
-        nameArr.append(tmp)
-    query=("SELECT username, fname, lname FROM doctorTable")
-    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    for un,fn,ln in cursor:
-        tmp = str(un+" - "+ln+", "+fn)
-        nameArr.append(tmp)
-    nameArr.append("TreeoHelp - help, treeo")
-    return nameArr
-
-
-
-def getCareTeamOfUser(username, cursor, cnx):
-    query = ("SELECT drOne, drTwo, drThree FROM patientTable WHERE username = %s") 
-    cursor.execute(query, (username, ))
-    docArr = []
-
-    for d1, d2, d3 in cursor:
-        print(d1, d2, d3)
-        if(d1=="N/A" or d2=="N/A" or d3=="N/A"):
-            docArr.append("TreeoHelp - help, treeo") #let them message a help account
-        else: #dr team is assigned so they can be in the dropdown
-            u1 = d1
-            r1 = userAcctInfo(u1, cursor, cnx)
-            if(r1!=None):
-                docArr.append(str(u1+" - "+r1[2]+", "+r1[1]))
-            
-            u2 = d2
-            r2 = userAcctInfo(u2, cursor, cnx)
-            if(r2!=None):
-                docArr.append(str(u2+" - "+r2[2]+", "+r2[1]))
-            
-            u3 = d3
-            #(e,f,l,p)
-            r3 = userAcctInfo(u3, cursor, cnx)
-            if(r3!=None):
-                docArr.append(str(u3+" - "+r3[2]+", "+r3[1]))
-            
-            docArr.append("TreeoHelp - help, treeo")
-    return docArr
-
-def assignPatientCareTeam(patientUser, dr1User, dr2User, dr3User, cursor, cnx):
-    # if("N/A" in currCare): #if any of the drs are unassigned
-        update_test = (
-                "UPDATE patientTable SET drOne=%s, drTwo=%s, drThree=%s"
-                "WHERE username = %s")
-        cursor.execute(update_test, (dr1User, dr2User, dr3User, patientUser))
-        cnx.commit()
-        return "success"
-    # return
-
+#Purpose: returns an array of the search dropdown items (username + first name + last name)
+#   for doctor users
 def searchDoctorList(cursor, cnx):
-    query = ("SELECT username, fname, lname FROM doctorTable")         #BETWEEN %s AND %s")
+    query = ("SELECT username, fname, lname FROM doctorTable")         
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     docArr = []
     for un,fn,ln in cursor:
@@ -270,85 +441,17 @@ def searchDoctorList(cursor, cnx):
     docArr.append("TreeoHelp - help, treeo")
     return docArr
 
-def getDrTypeOfAcct(username, cursor, cnx):
-    query = ("SELECT drType FROM doctorTable WHERE username=%s")
-    cursor.execute(query, (username, ))
-    for dr in cursor:
-        return dr[0]
-    return
-
-def isDrDietician(username, cursor, cnx):
-    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s")
-    cursor.execute(query, (username, "dietician"))
-    for dr in cursor:
-        return True
-    return False
-
-def isDrPhysician(username, cursor, cnx):
-    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s")
-    cursor.execute(query, (username, "physician"))
-    for dr in cursor:
-        return True
-    return False
-
-def isDrHealthCoach(username, cursor, cnx):
-    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s")
-    cursor.execute(query, (username, "healthcoach"))
-    for dr in cursor:
-        return True
-    return False
-
-def getAllDrDietician(cursor, cnx):
-    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s")         #BETWEEN %s AND %s")
-    cursor.execute(query, ("dietician",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    docArr = []
+#Purpose: returns an array of the search dropdown items (username + first name + last name)
+#   for patient users
+def searchPatientList(cursor, cnx):
+    query = ("SELECT username, fname, lname FROM patientTable")         
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    patientArr = []
     for un,fn,ln in cursor:
-        tmp = str(un+" - "+ln+", "+fn)
-        docArr.append(tmp)
-    return docArr
+        patientArr.append(str(un+" - "+ln+", "+fn))
+    return patientArr
 
-def getAllDrPhysician(cursor, cnx):
-    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s")         #BETWEEN %s AND %s")
-    cursor.execute(query, ("physician",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    docArr = []
-    for un,fn,ln in cursor:
-        tmp = str(un+" - "+ln+", "+fn)
-        docArr.append(tmp)
-    return docArr
-
-def getAllDrHealth(cursor, cnx):
-    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s")         #BETWEEN %s AND %s")
-    cursor.execute(query, ("healthcoach",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    docArr = []
-    for un,fn,ln in cursor:
-        tmp = str(un+" - "+ln+", "+fn)
-        docArr.append(tmp)
-    return docArr
-
-def getAllUnapprovedDrs(cursor, cnx):
-    query = ("SELECT username, fname FROM doctorTable WHERE verified=%s")         #BETWEEN %s AND %s")
-    cursor.execute(query, ("0",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    docArr = []
-    for un,fn in cursor:
-        docArr.append(un)
-    return docArr
-
-def getAllApprovedDrs(cursor, cnx):
-    query = ("SELECT username, fname FROM doctorTable WHERE verified=%s")         #BETWEEN %s AND %s")
-    cursor.execute(query, ("1",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    docArr = []
-    for un,fn in cursor:
-        docArr.append(un)
-    return docArr
-
-def verifyDoctor(username, cursor, cnx):
-    update_test = (
-                "UPDATE doctorTable SET verified = %s "
-                "WHERE username = %s")
-    cursor.execute(update_test, ("1",username ))
-    cnx.commit()
-    return "success"
-
+#Purpose: update doctor user to no longer be verified (done by admin)
 def unverifyDoctor(username, cursor, cnx):
     update_test = (
                 "UPDATE doctorTable SET verified = %s "
@@ -356,104 +459,9 @@ def unverifyDoctor(username, cursor, cnx):
     cursor.execute(update_test, ("0",username ))
     cnx.commit()
     return "success"
-    
-def getNameFromUsername(username, cursor, cnx): 
-    #the 2 queries need to have the same # of attributes in the select for a union
-    query = ("SELECT fname, lname FROM doctorTable WHERE username = %s " ) #always check drTable 1st (smaller)
-    cursor.execute(query, (username, ))
-    for f, l in cursor:
-        return str(f+" "+l)
-    
-    query = ("SELECT fname, lname FROM adminTable WHERE username = %s " ) #always check patTable 2nd (much larger)
-    cursor.execute(query, (username,))
-    for f, l in cursor:
-        return str(f+" "+l)
-    
-    query = ("SELECT fname, lname FROM patientTable WHERE username = %s " ) #always check patTable 2nd (much larger)
-    cursor.execute(query, (username,))
-    for f, l in cursor:
-        return str(f+" "+l)
-    
-    
 
-    return "N/A N/A"
-
-def getAllUnassignedPatients(cursor, cnx):
-    query = ("SELECT username, creationDate FROM patientTable WHERE drOne = %s OR drTwo=%s OR drThree=%s" )
-    cursor.execute(query, ("N/A","N/A","N/A"))
-    unassigned = []
-    for un, cd in cursor:
-        unassigned.append(un)
-    return unassigned
-
-def getDieticianOfPatient(username, cursor, cnx):
-    query = ("SELECT drOne, creationDate FROM patientTable WHERE username = %s" )
-    cursor.execute(query, (username,))
-    for dr1, cd in cursor:
-        return dr1
-    return ""
-
-def getPhysicianOfPatient(username, cursor, cnx):
-    query = ("SELECT drTwo, creationDate FROM patientTable WHERE username = %s" )
-    cursor.execute(query, (username,))
-    for dr2, cd in cursor:
-        return dr2
-    return ""
-
-def getHealthcoachOfPatient(username, cursor, cnx):
-    query = ("SELECT drThree, creationDate FROM patientTable WHERE username = %s" )
-    cursor.execute(query, (username,))
-    for dr3, cd in cursor:
-        return dr3
-    return ""
-
-def getAcctFromUsername(username, cursor, cnx):
-    query = ("SELECT username, password, fname, lname, email, creationDate, drType FROM doctorTable WHERE username = %s")   
-    cursor.execute(query, (username, ))
-    for u,p, f, l, e, cD, dT in cursor:
-        drClassObj = doctorUserClass( u, p, e, f, l, cD, dT)
-        return drClassObj
-    #TODO -- phase out/replace all calls to this
-        return (u, "doctor",str(f+" "+l), e, cD)
-    
-    query = ("SELECT username, password, fname, lname, email, creationDate, drOne, drTwo, drThree FROM patientTable WHERE username = %s")   
-    cursor.execute(query, (username, ))
-    for u, p,f, l, e, cD, d1, d2, d3 in cursor:
-        patientClassObj = patientUserClass(u,p,e, f, l, cD, 
-                                            d1, d2, d3)
-        return patientClassObj
-    #TODO -- phase out/replace all calls to this
-        return (u, "patient",str(f+" "+l), e, cD)
-    
-    query = ("SELECT username, password, fname, lname, creationDate FROM adminTable WHERE username = %s")   
-    cursor.execute(query, (username, ))
-    for u, p, f, l, cD in cursor:
-        adminClassObj = adminUserClass(u, p, f, l, cD)
-        return adminClassObj
-    #TODO -- phase out/replace all calls to this
-        return (u, "admin",str(f+" "+l), cD)
-    return
-
-def userAcctInfo(user, cursor, cnx):
-    query = ("SELECT username, password, fname, lname, email, creationDate, doctorType FROM doctorTable WHERE username = %s")   
-    cursor.execute(query, (user, ))
-    for u,p, f, l, e, cD, dT in cursor:
-        drClassObj = doctorUserClass( u, p, e, f, l, cD, dT)
-        return drClassObj
-    #TODO -- phase out/replace all calls to this
-        return (e,f, l,p)
-    
-    query = ("SELECT username, password, fname, lname, email, creationDate, drOne, drTwo, drThree FROM patientTable WHERE username = %s")   
-    cursor.execute(query, (user, ))
-    for u, p,f, l, e, cD, d1, d2, d3 in cursor:
-        patientClassObj = patientUserClass(u,p,e, f, l, cD, 
-                                            d1, d2, d3)
-        return patientClassObj
-        return (e,f, l,p)
-
-    return
-    
-
+#Purpose: update patient/dr user acct details only after verifying they are all valid 
+#   #(otherwise return a str with the error)
 def updateUserAcct(user, emailAdd,fn, ln,passw, cursor, cnx):
     if(passw==""): #if password is not being updated
         try:
@@ -497,8 +505,13 @@ def updateUserAcct(user, emailAdd,fn, ln,passw, cursor, cnx):
         if len(fn)<2 or len(ln)<2:
             return "short name error"
 
+        pwd_context = CryptContext(
+        schemes=["pbkdf2_sha256"],
+        default="pbkdf2_sha256",
+        pbkdf2_sha256__default_rounds=30000)
+        
         result = getAcctFromUsername(user, cursor, cnx)
-        if(result[1]=='doctor'):
+        if(type(result)==doctorUserClass):
             update_test = (
                 "UPDATE doctorTable SET email=%s, fname=%s, lname=%s, password = %s "
                 "WHERE username = %s")
@@ -513,43 +526,32 @@ def updateUserAcct(user, emailAdd,fn, ln,passw, cursor, cnx):
             cnx.commit()
             return "success"
 
-
-
-
-
+#Purpose: returns a class object with all database items packaged in it for any patient or dr user
+def userAcctInfo(user, cursor, cnx):
+    query = ("SELECT username, password, fname, lname, email, creationDate, doctorType FROM doctorTable WHERE username = %s")   
+    cursor.execute(query, (user, ))
+    for u,p, f, l, e, cD, dT in cursor:
+        drClassObj = doctorUserClass( u, p, e, f, l, cD, dT)
+        return drClassObj
     
+    query = ("SELECT username, password, fname, lname, email, creationDate, drOne, drTwo, drThree FROM patientTable WHERE username = %s")   
+    cursor.execute(query, (user, ))
+    for u, p,f, l, e, cD, d1, d2, d3 in cursor:
+        patientClassObj = patientUserClass(u,p,e, f, l, cD, 
+                                            d1, d2, d3)
+        return patientClassObj
 
-def deleteUserAcct(username, cursor, cnx):
-    result = getAcctFromUsername(username, cursor, cnx)
-    if(type(result)==doctorUserClass):
-        delete_test = (
-            "DELETE FROM doctorTable " #table name NOT db name
-            "WHERE username = %s")
-        cursor.execute(delete_test, (username,))
-        cnx.commit()
-    elif type(result)==adminUserClass:
-        delete_test = (
-            "DELETE FROM adminTable " #table name NOT db name
-            "WHERE username = %s")
-        cursor.execute(delete_test, (username,))
-        cnx.commit()
-    else:
-        delete_test = (
-            "DELETE FROM patientTable " #table name NOT db name
-            "WHERE username = %s")
-        cursor.execute(delete_test, (username,))
-        cnx.commit()
-    return "deleted "+username
+    return
+    
+#Purpose: update doctor user to be verified (done by admin)
+def verifyDoctor(username, cursor, cnx):
+    update_test = (
+                "UPDATE doctorTable SET verified = %s "
+                "WHERE username = %s")
+    cursor.execute(update_test, ("1",username ))
+    cnx.commit()
+    return "success"
 
-#patient deletion
-    #1->cancel all appts they are a part of (do not archive)
-    #2->update all msgs to/from them to be to/from "deletedAccount"
-        #BUT if they are notif, perma delete    
-    #Do not allow reply to msg + implement perma delete from dtb
-    #3->update all archive appts to be dr + [deactivated] patient
-    
-#doctor deletion
-    #how to handle patients with a gap in their car team (notify an admin to reassign them)
-    
+
 cursor.close()
 cnx.close()

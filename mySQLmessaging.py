@@ -963,7 +963,15 @@ if __name__ == '__main__':
     #update patient account to have a N/A
     #update all appts in archive (if both accts are delted, perma remove)
     #update all msgs (if both accts are delted, perma remove)
-    
+#patient deletion
+    #1->cancel all appts they are a part of (do not archive)
+    #2->update all msgs to/from them to be to/from "deletedAccount"
+        #BUT if they are notif, perma delete    
+    #Do not allow reply to msg + implement perma delete from dtb
+    #3->update all archive appts to be dr + [deactivated] patient
+
+#doctor deletion
+    #how to handle patients with a gap in their car team (notify an admin to reassign them)
 
 #ADMIN - list/search ALL users (search + see user accts including drs)
     #have a tally for # of unapproved patients/drs on home page
