@@ -21,14 +21,28 @@ pwd_context = CryptContext(
         pbkdf2_sha256__default_rounds=30000
     )
 
+#Purpose: returns an array of the search dropdown items (username + first name + last name)
+#   for admin, doctor and patient users 
+def adminAllSearchUsers(cursor, cnx): 
+    query=("SELECT username, fname, lname FROM patientTable")
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    nameArr = []
+    for un,fn,ln in cursor:
+        tmp = str(un+" - "+ln+", "+fn)
+        nameArr.append(tmp)
+    query=("SELECT username, fname, lname FROM doctorTable")
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    for un,fn,ln in cursor:
+        tmp = str(un+" - "+ln+", "+fn)
+        nameArr.append(tmp)
+    query=("SELECT username, fname, lname FROM adminTable")
+    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    for un,fn,ln in cursor:
+        tmp = str(un+" - "+ln+", "+fn)
+        nameArr.append(tmp)
+    return nameArr
 
-#create
-#update
-#delete
-#list/search ALL users (search + see user accts including drs)
-
-#admin - only search/assign care team/create admin/delete acct
-
+#Purpose: check info sent then (if verified) insert into database. Otherwise, return string error msg.
 def createAdminUser(username, pw, fn, ln, cursor, cnx):
     if(mySQL_userDB.isUsernameTaken(username,cursor, cnx)):
         return "taken error"
@@ -59,6 +73,7 @@ def createAdminUser(username, pw, fn, ln, cursor, cnx):
 
     return "success"
     
+#Purpose: return array of all admin usernames
 def getAllAdminUsers(cursor, cnx):
     query = ("SELECT username, password FROM adminTable")
     cursor.execute(query)
@@ -67,6 +82,7 @@ def getAllAdminUsers(cursor, cnx):
         admins.append(un)
     return admins
 
+#Purpose: check username/password for logging into an admin acct
 def verifyAdminLogin(un, pwrd, cursor, cnx):
     pwd_context = CryptContext(
         schemes=["pbkdf2_sha256"],
@@ -83,26 +99,6 @@ def verifyAdminLogin(un, pwrd, cursor, cnx):
             print("WRONG PASSWORD")
             return False
     return False
-
-def adminAllSearchUsers(cursor, cnx): #fix SQL DONE
-    query=("SELECT username, fname, lname FROM patientTable")
-    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    nameArr = []
-    for un,fn,ln in cursor:
-        tmp = str(un+" - "+ln+", "+fn)
-        nameArr.append(tmp)
-    query=("SELECT username, fname, lname FROM doctorTable")
-    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    for un,fn,ln in cursor:
-        tmp = str(un+" - "+ln+", "+fn)
-        nameArr.append(tmp)
-    query=("SELECT username, fname, lname FROM adminTable")
-    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
-    for un,fn,ln in cursor:
-        tmp = str(un+" - "+ln+", "+fn)
-        nameArr.append(tmp)
-    return nameArr
-
 
 
 cursor.close()
