@@ -267,7 +267,7 @@ def selectOption():
 
 
 def getAllMessagesPaged(username, pgNum): #page to be rendered
-#<MYSQL FUNCTIONAL>
+
     pageSize = 10
 
     query = ("SELECT send_date, send_time, subject, read_status, messageID, sender FROM messageDB "
@@ -433,7 +433,7 @@ def emptyTrash():
 def undoTrash(msgID, username):
     #if it is in the trash and the sender == current username -> move it to sent folder
     #else move it to inbox
-#<MYSQL FUNCTIONAL>
+
     sender_loc='sent_folder'
     reciever_loc='inbox'
 
@@ -456,7 +456,7 @@ def undoTrash(msgID, username):
 
 
 def insertMessage(sender, reciever, subject,body, convoID):
-#<MYSQL FUNCTIONAL>
+
     
     msgID= ""
     msgID= msgID+str(datetime.now().strftime('%H%M%S'))
@@ -489,7 +489,7 @@ def newEmail():
                           email_body = "")
 
 def countUnreadInInbox(username):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT messageID FROM messageDB "
              "WHERE reciever = %s AND read_status=%s AND reciever_loc=%s")  
     cursor.execute(query, (username,'unread','inbox'))
@@ -505,7 +505,7 @@ def countUnreadInInbox(username):
     
   
 def countUnreadInTrash(username):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT messageID FROM messageDB "
              "WHERE reciever = %s AND read_status=%s AND reciever_loc=%s")  
     cursor.execute(query, (username,'unread','trash'))
@@ -520,7 +520,7 @@ def countUnreadInTrash(username):
 
 
 def markAsRead(msgID):
-#<MYSQL FUNCTIONAL>
+
     try:
         read_status='read'
         updateFormat = ("UPDATE messageDB SET read_status = %s "
@@ -536,7 +536,7 @@ def markAsRead(msgID):
     
 
 def markAsUnread(msgID):
-#<MYSQL FUNCTIONAL>
+
     try:
         read_status='unread'
         updateFormat = ("UPDATE messageDB SET read_status = %s "
@@ -580,7 +580,7 @@ def permenantDel(msgID, del_username):
 
     
 def moveToTrash(msgID, del_username):
-#<MYSQL FUNCTIONAL>
+
     sender_loc='trash'
     reciever_loc='trash'
 
@@ -602,7 +602,7 @@ def moveToTrash(msgID, del_username):
 
 
 def getAllTrashMessages(username):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT send_date, send_time,read_status, reciever_loc,subject, perm_del, messageID, sender, sender_loc, reciever FROM messageDB "
              "WHERE reciever = %s OR sender = %s")  
     cursor.execute(query, (username,username)) 
@@ -622,7 +622,7 @@ def getAllTrashMessages(username):
 
 
 def getAllMessages(username):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT send_date, send_time, subject, read_status, messageID, sender FROM messageDB "
              "WHERE reciever = %s AND reciever_loc = %s")  
     cursor.execute(query, (username,"inbox")) 
@@ -639,7 +639,7 @@ def getAllMessages(username):
 
 
 def getAllMessagesSent(username):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT send_date, send_time, subject, messageID, reciever FROM messageDB "
              "WHERE sender = %s AND sender_loc = %s")  
     cursor.execute(query, (username,"sent_folder")) 
@@ -657,7 +657,7 @@ def testQuery():
         print(i)
 
 def getAllMsgsInConvo(convoID):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT send_date, send_time,sender, subject, messageID, msgbody, reciever FROM messageDB "
              "WHERE convoID = %s")  
     cursor.execute(query, (convoID,)) 
@@ -953,7 +953,7 @@ if __name__ == '__main__':
 #DO A SHORT DESCRIPTION OF EACH FUNCTION ABOVE IT
 
 
-
+#need to enforce that time for appt needs to be at least 30min in future (both for creation and update)
 #fix formatting on msgInfoNoReply.html (no reply btn)
 #autofill for patient (+mtg with x) no longer working -createmtg.html
 

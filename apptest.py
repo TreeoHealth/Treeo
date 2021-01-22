@@ -16,7 +16,7 @@ import mySQL_adminDB
 from classFile import adminUserClass, apptObjectClass, patientUserClass, doctorUserClass
 import zoomtest_post
 
-
+#global variables for paging, connection to database, password checking and some username arrays
 app = Flask(__name__)
 patientPages = []
 currPg=0
@@ -44,14 +44,17 @@ pwd_context = CryptContext(
         pbkdf2_sha256__default_rounds=30000
     )
 
-
+#Endpoint trigger: 1st page of the site
+#Purpose: if they are logged in, take them to their home page, else show the login page
 @app.route('/')
 def home():
     if not (session.get('logged_in_p') or session.get('logged_in_d') or session.get('logged_in_a')):
         return render_template('login.html', errorMsg="")
     else:
         return displayLoggedInHome()
-
+    
+#Endpoint trigger: when user logs in or navigates to home
+#Purpose: display their home page and info depending on what type of user they are (3 diff home pages)
 @app.route('/homepage')
 def displayLoggedInHome():
     if(session.get('logged_in_d')):
@@ -66,15 +69,14 @@ def displayLoggedInHome():
         docStatus = 'patient'
         return render_template('homePage.html',docStat = docStatus,name=session['name'])
 
-        #name of logged in person printed
-        #doctor/patient
-
+#Endpoint trigger: when they submit the login page form (to check username/password)
+#Purpose: check the database to see if the login was valid. If it was, decide which type of user logged 
+#   in and set the session value (if not, render error)
 @app.route('/login', methods=['POST','GET'])
 def check_login():
     if(request.form['username'] in mySQL_adminDB.getAllAdminUsers(cursor,cnx)):
         result = mySQL_adminDB.verifyAdminLogin(request.form['username'], request.form['password'],cursor, cnx)
         if(result==False):
-            print("WRONG PASSWORD ADMIN")
             return render_template('login.html', errorMsg="Incorrect username or password.")
         else:
             acct_info = mySQL_userDB.getAcctFromUsername(request.form['username'],cursor, cnx)
@@ -87,7 +89,6 @@ def check_login():
     result = mySQL_userDB.checkUserLogin(request.form['username'], request.form['password'],cursor, cnx)
     
     if(result==False):
-        print("WRONG PASSWORD")
         return render_template('login.html', errorMsg="Incorrect username or password.")
     else:
         acct_info = mySQL_userDB.getAcctFromUsername(request.form['username'],cursor, cnx)
@@ -105,10 +106,13 @@ def check_login():
         session['name'] = acct_info.fname+" "+acct_info.lname
         return displayLoggedInHome()
 
+#Purpose: render admin home page with their name
 def displayAdminHome():
     return render_template('adminHome.html',
                            name = session['name'])
     
+#Endpoint trigger: when admin user clicks the "unassigned patients"
+#Purpose: get all unassigned users from database and send to page in array for list display
 @app.route('/unassigned', methods=['POST','GET'])
 def adminListUnassigned():
     listPat = mySQL_userDB.getAllUnassignedPatients(cursor, cnx)
@@ -118,6 +122,8 @@ def adminListUnassigned():
         return render_template("unassignedList.html",
                            options = listPat)
         
+#Endpoint trigger: when admin user clicks the "unapproved doctors"
+#Purpose: get all unapproved doctors from database and send to page in array for list display
 @app.route('/unapproved', methods=['POST','GET'])
 def adminListUnapproved():
     listPat = mySQL_userDB.getAllUnapprovedDrs(cursor, cnx)
@@ -127,6 +133,8 @@ def adminListUnapproved():
         return render_template("unapprovedList.html",
                            options = listPat)
         
+#Endpoint trigger: when admin user clicks the "approved doctors"
+#Purpose: get all approved doctors from database and send to page in array for list display
 @app.route('/approved', methods=['POST','GET'])
 def adminListApproved():
     listPat = mySQL_userDB.getAllApprovedDrs(cursor, cnx)
@@ -136,14 +144,15 @@ def adminListApproved():
         return render_template("approvedList.html",
                            options = listPat)
 
-#/assign/{{item}}
+#Endpoint trigger: when admin user clicks a patient user's name in the unassigned list
+#Purpose: render the form to assign 3 care providers to patient user
 @app.route('/assign/<username>', methods=['POST','GET'])
 def assignForm(username):
     return render_template("assignCareTeam.html",
                            username  = username)
     
-
-
+#Endpoint trigger: when admin user clicks a doctor user's name in the unapproved list
+#Purpose: approve the dr user in the db and send an automated message then render confirmation pg
 @app.route('/approve/<username>', methods=['POST','GET'])
 def approveForm(username):
     mySQL_userDB.verifyDoctor(username, cursor, cnx)
@@ -155,6 +164,8 @@ def approveForm(username):
     return render_template("approveConfirmation.html",
                            drname  = str(username + " - " +drAcctName))
 
+#Endpoint trigger: when admin user clicks a doctor user's name in the approved list
+#Purpose: remove approval of the dr user in the db and send an automated message then render confirmation pg
 @app.route('/removeapproval/<username>', methods=['POST','GET'])
 def unapproveForm(username):
     mySQL_userDB.unverifyDoctor(username, cursor, cnx)
@@ -166,8 +177,9 @@ def unapproveForm(username):
     return render_template("unapproveConfirmation.html",
                            drname  = str(username + " - " +drAcctName))
 
-
-
+#Endpoint trigger: when admin user submits form to assign 3 care providers to patient user
+#Purpose: validate if all 3 providers selected are valid 
+#   if they are, assign, send auto msgs and render patient acct pg. if they are not, render error pg
 @app.route('/assignCareTeam', methods=['POST','GET'])
 def assignTeam(): #submit update form
     dr1 = request.form['dietician'].split(" - ")[0]
@@ -214,7 +226,8 @@ def assignTeam(): #submit update form
         sendAutomatedAcctMsg(dr3,"Care Team Assignment",emailBody) 
         return patientAcct(request.form['username'])
 
-
+#Endpoint trigger: when admin is typing in 1st input on assign page (every char entered triggers this)
+#Purpose: sends a list of autocomplete values containing username/first name/last name of all dieticians
 @app.route("/dieticianList")
 def dAutocomplete():
    jsonSuggest = []
@@ -225,6 +238,8 @@ def dAutocomplete():
            jsonSuggest.append({'value':username,'data':username})
    return jsonify({"suggestions":jsonSuggest})
 
+#Endpoint trigger: when admin is typing in 2nd input on assign page (every char entered triggers this)
+#Purpose: sends a list of autocomplete values containing username/first name/last name of all physicians
 @app.route("/physicianList")
 def pAutocomplete():
    jsonSuggest = []
@@ -235,6 +250,9 @@ def pAutocomplete():
            jsonSuggest.append({'value':username,'data':username})
    return jsonify({"suggestions":jsonSuggest})
 
+
+#Endpoint trigger: when admin is typing in 3rd input on assign page (every char entered triggers this)
+#Purpose: sends a list of autocomplete values containing username/first name/last name of all health coaches
 @app.route("/healthcoachList")
 def hcAutocomplete():
    jsonSuggest = []
@@ -245,10 +263,14 @@ def hcAutocomplete():
            jsonSuggest.append({'value':username,'data':username})
    return jsonify({"suggestions":jsonSuggest})
 
+#Endpoint trigger: when admin selects the "create new admin user" from home page
+#Purpose: renders the form for creating new admin user
 @app.route('/renderNewAdmin', methods=['POST','GET'])
 def createAdminPg():
     return render_template('createAdminAcct.html')
 
+#Endpoint trigger: when admin submits form to create new admin user
+#Purpose: checks if all information is correct. if it is, registers admin user in db, else render error msg pg
 @app.route('/registerNewAdmin', methods=['POST','GET'])
 def createNewAdmin():
     reply = mySQL_adminDB.createAdminUser(request.form['username'], 
@@ -281,11 +303,15 @@ def createNewAdmin():
     return
     
 
-
+#Endpoint trigger: when user chooses "register" option from login pg
+#Purpose: render register form page
 @app.route('/registerrender', methods=['POST','GET'])
 def regPg():
     return render_template('register.html')
 
+#Endpoint trigger: when user submits "register" form
+#Purpose: verify username is unique and try to insert the user type into the database (read reaponse to see if it worked).
+#   if it was inserted, log the user in (unless dr user). if it was not, render appropriate error msg with filled out register pg.
 @app.route('/register', methods=['POST','GET'])
 def new_register():
     if(mySQL_userDB.isUsernameTaken(request.form['username'],cursor, cnx)):
@@ -384,24 +410,28 @@ def new_register():
                                    lname = request.form['lname']
                                    ) 
     
-
+#Endpoint trigger: when user is typing in username input on register form (every char entered triggers this)
+#Purpose: checks if username is taken and checks if it violates the regex rules. Dynamically shows
+#   an error msg if either is violated
 @app.route('/usernamecheck', methods=['POST','GET'])
 def usernamecheck():
     text = request.args.get('jsdata')
     if(text in takenUsernames):
         text=""
         return 'USERNAME TAKEN'
-##    no _ or . at the end
-##    allowed characters = [a-zA-Z0-9._] (NOT /*$#@+=?><,;':%^&())
-##    no __ or _. or ._ or .. inside
-##    no _ or . at the beginning
-##    username is 5-20 characters long
-#
+    ##    no _ or . at the end
+    ##    allowed characters = [a-zA-Z0-9._] (NOT /*$#@+=?><,;':%^&())
+    ##    no __ or _. or ._ or .. inside
+    ##    no _ or . at the beginning
+    ##    username is 5-20 characters long
+    #
     if not(re.match("^(?=.{5,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$", text)):
         text=""
         return "5-20 characters. No spaces. Cannot start/end with punctuation. Cannot contain /*$#@+=?><,;':%^&()"   
     return ""
 
+#Endpoint trigger: when user is typing in email input on register form (every char entered triggers this)
+#Purpose: checks if email is valid (domain and syntax). Dynamically shows an error msg if either is violated
 @app.route('/emailCheck', methods=['POST','GET'])
 def emailcheck():
     text = request.args.get('jsdata')
@@ -420,6 +450,8 @@ def emailcheck():
         text = ""
         return str(e)
 
+#Endpoint trigger: when user is typing in first/last name inputs on register form (every char entered triggers this)
+#Purpose: checks if first/last name are at least 2 chars. Dynamically shows an error msg if this is violated
 @app.route('/nameLengthCheck', methods=['POST','GET'])
 def namecheck():
     text = request.args.get('jsdata')
@@ -428,6 +460,8 @@ def namecheck():
         return 'First and last name need 2+ characters'
     return ""
 
+#Endpoint trigger: when user is typing in password input on register form (every char entered triggers this)
+#Purpose: checks complexity of password. Dynamically shows the correct error msg if any part of the password rule is broken
 @app.route('/pwStrengthCheck', methods=['POST','GET'])
 def pwStrCheck():
     text = request.form.get('jsdata')
@@ -436,7 +470,7 @@ def pwStrCheck():
             uppercase=2,  # need min. 2 uppercase letters
             numbers=2  # need min. 2 digits
             )
-##PASSWORD STRENGTH
+    ##PASSWORD STRENGTH
     isEnough = policy.test(str(text))
     text=""
     if len(isEnough):
@@ -468,9 +502,12 @@ def pwStrCheck():
     else:
         return ""
 
+#Purpose: if patient user has somehow reached a page they aren't supposed to, render the access denied page
 def accessDenied():
     return render_template('accessDenied.html')
 
+#Endpoint trigger: when dr user selects "create meeting" option from dr home pg
+#Purpose: renders the form for creating an appt
 @app.route('/createrender', methods=['POST','GET'])
 def createPg():
     if session['logged_in_p']:
@@ -478,6 +515,8 @@ def createPg():
     return render_template('create_mtg.html',
                            errorMsg = "")
 
+#Endpoint trigger: when dr user selects "+ meeting" option from listed users in search result
+#Purpose: renders the form for creating an appt
 @app.route('/createrender/<username>', methods=['POST','GET'])
 def createWithUsername(username):
     if session['logged_in_p']:
@@ -486,6 +525,8 @@ def createWithUsername(username):
     return render_template('create_mtg.html',
                            errorMsg = "")
 
+#Endpoint trigger: when dr is typing in patient input on create mtg form (every char entered triggers this)
+#Purpose: autocompletes entered text with matching dropdown items from the database (username/first name/last name)
 @app.route('/create_search', methods=['POST','GET'])
 def createUserSearch():
     jsonSuggest = []
@@ -497,29 +538,27 @@ def createUserSearch():
             
     return jsonify({"suggestions":jsonSuggest})
 
+#Endpoint trigger: when dr user submits form to create mtg
+#Purpose: tries to create mtg through zoompost call (if it throws error, render error msg),
+#   if mtg was created, send automated msgs to dr and patient and render appt details page.
 @app.route('/createmtg', methods=['POST','GET'])
 def create_mtg():
     if session['logged_in_p']:
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
     #need to ensure that what is entered is either autocorrect, or valid
-    
-    
     try:
         if len(request.form['patientUser'].split(" - "))>1:
             username = request.form['patientUser'].split(" - ")[0]
             jsonResp = zoomtest_post.createMtg(time,str(request.form['password']),session['username'], username, cursor, cnx)
-            print(jsonResp)
-    #session['username'] == doctor
         else:
             jsonResp = zoomtest_post.createMtg(time,str(request.form['password']),session['username'], request.form['patientUser'],cursor, cnx)
-            print(jsonResp)
         date=time[:10]
         finalStr = ""
     except:    
         return render_template('create_mtg.html',
                                errorMsg = "ERROR. Could not create meeting.")
-#ADD PATIENT FIELD
+            #ADD PATIENT FIELD
     else:
         apptClassObj = mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)
         patientUsername = request.form['patientUser'].split(" - ")[0]
@@ -538,16 +577,8 @@ def create_mtg():
                                mtgdate=str(date))
     ##make a joinURL field on this AND the mtg detail page
 
-
-##CALENDAR FAILS TO DISPLAY FOR THE FOLLOWING CONDITIONS:
-    #{"title": "HELP", "start": "2020-09-27T00:53:00", "end": "2020-09-27T1:53:00", "url": "/showmtgdetail/75274348158"}
-    #^^^^ END OR START TIME NOT HAVING 2 PLACES (NOT LEADING WITH A 0 WHEN 1 DIGIT TIME)
-    #{"title": "asl", "start": "2020-09-21T14:46:00:00", "end": "2020-09-21T15:46:00:00", "url": "/showmtgdetail/75141590110"}
-    #^^^^ HAVING AN EXTRA SET OF 00 AFTER THE TIME
-#DO ERROR CATCHING ********************************************
-    #edited meetings have the extra :00? -> just chop it off every time? or update it in the aws dtb?
-    #just tack on the 0 when it's missing
-
+#Endpoint trigger: called in the background when a user opens their calendar
+#Purpose: gets all appts in the db for the current user, formats for error handling and read/writes to calendar
 @app.route('/data')
 def return_data():
     arrOfMtgs =mySQL_apptDB.getAllApptsFromUsername(session['username'], tmpcursor, cursor, cnx)
@@ -585,8 +616,11 @@ def return_data():
         #print(input_data.read())
         return input_data.read()    
 
+#Endpoint trigger: when user clicks an appt from the calendar
+#Purpose: gets the appt detail from the database and zoom API and displays details. if user is a dr, 
+#   render pg to allow editing. if user is patient or time is past the start, render pg that does not allow editing.
 @app.route('/showmtgdetail/<mtgid>', methods=['POST','GET'])
-def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
+def show_mtgdetail(mtgid):     
     jsonResp = zoomtest_post.getMtgFromMtgID(str(mtgid))
     apptDetail = mySQL_apptDB.getApptFromMtgId(str(mtgid), cursor, cnx)
     time=apptDetail.startTime
@@ -622,6 +656,8 @@ def show_mtgdetail(mtgid):     # TODO ---(make this calendar) Or when the calend
                        mtgtime=str(time[11:]),
                        mtgdate=str(date))
 
+#Endpoint trigger: when dr user clicks "edit appt" option from details page
+#Purpose: gets the appt detail from the database and zoom API and renders details in editable (pre-filled) form
 @app.route("/editrender/", methods=['POST','GET'])
 def editPgFromID():
     mtgid = str(request.form['mtgnum'])
@@ -629,8 +665,6 @@ def editPgFromID():
         return accessDenied()
     jsonResp = zoomtest_post.getMtgFromMtgID(request.form['mtgnum'])
 
-    #mtgname, pword, mtgtime, mtgdate
-    # time=str(jsonResp.get("start_time"))
     time = mySQL_apptDB.getApptFromMtgId(request.form['mtgnum'], cursor, cnx).startTime
     #split and display
     date=time[:10]
@@ -643,7 +677,9 @@ def editPgFromID():
                            mtgtime=str(time[11:]),
                            mtgdate=str(date))
 
-
+#Endpoint trigger: when dr user submits edit appt form
+#Purpose: updates meeting time in zoom API and database, send automated notification to dr and patient
+#   and renders appt detail (if time is passed, don't let them have the option to edit again)
 @app.route("/editmtg", methods=['POST','GET'])
 def editSubmit():
     if session['logged_in_p']:
@@ -652,7 +688,6 @@ def editSubmit():
     jsonResp = zoomtest_post.updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,cursor, cnx)
 
     jsonResp= zoomtest_post.getMtgFromMtgID(str(request.form['mtgnum']))
-    #str(jsonResp.get("start_time"))
 
     mtgDetails = mySQL_apptDB.getApptFromMtgId(str(request.form['mtgnum']), cursor, cnx)
     time=mtgDetails.startTime
@@ -667,7 +702,7 @@ def editSubmit():
     emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails.joinURL+"\r\n\r\nThis has been changed in your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
     sendAutomatedApptMsg(mtgDetails.patient,"Appointment Updated",emailBody)
     emailBody="Hello "+mtgDetails.doctor+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails.patient, cursor, cnx)+" ("+mtgDetails.patient+") has been updated. \r\n\r\n\t"
-    emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails[5]+"\r\n\r\nThis has been changed your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
+    emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails.joinURL+"\r\n\r\nThis has been changed your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
     sendAutomatedApptMsg(mtgDetails.doctor,"Appointment Updated",emailBody)
     if(mySQL_apptDB.isMtgStartTimePassed(request.form['mtgnum'], cursor, cnx)==True): #if it is passed so it should not be edited
         return render_template('apptDetail.html',
@@ -686,6 +721,8 @@ def editSubmit():
                        mtgtime=str(time[11:]),
                        mtgdate=str(date))
 
+#Endpoint trigger: when user clicks "acct details" option from nav bar
+#Purpose: retrieves user info from db and renders in a page (read only) with edit/delete options
 @app.route('/acctdetails', methods=['POST','GET'])
 def acct_details():     
     acct_info = mySQL_userDB.getAcctFromUsername(str(session['username']),cursor, cnx)
@@ -697,6 +734,8 @@ def acct_details():
                            createDate = acct_info.creationDate
                            )
 
+#Endpoint trigger: when user clicks "edit acct" option from acct details page
+#Purpose: retrieves user info from db and renders in a form that will allow them to update their acct info
 @app.route('/acctEditrender/', methods=['POST','GET'])
 def editAcctRender():
     acct_info = mySQL_userDB.userAcctInfo(str(request.form['username']),cursor, cnx)
@@ -711,6 +750,10 @@ def editAcctRender():
                            lname=acct_info.lname
                            )
 
+#Endpoint trigger: when user submits "edit acct" form from acct details page
+#Purpose: if changing pw, checks if password is diff from old password and if the new ones match (errors if not).
+#   Checks name length and email format (render error pg if wrong). if all check out, updates acct info in 
+#   dtb and renders acct detail page with updated info.
 @app.route('/editacct', methods=['POST','GET'])
 def editAcctDetails():
     oldPw = str(request.form['pword1'])
@@ -736,7 +779,7 @@ def editAcctDetails():
         pwUpdate=True
         errMsg=""
         errFlag=False
-#FIRST NEED TO VALIDATE THAT THE OLD PASSWORD IS RIGHT!!!
+    #FIRST NEED TO VALIDATE THAT THE OLD PASSWORD IS RIGHT!!!
         oldPassw = acct_info.password
         if False==(pwd_context.verify(oldPw, oldPassw)):
             errFlag=True
@@ -800,7 +843,9 @@ def editAcctDetails():
     session['name']=str(request.form['fname'])+" "+str(request.form['lname'])
     return acct_details()
 
-
+#Endpoint trigger: when user clicks "delete acct" option from acct details page (and confirms popup)
+#Purpose: deletes all appts user is in, deletes acct, changes all msgs to/from to be to/from "deactivatedUser",
+#   deletes all notifications, updates archived appts (username), and logs the user out
 @app.route('/acctDelete', methods=['POST','GET'])
 def deleteAccount():
     allAppts = mySQL_apptDB.getAllApptsFromUsername(str(request.form['username']), tmpcursor, cursor, cnx)
@@ -813,6 +858,7 @@ def deleteAccount():
     return logout()
     
     
+#Purpose: changes all msgs to/from deleted username to be to/from "<deactivatedUser>" 
 def deactivateAllMsgsUsername(oldUsername):
     try:
         updateFormat = ("UPDATE messageDB SET sender = %s "
@@ -827,6 +873,7 @@ def deactivateAllMsgsUsername(oldUsername):
     except:
         return "ERROR. Could not mark as deactivated."
 
+#Purpose: deletes all msgs btwn "<deactivatedUser>" and either Treeo notification bot (remove bloat from dtb)
 def deleteAllNotifDeactive():
     try:
         delete_test = (
@@ -839,12 +886,14 @@ def deleteAllNotifDeactive():
     except:
         return "ERROR. Could not clean out messages."
 
+
+#Endpoint trigger: when dr user clicks on patient user link from search list
+#Purpose: queries for that patient acct info and renders in readonly form (care team included)
 @app.route('/patients/<username>', methods=['POST','GET'])
 def patientAcct(username):
     ##dr will not be given the option to edit any details
     ##this is where medical details will eventually be rendered
     patientInfoObj = mySQL_userDB.getAcctFromUsername(str(username),cursor, cnx)
-    
     
     return render_template('patientAcctDetails.html', 
                            username=username,
@@ -856,6 +905,8 @@ def patientAcct(username):
                            createDate = patientInfoObj.creationDate
                            )
 
+#Endpoint trigger: when dr user clicks "List all patients" option from home page
+#Purpose: queries for all patient usernames and returns the paged search page (10 patients per pg)
 @app.route('/patients', methods=['POST','GET'])
 def list_patients():
     listStr = mySQL_userDB.returnAllPatients(cursor, cnx)
@@ -864,6 +915,9 @@ def list_patients():
     currPg=0
     return displayPagedSearch(listStr, 10)
 
+#Endpoint trigger: when dr user clicks "assigned patients" option from home page
+#Purpose: queries for all patient usernames that are assigned to the curr dr user
+#   and returns the paged search page (10 patients per pg)
 @app.route('/patientsAssigned', methods=['POST','GET'])
 def list_assigned_patients():
     listStr = mySQL_userDB.returnPatientsAssignedToDr(session['username'], cursor, cnx)
@@ -872,10 +926,16 @@ def list_assigned_patients():
     currPg=0
     return displayPagedSearch(listStr, 10)
 
+#Endpoint trigger: when dr user clicks "Search patients" option from home page
+#Purpose: renders form for dr to search for patients
 @app.route('/searchpgrender', methods=['POST','GET'])
 def search_patients():
     return render_template('searchPg.html')
 
+#Endpoint trigger: when dr user submits a search in the search form
+#Purpose: if search was blank, return all patients in paged search page (10 patients per pg).
+#   if dr used the autocomplete to select a specific patient -> take them to the account page directly.
+#   if they just did a general search, render list of patient accts that match the query (10 patients per pg)  
 @app.route('/searchResult', methods=['POST','GET'])
 def search_page():
     query = request.form['names']
@@ -915,6 +975,9 @@ def search_page():
     currPg=0
     return displayPagedSearch(listStr,10)
 
+#Endpoint trigger: when dr user changes the size of search result page (dropdown)
+#Purpose: gets array stitched into pg ("x,x,x|y,y,y|...") and splits into a different size of pg 
+#   (resplit array and parse into new string). Rerender the page with the same contents but diff size (updates page marker).
 @app.route('/changePgSize', methods=['POST','GET'])
 def changePgSize():
     pageSize = int(request.form['listStatus'])
@@ -927,6 +990,9 @@ def changePgSize():
             allPatients.append(patient)
     return displayPagedSearch(allPatients, pageSize)
 
+#Purpose: gets array of patient usernames to be displayed and the size of the page then splits
+#   that array into a the string to be stitched into the html pg ("x,x,x|y,y,y|...") and decides which
+#   page to render (if there is a next pg, do firstPg but if not, do onlyPg, etc.)
 def displayPagedSearch(patientList, listSize):
    patientPages = []
    numPatientsOnPg = listSize
@@ -986,6 +1052,9 @@ def displayPagedSearch(patientList, listSize):
                                pgSize = selectSize)
 
        
+#Endpoint trigger: when dr user presses next/prev buttons on the search page
+#Purpose: take the page str stitched into the html pg ("x,x,x|y,y,y|...") and decide which direction we went
+#    (update currPg value) and decide which page to render and what patient users go on the page
 @app.route('/page', methods=['POST','GET'])
 def nextPg():
     numPatientsOnPg = int(request.form['pgSize'])
@@ -1059,7 +1128,8 @@ def nextPg():
                            ppgnum=currPg-1,
                             npgnum=currPg+1)
 
-
+#Endpoint trigger: when dr is typing in search box input on search page (every char entered triggers this)
+#Purpose: sends a list of autocomplete values containing username/first name/last name of all patient users
 @app.route("/search/<string:box>")
 def process(box):
     jsonSuggest = []
@@ -1070,22 +1140,28 @@ def process(box):
             jsonSuggest.append({'value':username,'data':username})
     return jsonify({"suggestions":jsonSuggest})
 
+#Endpoint trigger: when user navigates to calendar from home page or nav bar
+#Purpose: renders calendar page (invokes background processes for formatting/functionality in flaskcalendar)
 @app.route('/showallmtgs', methods=['POST','GET'])
 def show_mtg():
     return render_template("calendar.html")
 
-
+#Endpoint trigger: when dr clicks "delete mtg" option from home pg
+#Purpose: renders form to allow dr to manually enter a mtg id to be cancelled
 @app.route("/deleterender", methods=['POST','GET'])
 def deletePg():
     if session['logged_in_p']:
         return accessDenied()
     return render_template('delete.html', mtg="")
 
+#Endpoint trigger: when user clicks "cancel" option from appt detail pg
+#Purpose: invokes cancellation process for the appt via the mtgID
 @app.route("/deleteRenderNum/", methods=['POST','GET']) 
 def deletePgNum():
     return autoDeleteMtg(str(request.form['mtgnum']))
 
-
+#Purpose: if mtgID is valid, cancels the appt via the mtgID, sends 2 automated notifications to patient and 
+#   dr, and deletes appt from zoom API then renders confirmation (if not valid id, render the manual delete form)
 def autoDeleteMtg(mtgid):
    
     if (mySQL_apptDB.isMeetingIDValid(str(mtgid), cursor, cnx)==True):
@@ -1104,11 +1180,15 @@ def autoDeleteMtg(mtgid):
     else:
         return deletePg()
 
+#Endpoint trigger: when dr manually submits a mtg ID to be cancelled in the delete mtg form
+#Purpose: invokes cancellation process for the appt via the mtgID
 @app.route("/deletemtg", methods=['POST','GET'])
 def deleteMtg():
    return autoDeleteMtg(str(request.form['mtgID']))
 
-    
+#Endpoint trigger: when user clicks "send" on msg they composed
+#Purpose: checks username of who they are sending to (verify is it valid, else render an error). If it
+#   is valid, insert the msg as the 1st in the conversation (the "0") and send them back to their inbox.
 @app.route('/submitEmail', methods=['POST','GET'])
 def formatEmail():
 
@@ -1148,6 +1228,8 @@ def formatEmail():
     else:
        return openInbox()
 
+#Endpoint trigger: when user clicks "send" on msg replying to another msg
+#Purpose: insert the msg as a reply in the conversation (the "headMsgID") and send them back to their inbox.
 @app.route('/submitReplyEmail', methods=['POST','GET'])
 def formatReplyEmail():
    insertMessage(request.form['sender_username'],
@@ -1165,13 +1247,16 @@ def formatReplyEmail():
    else:
        return openInbox()
 
+
+#Endpoint trigger: when user clicks on their sent folder in side nav bar
+#Purpose: render 1st page of the sent folder
 @app.route('/sentFolder', methods=['POST','GET'])
 def sentFolder():
     return renderPagedSent(0)
 
-
+#Purpose: render the nth page of the sent folder by calculating current location, which msgs to show,
+#   updating the page indicator and rendering the correct page (next button, next and prev buttons, etc.)
 def renderPagedSent(pgNum):
-    
     pageSize = 10
     msgList = getAllMessagesSent(session['username'])
     pageNumber = int(pgNum)
@@ -1232,11 +1317,14 @@ def renderPagedSent(pgNum):
                           totalEmailNum = len(msgList),
                           msgList=msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize)])
 
-
+#Endpoint trigger: when user clicks on their trash folder in side nav bar
+#Purpose: render 1st page of the trash folder
 @app.route('/trashFolder', methods=['POST','GET'])
 def trashFolder():
     return renderPagedTrash(0)
 
+#Purpose: render the nth page of the trash folder by calculating current location, which msgs to show,
+#   updating the page indicator and rendering the correct page (next button, next and prev buttons, etc.)
 def renderPagedTrash(pgNum):
     
     pageSize = 10
@@ -1297,10 +1385,12 @@ def renderPagedTrash(pgNum):
                           totalEmailNum = len(msgList),
                           msgList=msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize)])
 
-
+#Endpoint trigger: when user clicks any of the icon options (trash/prev/next/etc.) on their inbox page
+#Purpose: handle the clicks of the picture buttons on the inbox page (try except structure tells what button
+#   was pressed). Applies the option selected to all messages selected by the checkboxes on the current page
+#   and reopens inbox
 @app.route('/selectOption', methods=['POST','GET'])
 def selectOption():
-    #handling for the clicks of the picture buttons on the inbox page
     x = ""
     try:
        x = str(request.form['prevPg.x'])
@@ -1338,6 +1428,7 @@ def selectOption():
                         openInbox()
     return openInbox()
 
+#Purpose: sends an automatic msg from this bot (has to do with account info)
 def sendAutomatedAcctMsg(reciever,subject,msgBody):
     insertMessage("TreeoNotification",
            reciever,
@@ -1345,7 +1436,8 @@ def sendAutomatedAcctMsg(reciever,subject,msgBody):
            msgBody,
                  "0"
                  )
-    
+
+#Purpose: sends an automatic msg from this bot (has to do with appointment info)
 def sendAutomatedApptMsg(reciever,subject,msgBody):
     insertMessage("TreeoCalendar",
            reciever,
@@ -1354,8 +1446,11 @@ def sendAutomatedApptMsg(reciever,subject,msgBody):
                  "0"
                  )
 
+
+#Purpose: render the nth page of the inbox folder by calculating current location, which msgs to show,
+#   updating the page indicator and rendering the correct page (next button, next and prev buttons, etc.)
 def getAllMessagesPaged(username, pgNum): #page to be rendered
-#<MYSQL FUNCTIONAL>
+    
     pageSize = 10
 
     query = ("SELECT send_date, send_time, subject, read_status, messageID, sender FROM messageDB "
@@ -1368,7 +1463,7 @@ def getAllMessagesPaged(username, pgNum): #page to be rendered
             else:
                 msgList.append([str(send_date + " - " +send_time),messageID,sender,send_date,subject,False])
                 
-#most recent messages first
+    #most recent messages first
     msgList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
 
 
@@ -1428,7 +1523,10 @@ def getAllMessagesPaged(username, pgNum): #page to be rendered
                           totalEmailNum = len(msgList),
                           msgList=msgList[pageNumber*pageSize:pageNumber*pageSize+(pageSize)])
 
-
+#Endpoint trigger: when user clicks any of the icon options (trash/prev/next/etc.) on their sent page
+#Purpose: handle the clicks of the picture buttons on the inbox page (try except structure tells what button
+#   was pressed). Applies the option selected to all messages selected by the checkboxes on the current page
+#   and reopens sent folder
 @app.route('/selectSent', methods=['POST','GET'])
 def selectSent():
     #handling for picture icon buttons on the sent page
@@ -1454,10 +1552,12 @@ def selectSent():
                 return sentFolder()
             except:
                 return sentFolder()
+    return sentFolder()
 
 
-
-
+#Endpoint trigger: when user is typing in To: input on email compose page (every char entered triggers this)
+#Purpose: sends a list of autocomplete values containing username/first name/last name of all possible users
+#   (patient can only message care team and help acct, dr can msg dr/patients, admins can msg all users)
 @app.route("/emailsearch/<string:box>")
 def usernameSearch(box):
    jsonSuggest = []
@@ -1474,6 +1574,8 @@ def usernameSearch(box):
            jsonSuggest.append({'value':username,'data':username})
    return jsonify({"suggestions":jsonSuggest})
 
+#Endpoint trigger: when user is typing in subject input any message page (every char entered triggers this)
+#Purpose: Dynamically shows character count and max chars for the subject input
 @app.route('/subjWordCheck', methods=['POST','GET'])
 def subjCheck():
    text = str(len(request.args.get('jsdata')))
@@ -1481,6 +1583,8 @@ def subjCheck():
    print(text)
    return text
 
+#Endpoint trigger: when user is typing in msg body input any message page (every char entered triggers this)
+#Purpose: Dynamically shows character count and max chars for the msg body input
 @app.route('/bodyWordCheck', methods=['POST','GET'])
 def bodyCheck():
    text = str(len(request.args.get('jsdata')))
@@ -1488,7 +1592,10 @@ def bodyCheck():
    print(text)
    return text
 
-
+#Endpoint trigger: when user clicks any of the icon options (perm trash/prev/next/etc.) on their trash folder
+#Purpose: handle the clicks of the picture buttons on the trash folder (try except structure tells what button
+#   was pressed). Applies the option selected to all messages selected by the checkboxes on the current page
+#   and reopens trash
 @app.route('/permTrash', methods=['POST','GET'])
 def emptyTrash():
     x=""
@@ -1526,7 +1633,8 @@ def emptyTrash():
 
    
 
-
+#Purpose: sends message from the trash back to where it came from 
+#   if it is from the current user -> sent, if it is to the current user -> inbox.
 def undoTrash(msgIDList, username):
     #if it is in the trash and the sender == current username -> move it to sent folder
     #else move it to inbox
@@ -1554,9 +1662,9 @@ def undoTrash(msgIDList, username):
             print("error in undo trash --> ", e)
 
 
-
+#Purpose: insert message into the message database (combine parameter data with date and time)
 def insertMessage(sender, reciever, subject,body, convoID):
-#<MYSQL FUNCTIONAL>
+
     
     msgID= ""
     msgID= msgID+str(datetime.now().strftime('%H%M%S'))
@@ -1575,7 +1683,8 @@ def insertMessage(sender, reciever, subject,body, convoID):
     cursor.execute(formatInsert, insertContent)
     cnx.commit()
         
-
+#Endpoint trigger: when user is clicks the "compose" option
+#Purpose: render new email form (with a note about not being assigned if they are an unassigned patient)
 @app.route('/newEmail', methods=['POST','GET'])
 def newEmail():
     if(session['logged_in_p']==True):
@@ -1600,8 +1709,9 @@ def newEmail():
                           subject = "",
                           email_body = "")
 
+#Purpose: return a tally of all unread emails in this user's inbox
 def countUnreadInInbox(username):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT messageID FROM messageDB "
              "WHERE reciever = %s AND read_status=%s AND reciever_loc=%s")  
     cursor.execute(query, (username,'unread','inbox'))
@@ -1615,9 +1725,9 @@ def countUnreadInInbox(username):
         return "("+str(unreadNum)+")"
 
     
-  
+#Purpose: return a tally of all unread emails in this user's trash folder
 def countUnreadInTrash(username):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT messageID FROM messageDB "
              "WHERE reciever = %s AND read_status=%s AND reciever_loc=%s")  
     cursor.execute(query, (username,'unread','trash'))
@@ -1630,9 +1740,9 @@ def countUnreadInTrash(username):
     else:
         return "("+str(unreadNum)+")"
 
-
+#Purpose: update a message to be marked as read
 def markAsRead(msgID):
-#<MYSQL FUNCTIONAL>
+
     try:
         read_status='read'
         updateFormat = ("UPDATE messageDB SET read_status = %s "
@@ -1644,11 +1754,9 @@ def markAsRead(msgID):
         
         return "ERROR. Could not mark as read."
 
-
-    
-
+#Purpose: update a message to be marked as unread
 def markAsUnread(msgID):
-#<MYSQL FUNCTIONAL>
+
     try:
         read_status='unread'
         updateFormat = ("UPDATE messageDB SET read_status = %s "
@@ -1659,9 +1767,12 @@ def markAsUnread(msgID):
     except:
         return "ERROR. Could not mark as unread."
     
-
+#Purpose: given a list of msgIDs and the user deleting the messages, we dictate which messages are actually
+#   fully removed from the database (permanently deleted with 'sr') vs just hidden from this user ('s','r',or 'n')
+#   NOTE: 'n' = neither of the users has deleted, 's' = sender has deleted, reciever has not
+#   NOTE: 'r' = reciever has deleted, sender has not, 'sr' = both have deleted (so remove from dtb)
+#   NOTE: if the other person involved is a deleted user or a notification bot, perma delete that msg
 def permenantDel(msgIDList, del_username):
-#<MYSQL FUNCITIONAL>
     for msgID in msgIDList:
         try:
             query = ("SELECT sender, reciever, perm_del FROM messageDB "
@@ -1699,9 +1810,9 @@ def permenantDel(msgIDList, del_username):
         except Exception as e:
             print("error in perma delete --> ", e)
 
-    
+#Purpose: update a message to be located in the trash
 def moveToTrash(msgIDList, del_username):
-#<MYSQL FUNCTIONAL>
+
     sender_loc='trash'
     reciever_loc='trash'
     try:
@@ -1728,9 +1839,9 @@ def moveToTrash(msgIDList, del_username):
     except Exception as e:
         print(e)
         
-
+#Purpose: query table to find all messages that are located in the user's trash folder
 def getAllTrashMessages(username):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT send_date, send_time,read_status, reciever_loc,subject, perm_del, messageID, sender, sender_loc, reciever FROM messageDB "
              "WHERE reciever = %s OR sender = %s")  
     cursor.execute(query, (username,username)) 
@@ -1748,9 +1859,9 @@ def getAllTrashMessages(username):
     trashList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
     return trashList
 
-
+#Purpose: query table to find all messages that are located in the user's inbox
 def getAllMessages(username):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT send_date, send_time, subject, read_status, messageID, sender FROM messageDB "
              "WHERE reciever = %s AND reciever_loc = %s")  
     cursor.execute(query, (username,"inbox")) 
@@ -1765,9 +1876,9 @@ def getAllMessages(username):
     msgList.sort(reverse=True,key=lambda date: datetime.strptime(date[0], "%B %d, %Y - %H:%M:%S"))
     return msgList
 
-
+#Purpose: query table to find all messages that are located in the user's sent folder
 def getAllMessagesSent(username):
-#<MYSQL FUNCTIONAL>
+
     query = ("SELECT send_date, send_time, subject, messageID, reciever FROM messageDB "
              "WHERE sender = %s AND sender_loc = %s")  
     cursor.execute(query, (username,"sent_folder")) 
@@ -1779,6 +1890,8 @@ def getAllMessagesSent(username):
     return msgList
 
 
+#Purpose: return array of messages in a conversation that share a convoID (how you identify replies)
+#   and sort by date (most recent at top) so the conversation is rendered in order
 def getAllMsgsInConvo(convoID):
     query = ("SELECT send_date, send_time,sender, subject, messageID, msgbody, reciever FROM messageDB "
              "WHERE convoID = %s")  
@@ -1796,10 +1909,11 @@ def getAllMsgsInConvo(convoID):
 
 
 
-
+#Endpoint trigger: when user is clicks a message in any folder
+#Purpose: render the conversation (if the other account is deactivated, do not allow the user to reply)
+#   NOTE: the if/else is simply to decide where the active is (if the msg is in the sent folder, the inbox in the nav bar should not be the active one)
 @app.route('/msg/<msgid>', methods=['POST','GET'])
 def openMsg(msgid):
-#<TEST MYSQL>
     query = ("SELECT sender, reciever, sender_loc, reciever_loc, convoID FROM messageDB "
              "WHERE messageID = %s")  
     cursor.execute(query, (msgid,))
@@ -1868,9 +1982,10 @@ def openMsg(msgid):
         
         
 
+#Endpoint trigger: when user is clicks the reply button when on message info page
+#Purpose: render a reply email (set sender/reciever and subject, they only change msg body)
 @app.route('/reply', methods=['POST','GET'])
 def reply():
-#<TEST MYSQL>
     convoID =request.form['headMsgID']
     query = ("SELECT sender, reciever, subject FROM messageDB "
              "WHERE messageID = %s")  
@@ -1893,10 +2008,15 @@ def reply():
                           reciever_username=(originalReciever if originalSender == session['username'] else originalSender),
                           subject = subj,
                           email_body = "")
+
+#Endpoint trigger: when user opens inbox from anywhere (nav bar from home page or anywhere in inbox)
+#Purpose: render 1st page of the inbox
 @app.route('/inbox')
 def openInbox():
    return getAllMessagesPaged(session['username'],"0")
 
+#Endpoint trigger: when user clicks the logout button on the nav bar or home page
+#Purpose: log the user out and render the login page
 @app.route("/logout", methods=['POST','GET'])
 def logout():
     session['logged_in_p'] = False
@@ -1904,6 +2024,7 @@ def logout():
     session['logged_in_a'] = False
     return home()
 
+#starts the app and sets up the session object
 if __name__ == "__main__":
     patientPages = []
     app.secret_key = os.urandom(12)
