@@ -101,7 +101,7 @@ def isMeetingIDValid(mtgid, cursor, cnx):
 def isMtgStartTimePassed(mtgID, cursor, cnx):
     if(datetime.now().strftime("%Y-%m-%dT%H:%M:%S")>getApptFromMtgId(mtgID, cursor, cnx).startTime):
         return True
-    return Falses   
+    return False  
 
 #Purpose: update the meeting details of the meeting in the table
 def updateAppt(mtgName, mtgid,start_time, cursor, cnx): 

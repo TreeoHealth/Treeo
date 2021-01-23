@@ -4,7 +4,8 @@ import http.client
 import json
 import jwt   # pip install pyjwt
 from pytz import timezone
-from datetime import date, datetime,timezone, timedelta
+import datetime
+from datetime import date, datetime, timedelta
 import mySQL_apptDB
 
 #global connection/jwt objects
@@ -52,16 +53,17 @@ def convert_datetime_timezone(dt, tz1, tz2):
     tz1 = timezone(tz1)
     tz2 = timezone(tz2)
 
-    dt = datetime.strptime(dt,"%Y-%m-%dT%H:%M:%S")
-    dt = tz1.localize(dt)
-    dt = dt.astimezone(tz2)
-    dt = dt.strftime("%Y-%m-%dT%H:%M:%S")
+    dtO = datetime.strptime(dt,"%Y-%m-%dT%H:%M:%S")
+    dtO = tz1.localize(dtO)
+    dtO = dtO.astimezone(tz2)
+    dtO = dtO.strftime("%Y-%m-%dT%H:%M:%S")
 
-    return dt
+    return dtO
 
 #Purpose: creates a meeting through the zoom api and adds the appt to the database through a call
 def createMtg(time, password, doctor, patient, cursor, cnx):
     #add 5 hrs to time
+    print(time, password, doctor, patient)
     conn = http.client.HTTPSConnection("api.zoom.us")
     topic = doctor+" + "+patient+" appt"
     payload={
@@ -84,18 +86,27 @@ def createMtg(time, password, doctor, patient, cursor, cnx):
         'authorization': "Bearer "+headerKey
         }
 
-#HE1A37EjRIiGjh_wekf90A is my zoom account
+    #HE1A37EjRIiGjh_wekf90A is my zoom account
     conn.request("POST", "/v2/users/HE1A37EjRIiGjh_wekf90A/meetings", json.dumps(payload), headers)
     
     res = conn.getresponse()
     raw_data = res.read()
     data = json.loads(raw_data.decode("utf-8"))
-    
-#change time to zoom time-5h (UTC->EST) but take off the 'z' to match the format
-    zoomAdjustedTime = convert_datetime_timezone(str(data.get("start_time"))[:-1], 'UTC',"US/Eastern")
+    print(data)
+    #change time to zoom time-5h (UTC->EST) but take off the 'z' to match the format
+    zoomAdjustedTime = convert_datetime_timezone(data.get("start_time")[:-1], 'UTC',"US/Eastern")
     mySQL_apptDB.createAppt(topic, str(data.get("id")), doctor, patient, zoomAdjustedTime, str(data.get("join_url")), cursor, cnx)
     conn.close()
     return data
+
+#Purpose: look at all zoom meetings through call return from Zoom API and cancel each one
+def cancelAllMeetings():
+    conn = http.client.HTTPSConnection("api.zoom.us")
+    
+    for i in getMtgsFromUserID("HE1A37EjRIiGjh_wekf90A").get("meetings"):
+        conn.request("DELETE", "/v2/meetings/"+str(i.get("id")), headers=headers)
+        res = conn.getresponse()
+    conn.close()
 
 #Purpose: delete zoom meeting from both Zoom API and database (through call)
 def deleteMtgFromID(mtgID, cursor, cnx):
@@ -168,7 +179,7 @@ def updateMtg(mtgid, topic, time, cursor, cnx):
     res = conn.getresponse()
     raw_data = res.read()
     
-#convert the UTC time to -5 for storing (UTC->EST)
+    #convert the UTC time to -5 for storing (UTC->EST)
     data = getMtgFromMtgID(mtgid)
     zoomAdjustedTime = convert_datetime_timezone(str(data.get("start_time"))[:-1], 'UTC',"US/Eastern")
     mySQL_apptDB.updateAppt(topic, mtgid,zoomAdjustedTime, cursor, cnx)
@@ -176,9 +187,12 @@ def updateMtg(mtgid, topic, time, cursor, cnx):
     return getMtgFromMtgID(mtgid)
 
 
+# for i in getMtgsFromUserID("HE1A37EjRIiGjh_wekf90A").get("meetings"):
+#     print(i.get("id"))
 
+#cancelAllMeetings()
+# print("AFTER CANCEL")
+# for i in getMtgsFromUserID("HE1A37EjRIiGjh_wekf90A").get("meetings"):
+#     print(i.get("id"))
 
-
-
-
-
+    

@@ -947,15 +947,18 @@ if __name__ == '__main__':
 #-DONE :)-need to make functions for getting specific drs assigned to a specific user (not just a list)
     #-DONE :)--treeo help should not appear as an assigned provider   
 
-
-#CLEAN UP ALL COMMENTS
-#alphabetize/sort functionality in apptest.py
-#DO A SHORT DESCRIPTION OF EACH FUNCTION ABOVE IT
+#-DONE :)-CLEAN UP ALL COMMENTS
+#-DONE :)-alphabetize/sort functionality in apptest.py
+#-DONE :)-DO A SHORT DESCRIPTION OF EACH FUNCTION ABOVE IT
 
 
 #need to enforce that time for appt needs to be at least 30min in future (both for creation and update)
 #fix formatting on msgInfoNoReply.html (no reply btn)
 #autofill for patient (+mtg with x) no longer working -createmtg.html
+#view password on edit acct page x3
+#dr deletion
+    #for partial patient assignments, prefilll out the care team assignment team 
+    #update patient account to have "n/a" dr again (for all patients assigned to that dr)
 
 #-tbd how to handle a dr being deleted when they are on patient care team
     #partial care team in admin portal

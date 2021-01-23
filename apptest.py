@@ -986,7 +986,8 @@ def create_mtg():
             jsonResp = zoomtest_post.createMtg(time,str(request.form['password']),session['username'], request.form['patientUser'],cursor, cnx)
         date=time[:10]
         finalStr = ""
-    except:    
+    except Exception as e:    
+        print(e)
         return render_template('create_mtg.html',
                                errorMsg = "ERROR. Could not create meeting.")
             #ADD PATIENT FIELD

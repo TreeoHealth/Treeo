@@ -528,7 +528,7 @@ def updateUserAcct(user, emailAdd,fn, ln,passw, cursor, cnx):
 
 #Purpose: returns a class object with all database items packaged in it for any patient or dr user
 def userAcctInfo(user, cursor, cnx):
-    query = ("SELECT username, password, fname, lname, email, creationDate, doctorType FROM doctorTable WHERE username = %s")   
+    query = ("SELECT username, password, fname, lname, email, creationDate, drType FROM doctorTable WHERE username = %s")   
     cursor.execute(query, (user, ))
     for u,p, f, l, e, cD, dT in cursor:
         drClassObj = doctorUserClass( u, p, e, f, l, cD, dT)

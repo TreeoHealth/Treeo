@@ -1,6 +1,6 @@
 username --- password [type]
 admin --- helpME123
-second_user --- 2ND_Us3r
+second_user --- 2ND_Us3r -> SECOND22
 third_user --- 3RD_Us3r
 fourth_user --- 4TH_Us3r
 fifth_user --- 5TH_Us3r
