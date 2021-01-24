@@ -951,30 +951,39 @@ if __name__ == '__main__':
 #-DONE :)-alphabetize/sort functionality in apptest.py
 #-DONE :)-DO A SHORT DESCRIPTION OF EACH FUNCTION ABOVE IT
 
-
-#need to enforce that time for appt needs to be at least 30min in future (both for creation and update)
-#fix formatting on msgInfoNoReply.html (no reply btn)
-#autofill for patient (+mtg with x) no longer working -createmtg.html
-#view password on edit acct page x3
-#dr deletion
-    #for partial patient assignments, prefilll out the care team assignment team 
-    #update patient account to have "n/a" dr again (for all patients assigned to that dr)
-
-#-tbd how to handle a dr being deleted when they are on patient care team
-    #partial care team in admin portal
-    #how to handle a NULL dr
-    #update patient account to have a N/A
-    #update all appts in archive (if both accts are delted, perma remove)
-    #update all msgs (if both accts are delted, perma remove)
-#patient deletion
-    #1->cancel all appts they are a part of (do not archive)
-    #2->update all msgs to/from them to be to/from "deletedAccount"
+#-DONE :)-patient deletion
+    #-DONE :)-1->cancel all appts they are a part of (do not archive)
+    #-DONE :)-2->update all msgs to/from them to be to/from "deletedAccount"
         #BUT if they are notif, perma delete    
-    #Do not allow reply to msg + implement perma delete from dtb
-    #3->update all archive appts to be dr + [deactivated] patient
+    #-DONE :)-Do not allow reply to msg + implement perma delete from dtb
+    #-DONE :)-3->update all archive appts to be dr + [deactivated] patient   
+     
+#-DONE :)-need to enforce that time for appt needs to be at least 30min in future (both for creation and update)
+#-DONE :)-view password on edit acct page x3
+#-DONE :)-dr dropdown selections only verified (does not let admin assign unverified drs to a patient)
 
-#doctor deletion
-    #how to handle patients with a gap in their car team (notify an admin to reassign them)
+#-DONE :)-notify patient if care team changes (deleted acct or remove approval)
+#-DONE :)-dr deletion
+    #-DONE :)-for partial patient assignments, prefill out the care team assignment team 
+    #-DONE :)-update patient account to have "n/a" dr again (for all patients assigned to that dr)
+    #-DONE :)-update all appts in archive
+    #-DONE :)-update all msgs (if both accts are delted, perma remove)
+#-DONE :)-fix formatting on msgInfoNoReply.html (no reply btn)
+    
+#-DONE :)-change text on "are you sure?" warning
+        #-DONE :)-delete acct 
+        #-DONE :)-cancel appt
+        #approve dr
+        #permadelete msgs
+        
+        
+#fix all info formatting/styling
+
+#autofill for patient (+mtg with x) no longer working -createmtg.html
+
+
+
+
 
 #ADMIN - list/search ALL users (search + see user accts including drs)
     #have a tally for # of unapproved patients/drs on home page
@@ -1012,10 +1021,7 @@ if __name__ == '__main__':
     #in the function where patients and drs are mixed, figure out how to distinguish them
         #conditional formatting of the dropdown (CSS)
     #when there is an error in register, do not dewfault to dietician/patient
-    #start putting "are you sure?" warnings on bigger actions
-        #cancel appt
-        #approve dr
-        #permadelete msgs
+
     #TODO -- remove the links of admin inbox to calendar/etc (make seperate admin pages)
         #-all malibox? (or just remove nav on all mailbox except inbox + only have sep inbox?)
         #-patient acct detail pg

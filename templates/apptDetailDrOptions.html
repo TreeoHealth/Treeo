@@ -51,9 +51,9 @@
 <input type="hidden" value={{mtgnum}} name="mtgnum">
 <input type="submit" value="Edit" class="btn btn-primary btn-large btn-block">
 </form>
-<form action='/deleteRenderNum/' method = "POST">
+<form action='/deleteRenderNum/' method = "POST" onSubmit="return confirm('Are you sure you want to cancel this appointment?');">
 <input type="hidden" value={{mtgnum}} name="mtgnum">
-<input type="submit" value="Cancel" class="btn btn-primary btn-large btn-block">
+<input type="submit"  value="Cancel" class="btn btn-primary btn-large btn-block">
 </form>
 </div>
 </div>

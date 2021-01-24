@@ -4,7 +4,7 @@ from classFile import apptObjectClass
 from password_strength import PasswordPolicy
 from passlib.context import CryptContext
 import email_validator
-from datetime import date, datetime,timezone
+from datetime import date, datetime,timezone, timedelta
 
 config = {
   'host':'treeo-server.mysql.database.azure.com',
@@ -103,6 +103,13 @@ def isMtgStartTimePassed(mtgID, cursor, cnx):
         return True
     return False  
 
+#Purpose: check if the desired start time is AT LEAST 30 mins in the future (for appt creation/updated time)
+#   return true if it is 30+ mins in future, false if it is within 30 mins of now
+def isTime30MinInFuture(startTime):
+    if((datetime.now()+ timedelta(minutes=30)).strftime("%Y-%m-%dT%H:%M:%S")<=startTime):
+        return True
+    return False  
+
 #Purpose: update the meeting details of the meeting in the table
 def updateAppt(mtgName, mtgid,start_time, cursor, cnx): 
     update_test = (
@@ -111,6 +118,7 @@ def updateAppt(mtgName, mtgid,start_time, cursor, cnx):
     cursor.execute(update_test, (mtgName,start_time, mtgid))
     cnx.commit()
     return "success update"
+
 
 cursor.close()
 cnx.close()

@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="/static/style.css" type="text/css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
 <!--&#123;% block body %&#125;-->
 
 
@@ -26,15 +28,18 @@
 </div>
 <div class="control-group">
 <label class="login-field-icon fui-user" for="login-name">Old Password</label>
-				<input type="password" class="login-field" name="pword1" value={{pword1}} >
+				<input type="password" id="password1" class="login-field" name="pword1" value={{pword1}} >
+				<i style="margin-left: -30px;cursor: pointer;" class="far fa-eye" id="togglePassword1"></i>
 </div>
 <div class="control-group">
 <label class="login-field-icon fui-user" for="login-name">New Password</label>
-				<input type="password" class="login-field" name="pwordNew1" value={{pwordNew1}} >
+				<input type="password" id="password2" class="login-field" name="pwordNew1" value={{pwordNew1}} >
+				<i style="margin-left: -30px;cursor: pointer;" class="far fa-eye" id="togglePassword2"></i>
 </div>
 <div class="control-group">
 <label class="login-field-icon fui-user" for="login-name">Confirm New Password</label>
-				<input type="password" class="login-field"  name="pwordNew2"value={{pwordNew2}}>
+				<input type="password" id="password3"  class="login-field"  name="pwordNew2"value={{pwordNew2}}>
+				<i style="margin-left: -30px;cursor: pointer;" class="far fa-eye" id="togglePassword3"></i>
 </div>
 <div class="control-group">
 	<label class="login-field-icon fui-user" for="login-name">Email</label>
@@ -56,3 +61,35 @@
 </div>
 </div>
 </form>
+
+<script>
+	const togglePassword1 = document.querySelector('#togglePassword1');
+const password1 = document.querySelector('#password1');
+togglePassword1.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password1.getAttribute('type') === 'password' ? 'text' : 'password';
+    password1.setAttribute('type', type);
+    // toggle the eye slash icon
+    this.classList.toggle('fa-eye-slash');
+});
+
+const togglePassword2 = document.querySelector('#togglePassword2');
+const password2 = document.querySelector('#password2');
+togglePassword2.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password2.getAttribute('type') === 'password' ? 'text' : 'password';
+    password2.setAttribute('type', type);
+    // toggle the eye slash icon
+    this.classList.toggle('fa-eye-slash');
+});
+
+const togglePassword3 = document.querySelector('#togglePassword3');
+const password3 = document.querySelector('#password3');
+togglePassword3.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password3.getAttribute('type') === 'password' ? 'text' : 'password';
+    password3.setAttribute('type', type);
+    // toggle the eye slash icon
+    this.classList.toggle('fa-eye-slash');
+});
+</script>

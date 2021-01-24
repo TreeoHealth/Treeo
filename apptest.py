@@ -376,8 +376,12 @@ def approveForm(username):
 #Purpose: render the form to assign 3 care providers to patient user
 @app.route('/assign/<username>', methods=['POST','GET'])
 def assignForm(username):
+    userObject = mySQL_userDB.getAcctFromUsername(username, cursor, cnx)
     return render_template("assignCareTeam.html",
-                           username  = username)
+                           username  = username,
+                           dietician = userObject.dietician if userObject.dietician !="N/A" else "",
+                           physician = userObject.physician if userObject.physician !="N/A" else "",
+                           healthcoach = userObject.healthcoach if userObject.healthcoach !="N/A" else "",)
 
 #Endpoint trigger: when admin user submits form to assign 3 care providers to patient user
 #Purpose: validate if all 3 providers selected are valid 
@@ -389,21 +393,21 @@ def assignTeam(): #submit update form
     dr3 = request.form['healthcoach'].split(" - ")[0]
     if(mySQL_userDB.isDrDietician(dr1, cursor, cnx)==False):
         return render_template("assignCareTeam.html",
-                            errorMsg = "Invalid dietician user.",
+                            errorMsg = "Invalid dietician user (does not exist or is unapproved).",
                            username  = request.form['username'],
                            dietician = dr1,
                            physician = dr2,
                            healthcoach=dr3)
     elif(mySQL_userDB.isDrPhysician(dr2, cursor, cnx)==False):
         return render_template("assignCareTeam.html",
-                            errorMsg = "Invalid physician user.",
+                            errorMsg = "Invalid physician user (does not exist or is unapproved).",
                            username  = request.form['username'],
                            dietician = dr1,
                            physician = dr2,
                            healthcoach=dr3)
     elif mySQL_userDB.isDrHealthCoach(dr3, cursor, cnx)==False:
         return render_template("assignCareTeam.html",
-                            errorMsg = "Invalid health coach user.",
+                            errorMsg = "Invalid health coach user (does not exist or is unapproved).",
                            username  = request.form['username'],
                            dietician = dr1,
                            physician = dr2,
@@ -518,6 +522,13 @@ def unapproveForm(username):
     sendAutomatedAcctMsg(username,"Provider Account Suspended",emailBody) 
     emailBody = "Hello "+session['name']+",\r\nYou have removed provider approval for "+drAcctName+ " (" +username+"). If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
     sendAutomatedAcctMsg(session['username'],"Provider Approval Revoked",emailBody) 
+    
+    drAccType = mySQL_userDB.getDrTypeOfAcct(username, cursor, cnx)
+    assignedPatients = mySQL_userDB.returnPatientsAssignedToDr(username, cursor, cnx)
+    for patientUser in assignedPatients:
+        emailBody = "Hello "+patientUser+",\r\nYour "+drAccType+" ("+drAcctName+" - "+username+") on your care team has been removed from the system.\r\nWe will assign a replacement ASAP.\r\nSincerely,\r\n\tYour Treeo Team"
+        sendAutomatedAcctMsg(patientUser, "Care Team Revision", emailBody)
+    mySQL_userDB.removeDrFromAllCareTeams(username, cursor, cnx)
     return render_template("unapproveConfirmation.html",
                            drname  = str(username + " - " +drAcctName))
 
@@ -814,23 +825,41 @@ def deactivateAllMsgsUsername(oldUsername):
 #   deletes all notifications, updates archived appts (username), and logs the user out
 @app.route('/acctDelete', methods=['POST','GET'])
 def deleteAccount():
-    allAppts = mySQL_apptDB.getAllApptsFromUsername(str(request.form['username']), tmpcursor, cursor, cnx)
+    drUsername = str(request.form['username'])
+    userAcctObj = mySQL_userDB.getAcctFromUsername(drUsername, cursor, cnx)
+    
+    if(type(userAcctObj)==doctorUserClass):
+        assignedPatients = mySQL_userDB.returnPatientsAssignedToDr(drUsername, cursor, cnx)
+        for patientUser in assignedPatients:
+            emailBody = "Hello "+patientUser+",\r\nYour "+userAcctObj.doctorType+" ("+userAcctObj.fname+" "+userAcctObj.lname+" - "+drUsername+") on your care team has been removed from the system.\r\nWe will assign a replacement ASAP.\r\nSincerely,\r\n\tYour Treeo Team"
+            sendAutomatedAcctMsg(patientUser, "Care Team Revision", emailBody)
+        
+        mySQL_userDB.removeDrFromAllCareTeams(drUsername, cursor, cnx)
+        
+    allAppts = mySQL_apptDB.getAllApptsFromUsername(drUsername, tmpcursor, cursor, cnx)
     for apptInfo in allAppts:
         autoDeleteMtg(apptInfo.meetingID)
-    mySQL_userDB.deleteUserAcct(str(request.form['username']), cursor, cnx)
-    deactivateAllMsgsUsername(str(request.form['username']))
+        
+    mySQL_userDB.deleteUserAcct(drUsername, cursor, cnx)
+    deactivateAllMsgsUsername(drUsername)
     deleteAllNotifDeactive()
-    mySQL_apptDB.deactivateAllArchivedAppts(str(request.form['username']),cursor, cnx )
+    mySQL_apptDB.deactivateAllArchivedAppts(drUsername,cursor, cnx )
+    
     return logout()
   
-#Purpose: deletes all msgs btwn "<deactivatedUser>" and either Treeo notification bot (remove bloat from dtb)
+#Purpose: deletes all msgs btwn "<deactivatedUser>" and either Treeo notification bot or another deactivated acct (remove bloat from dtb)
 def deleteAllNotifDeactive():
     try:
         delete_test = (
             "DELETE FROM messageDB " #table name NOT db name
             "WHERE (sender = %s AND reciever = %s) OR (sender = %s AND reciever = %s) "
-            "OR (sender = %s AND reciever = %s) OR (sender = %s AND reciever = %s) ")
-        cursor.execute(delete_test, ("<deactivatedUser>","TreeoCalendar", "TreeoCalendar","<deactivatedUser>", "<deactivatedUser>","TreeoNotification", "TreeoNotification","<deactivatedUser>"))
+            "OR (sender = %s AND reciever = %s) OR (sender = %s AND reciever = %s) "
+            "OR (sender = %s AND reciever = %s)")
+        cursor.execute(delete_test, ("<deactivatedUser>","TreeoCalendar", 
+                                     "TreeoCalendar","<deactivatedUser>", 
+                                     "<deactivatedUser>","TreeoNotification", 
+                                     "TreeoNotification","<deactivatedUser>",
+                                     "<deactivatedUser>","<deactivatedUser>"))
         cnx.commit()
         
     except:
@@ -977,6 +1006,11 @@ def create_mtg():
     if session['logged_in_p']:
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
+    
+    if False == mySQL_apptDB.isTime30MinInFuture(time):
+        return render_template('create_mtg.html',
+                           errorMsg = "ERROR: Start time must be 30 or more minutes in the future.")
+    
     #need to ensure that what is entered is either autocorrect, or valid
     try:
         if len(request.form['patientUser'].split(" - "))>1:
@@ -1076,6 +1110,7 @@ def editPgFromID():
     if(time[-1]=='Z'):
         time = time[:-1] #takes off the 'z'
     return render_template('edit.html',
+                           errorMsg = "",
                            mtgnum=mtgid,
                            mtgname=str(jsonResp.get("topic")),
                            pword=str(jsonResp.get("password")),
@@ -1090,6 +1125,22 @@ def editSubmit():
     if session['logged_in_p']:
         return accessDenied()
     time = str(request.form['day'])+'T'+ str(request.form['time'])+':00'
+    
+    if False == mySQL_apptDB.isTime30MinInFuture(time):
+        jsonResp = zoomtest_post.getMtgFromMtgID(request.form['mtgnum'])
+        time = mySQL_apptDB.getApptFromMtgId(request.form['mtgnum'], cursor, cnx).startTime
+        #split and display
+        date=time[:10]
+        if(time[-1]=='Z'):
+            time = time[:-1] #takes off the 'z'
+        return render_template('edit.html',
+                               errorMsg = "ERROR: New time must be 30 mins or more in the future.",
+                               mtgnum=request.form['mtgnum'],
+                               mtgname=str(jsonResp.get("topic")),
+                               pword=str(jsonResp.get("password")),
+                               mtgtime=str(time[11:]),
+                               mtgdate=str(date))
+    
     jsonResp = zoomtest_post.updateMtg(str(request.form['mtgnum']),str(request.form['mtgname']), time,cursor, cnx)
 
     jsonResp= zoomtest_post.getMtgFromMtgID(str(request.form['mtgnum']))

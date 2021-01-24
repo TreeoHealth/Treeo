@@ -127,8 +127,8 @@ def getAllApprovedDrs(cursor, cnx):
 #Purpose: returns an array of the search dropdown items (username + first name + last name)
 #   for doctor users that ARE dieticians
 def getAllDrDietician(cursor, cnx):
-    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s")         
-    cursor.execute(query, ("dietician",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s AND verified=%s")         
+    cursor.execute(query, ("dietician","1")) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     docArr = []
     for un,fn,ln in cursor:
         tmp = str(un+" - "+ln+", "+fn)
@@ -138,8 +138,8 @@ def getAllDrDietician(cursor, cnx):
 #Purpose: returns an array of the search dropdown items (username + first name + last name)
 #   for doctor users that ARE healthcoaches
 def getAllDrHealth(cursor, cnx):
-    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s")         
-    cursor.execute(query, ("healthcoach",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s AND verified=%s")         
+    cursor.execute(query, ("healthcoach","1")) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     docArr = []
     for un,fn,ln in cursor:
         tmp = str(un+" - "+ln+", "+fn)
@@ -149,8 +149,8 @@ def getAllDrHealth(cursor, cnx):
 #Purpose: returns an array of the search dropdown items (username + first name + last name)
 #   for doctor users that ARE physicians
 def getAllDrPhysician(cursor, cnx):
-    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s")         
-    cursor.execute(query, ("physician",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    query = ("SELECT username, fname, lname FROM doctorTable WHERE drType=%s AND verified=%s")         
+    cursor.execute(query, ("physician","1")) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     docArr = []
     for un,fn,ln in cursor:
         tmp = str(un+" - "+ln+", "+fn)
@@ -347,30 +347,30 @@ def insertPatient(username, password, email, fname, lname, cursor, cnx):
 
 #Purpose: checks if drType is dietician (returns true if it is, false otherwise)
 def isDrDietician(username, cursor, cnx):
-    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s")
-    cursor.execute(query, (username, "dietician"))
+    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s AND verified=%s")
+    cursor.execute(query, (username, "dietician", "1"))
     for dr in cursor:
         return True
     return False
 
 #Purpose: checks if drType is healthcoach (returns true if it is, false otherwise)
 def isDrHealthCoach(username, cursor, cnx):
-    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s")
-    cursor.execute(query, (username, "healthcoach"))
+    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s AND verified=%s")
+    cursor.execute(query, (username, "healthcoach", "1"))
     for dr in cursor:
         return True
     return False
 
 #Purpose: checks if drType is physician (returns true if it is, false otherwise)
 def isDrPhysician(username, cursor, cnx):
-    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s")
-    cursor.execute(query, (username, "physician"))
+    query = ("SELECT username FROM doctorTable WHERE username=%s AND drType = %s AND verified=%s")
+    cursor.execute(query, (username, "physician", "1"))
     for dr in cursor:
         return True
     return False
 
 #Purpose: checks if username is taken by checking all 3 user databases (returns true if it is)
-def isUsernameTaken(username, cursor, cnx): #fix SQL DONE
+def isUsernameTaken(username, cursor, cnx): 
         #the 2 queries need to have the same # of attributes in the select
     query = ("SELECT username FROM doctorTable WHERE username = %s" ) 
         #because the doctor table will always be smaller, always query it first
@@ -389,6 +389,26 @@ def isUsernameTaken(username, cursor, cnx): #fix SQL DONE
         return True 
     
     return False #it was queried in both tables and neither matched
+
+#Purpose: iterates over all users that this dr user has been assigned and updates the care team assignment
+def removeDrFromAllCareTeams(username, cursor, cnx):
+    assignedPatients = returnPatientsAssignedToDr(username, cursor, cnx)
+    for patient in assignedPatients:
+        update_test = (
+                "UPDATE patientTable SET drOne=%s "
+                "WHERE username = %s AND drOne = %s")
+        cursor.execute(update_test, ("N/A", patient, username))
+        cnx.commit()
+        update_test = (
+                "UPDATE patientTable SET drTwo=%s "
+                "WHERE username = %s AND drTwo = %s")
+        cursor.execute(update_test, ("N/A", patient, username))
+        cnx.commit()
+        update_test = (
+                "UPDATE patientTable SET drThree=%s "
+                "WHERE username = %s AND drThree = %s")
+        cursor.execute(update_test, ("N/A", patient, username))
+        cnx.commit()
 
 #Purpose: returns an array of all usernames in the patient table
 def returnAllPatients(cursor, cnx): 

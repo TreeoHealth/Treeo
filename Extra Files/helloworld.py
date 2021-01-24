@@ -1,7 +1,6 @@
 from flask import Flask
 from flask import Flask, flash, redirect, render_template, request, session, abort
 from password_strength import PasswordPolicy
-import mySQL_userDB
 import password_strength
 app = Flask(__name__)
 
@@ -16,8 +15,6 @@ def index():
 
 @app.route('/approve', methods=['POST','GET'])
 def approve():
-    print(request.form)
-    print(response)
     return "help"
 
 @app.route('/approve/<username>', methods=['POST','GET'])
