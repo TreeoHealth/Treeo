@@ -178,8 +178,39 @@ def getAllUnassignedPatients(cursor, cnx):
     return unassigned
 
 #Purpose: returns an array of the 3 drs that are assigned to a patient user
-#   for email recipient dropdown (so add the help account as well)
+#   for care team detail purposes
 def getCareTeamOfUser(username, cursor, cnx):
+    query = ("SELECT drOne, drTwo, drThree FROM patientTable WHERE username = %s") 
+    cursor.execute(query, (username, ))
+    docArr = []
+
+    for d1, d2, d3 in cursor:
+        u1 = d1
+        r1 = userAcctInfo(u1, cursor, cnx)
+        if(r1!=None):
+            docArr.append(str(u1+" - "+r1.lname+", "+r1.fname))
+        else:
+           docArr.append("Not assigned")
+            
+        u2 = d2
+        r2 = userAcctInfo(u2, cursor, cnx)
+        if(r2!=None):
+            docArr.append(str(u2+" - "+r2.lname+", "+r2.fname))
+        else:
+            docArr.append("Not assigned")
+        
+        u3 = d3
+        r3 = userAcctInfo(u3, cursor, cnx)
+        if(r3!=None):
+            docArr.append(str(u3+" - "+r3.lname+", "+r3.fname))
+        else:
+            docArr.append("Not assigned")
+    
+    return docArr
+
+#Purpose: returns an array of the 3 drs that are assigned to a patient user
+#   for email recipient dropdown (so add the help account as well)
+def getCareTeamOfUserEmailList(username, cursor, cnx):
     query = ("SELECT drOne, drTwo, drThree FROM patientTable WHERE username = %s") 
     cursor.execute(query, (username, ))
     docArr = []

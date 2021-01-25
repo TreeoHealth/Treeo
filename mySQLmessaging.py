@@ -969,27 +969,31 @@ if __name__ == '__main__':
     #-DONE :)-update all appts in archive
     #-DONE :)-update all msgs (if both accts are delted, perma remove)
 #-DONE :)-fix formatting on msgInfoNoReply.html (no reply btn)
-    
 #-DONE :)-change text on "are you sure?" warning
         #-DONE :)-delete acct 
-        #-DONE :)-cancel appt
+        #-DONE :)-cancel appt    
+
+#confirmation alert
         #approve dr
         #permadelete msgs
         
-        
-#fix all info formatting/styling
+#-DONE :)-fix all info formatting/styling 
+#-DONE :)-have button on patient portal to list current care team  
+#-DONE :)-autofill for patient (+mtg with x) no longer working -createmtg.html
+#-DONE :)- make patient detail page that lists drs take you to a dr profile page (link)
+    #-DONE :)-curr care team pg
+    #-DONE :)-patient acct details
 
-#autofill for patient (+mtg with x) no longer working -createmtg.html
+#On user acct page/in search result have a "send message" button that takes you to a pre-filled out inbox page
+#TODO -- FIX input/icon/label alignment for care team pg + acct details pg
 
 
-
-
+#make a <24h cancellation warning for patients (fee) -- ask again before cancelling
 
 #ADMIN - list/search ALL users (search + see user accts including drs)
     #have a tally for # of unapproved patients/drs on home page
-#On user acct page/in search result have a "send message" button that takes you to a pre-filled out inbox page
-
-#EVENTUALLY -- make patient detail page that lists drs take you to a dr profile page (link)
+#make appt times 0/15/30/1h (round times only)
+    #make appt not overlapping (enforce no overlap for drs and for patients)
 
 #Split apptest.py into smaller files
     #cannot abstract --> T^T

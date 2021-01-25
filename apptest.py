@@ -612,6 +612,20 @@ def displayPagedSearch(patientList, listSize):
                             fullPagesArr=result,
                                pgSize = selectSize)
 
+#Endpoint trigger: when link for dr acct is clicked from patient detail page or from curr care team page
+#Purpose: if dr had "emptyDr", render a preset page, else render the acct info for that dr acct
+@app.route('/doctors/<username>', methods=['POST','GET'])
+def doctorAcctPage(username):
+    if(username == "emptyDr"):
+        return render_template("drDoesNotExist.html")
+    drInfoObj = mySQL_userDB.getAcctFromUsername(str(username),cursor, cnx)
+    return render_template("doctorAcctDetails.html",
+                           username=username,
+                           nm=drInfoObj.fname+" "+drInfoObj.lname,
+                           email=drInfoObj.email,
+                           createDate=drInfoObj.creationDate)
+    
+
 #Endpoint trigger: when dr user clicks "assigned patients" option from home page
 #Purpose: queries for all patient usernames that are assigned to the curr dr user
 #   and returns the paged search page (10 patients per pg)
@@ -716,14 +730,17 @@ def patientAcct(username):
     ##dr will not be given the option to edit any details
     ##this is where medical details will eventually be rendered
     patientInfoObj = mySQL_userDB.getAcctFromUsername(str(username),cursor, cnx)
-    
+    drList = mySQL_userDB.getCareTeamOfUser(str(username),cursor, cnx)
     return render_template('patientAcctDetails.html', 
                            username=username,
-                           nm=patientInfoObj.fname + patientInfoObj.lname,
+                           nm=patientInfoObj.fname + " " +patientInfoObj.lname,
                            email=patientInfoObj.email,
-                           drOne=("Not assigned" if patientInfoObj.dietician=="N/A" else patientInfoObj.dietician),
-                           drTwo=("Not assigned" if patientInfoObj.physician=="N/A" else patientInfoObj.physician),
-                           drThree=("Not assigned" if patientInfoObj.healthcoach=="N/A" else patientInfoObj.healthcoach),
+                           d1Username= "emptyDr" if patientInfoObj.dietician=="N/A" else patientInfoObj.dietician,
+                           drOne=drList[0],
+                           d2Username="emptyDr" if patientInfoObj.physician=="N/A" else patientInfoObj.physician,
+                           drTwo=drList[1],
+                           d3Username="emptyDr" if patientInfoObj.healthcoach=="N/A" else patientInfoObj.healthcoach,
+                           drThree=drList[2],
                            createDate = patientInfoObj.creationDate
                            )
 
@@ -757,16 +774,31 @@ def search_page():
     acct_search_item = mySQL_userDB.getAcctFromUsername(actualUsername,cursor, cnx)
     
     if(len(query.split(" - "))==2 and mySQL_userDB.isUsernameTaken(actualUsername,cursor, cnx)):
-            #if the username exists and the user used the autocomplete -> take them to the account page directly
+        #if the username exists and the user used the autocomplete -> take them to the account page directly
+        
+        patientInfoObj = mySQL_userDB.getAcctFromUsername(str(actualUsername),cursor, cnx)
+        drList = mySQL_userDB.getCareTeamOfUser(str(actualUsername),cursor, cnx)
         return render_template('patientAcctDetails.html', 
-                           username=acct_search_item.username,
-                           nm=acct_search_item.fname + acct_search_item.lname,
-                           email=acct_search_item.email,
-                           drOne=("Not assigned" if acct_search_item.dietician=="N/A" else acct_search_item.dietician),
-                           drTwo=("Not assigned" if acct_search_item.physician=="N/A" else acct_search_item.physician),
-                           drThree=("Not assigned" if acct_search_item.healthcoach=="N/A" else acct_search_item.healthcoach),
-                           createDate = acct_search_item.creationDate
+                           username=actualUsername,
+                           nm=patientInfoObj.fname + " " +patientInfoObj.lname,
+                           email=patientInfoObj.email,
+                           d1Username=patientInfoObj.dietician,
+                           drOne=drList[0],
+                           d2Username=patientInfoObj.physician,
+                           drTwo=drList[1],
+                           d3Username=patientInfoObj.healthcoach,
+                           drThree=drList[2],
+                           createDate = patientInfoObj.creationDate
                            )
+            # return render_template('patientAcctDetails.html', 
+        #                    username=acct_search_item.username,
+        #                    nm=acct_search_item.fname + acct_search_item.lname,
+        #                    email=acct_search_item.email,
+        #                    drOne=("Not assigned" if acct_search_item.dietician=="N/A" else acct_search_item.dietician),
+        #                    drTwo=("Not assigned" if acct_search_item.physician=="N/A" else acct_search_item.physician),
+        #                    drThree=("Not assigned" if acct_search_item.healthcoach=="N/A" else acct_search_item.healthcoach),
+        #                    createDate = acct_search_item.creationDate
+        #                    )
     
     jsonSuggest=[]
     listStr=[]
@@ -1009,7 +1041,8 @@ def create_mtg():
     
     if False == mySQL_apptDB.isTime30MinInFuture(time):
         return render_template('create_mtg.html',
-                           errorMsg = "ERROR: Start time must be 30 or more minutes in the future.")
+                           errorMsg = "ERROR: Start time must be 30 or more minutes in the future.",
+                           patientUser = "")
     
     #need to ensure that what is entered is either autocorrect, or valid
     try:
@@ -1023,7 +1056,8 @@ def create_mtg():
     except Exception as e:    
         print(e)
         return render_template('create_mtg.html',
-                               errorMsg = "ERROR. Could not create meeting.")
+                               errorMsg = "ERROR. Could not create meeting.",
+                               patientUser = "")
             #ADD PATIENT FIELD
     else:
         apptClassObj = mySQL_apptDB.getApptFromMtgId(jsonResp.get("id"), cursor, cnx)
@@ -1050,7 +1084,8 @@ def createPg():
     if session['logged_in_p']:
         return accessDenied()
     return render_template('create_mtg.html',
-                           errorMsg = "")
+                           errorMsg = "",
+                           patientUser = "")
 
 #Endpoint trigger: when dr is typing in patient input on create mtg form (every char entered triggers this)
 #Purpose: autocompletes entered text with matching dropdown items from the database (username/first name/last name)
@@ -1073,7 +1108,8 @@ def createWithUsername(username):
         return accessDenied()
 
     return render_template('create_mtg.html',
-                           errorMsg = "")
+                           errorMsg = "",
+                           patientUser = username)
 
 #Endpoint trigger: when dr manually submits a mtg ID to be cancelled in the delete mtg form
 #Purpose: invokes cancellation process for the appt via the mtgID
@@ -1215,6 +1251,24 @@ def return_data():
     with open('appts.json', "r") as input_data:
         #print(input_data.read())
         return input_data.read()    
+
+#Endpoint trigger: when user clicks "Care team" button on home page
+#Purpose: renders the logged in patient's care team
+@app.route('/user_careteam', methods=['POST','GET'])
+def show_care_team():
+    userObj = mySQL_userDB.getAcctFromUsername(session['username'], cursor, cnx)
+    drList = mySQL_userDB.getCareTeamOfUser(session['username'], cursor, cnx)
+    
+    return render_template("careTeamDetails.html",
+                           username = session['username'],
+                           nm = session['name'],
+                           d1Username= "emptyDr" if userObj.dietician=="N/A" else userObj.dietician,
+                           drOne=drList[0],
+                           d2Username="emptyDr" if userObj.physician=="N/A" else userObj.physician,
+                           drTwo=drList[1],
+                           d3Username="emptyDr" if userObj.healthcoach=="N/A" else userObj.healthcoach,
+                           drThree=drList[2])
+
 
 #Endpoint trigger: when user navigates to calendar from home page or nav bar
 #Purpose: renders calendar page (invokes background processes for formatting/functionality in flaskcalendar)
@@ -2076,7 +2130,7 @@ def usernameSearch(box):
    elif (session['logged_in_a']==True):
        listPatients = mySQL_adminDB.adminAllSearchUsers(cursor, cnx)
    else:
-        listPatients= mySQL_userDB.getCareTeamOfUser(session['username'],cursor, cnx)
+        listPatients= mySQL_userDB.getCareTeamOfUserEmailList(session['username'],cursor, cnx)
    for username in listPatients:
        if(query.lower() in username.lower()): #match regardless of case
            jsonSuggest.append({'value':username,'data':username})

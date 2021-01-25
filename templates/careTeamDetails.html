@@ -13,20 +13,12 @@
 <div class="login">
 <div class="login-screen">
 <div class="app-title">
-<h1>Patient Profile</h1>
+<h1>Care team - {{username}}</h1>
 </div>
 <div class="login-form">
 <div class="control-group">
-	<label class="login-field-icon fui-user" for="login-name">Username</label><br>
-	<input readonly type="text" class="login-field" value={{username}} name="username">
-</div>
-<div class="control-group">
 	<label class="login-field-icon fui-user" for="login-name">Name</label><br>
 	<input readonly type="text" class="login-field" value="{{nm}}" name="nm">
-</div>
-<div class="control-group">
-	<label class="login-field-icon fui-user" for="login-name">Email</label><br>
-	<input readonly type="text" class="login-field" value={{email}} name="email">
 </div>
 <div style="margin-left: 40px" class="control-group">
 	<label class="login-field-icon fui-user" for="login-name">Dietician</label><br>
@@ -40,11 +32,9 @@
 	<label class="login-field-icon fui-user" for="login-name">Health Coach</label><br>
 	<input readonly type="text" class="login-field" value="{{drThree}}" name="drThree"><a class = "drLinkImg" href="/doctors/{{d3Username}}"><img src="/static/goToDrAcct.png" width="40" height = "40" style="margin-top: -14px;"></a></input>
 </div>
-<div class="control-group">
-	<label class="login-field-icon fui-user" for="login-name">Member Since</label><br>
-	<input readonly type="text" class="login-field" value="{{createDate}}" name="createDate">
+<a href="{{ url_for('home') }}" class="btn btn-primary btn-large btn-block">Home</a>
 </div>
-</div>
+
 </div>
 </div>
 </div>
