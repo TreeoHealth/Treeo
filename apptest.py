@@ -790,15 +790,7 @@ def search_page():
                            drThree=drList[2],
                            createDate = patientInfoObj.creationDate
                            )
-            # return render_template('patientAcctDetails.html', 
-        #                    username=acct_search_item.username,
-        #                    nm=acct_search_item.fname + acct_search_item.lname,
-        #                    email=acct_search_item.email,
-        #                    drOne=("Not assigned" if acct_search_item.dietician=="N/A" else acct_search_item.dietician),
-        #                    drTwo=("Not assigned" if acct_search_item.physician=="N/A" else acct_search_item.physician),
-        #                    drThree=("Not assigned" if acct_search_item.healthcoach=="N/A" else acct_search_item.healthcoach),
-        #                    createDate = acct_search_item.creationDate
-        #                    )
+
     
     jsonSuggest=[]
     listStr=[]
@@ -1007,6 +999,19 @@ def editAcctRender():
                            )
 
 
+#Endpoint trigger: when user clicks "Send Message" from patient acct details pg OR  dr acct details pg
+#Purpose: opens a new email with that username as the reciever
+@app.route('/new_message/<username>', methods=['POST','GET'])
+def composeNewMsg(username):
+    return render_template("newEmail.html",
+                          inboxUnread =countUnreadInInbox(session['username']),
+                          trashUnread = countUnreadInTrash(session['username']),
+                          sender_username = session['username'],
+                          errorMsg="",
+                          userNotif = "",
+                          reciever_username=username,
+                          subject = "",
+                          email_body = "")
 
 #******************meeting CRUD**********************************************************************************************************
 
