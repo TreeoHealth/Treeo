@@ -26,21 +26,21 @@ pwd_context = CryptContext(
 def archiveAppt(mtgid, cursor, cnx):
     apptDetails=getApptFromMtgId(mtgid,cursor,cnx)
     formatInsert = ("INSERT INTO archiveApptTable "
-                   "(mtgID, patient,doctor,"
+                   "(mtgID, patient,provider,mtgName,"
                     "start_time) "
-                   "VALUES (%s, %s,%s, %s)") #NOTE: use %s even with numbers
-    insertContent = (apptDetails.meetingID, apptDetails.patient, apptDetails.doctor, apptDetails.startTime)
+                   "VALUES (%s, %s,%s, %s, %s)") #NOTE: use %s even with numbers
+    insertContent = (apptDetails.meetingID, apptDetails.patient, apptDetails.provider, apptDetails.meetingName, apptDetails.startTime)
     cursor.execute(formatInsert, insertContent)
     cnx.commit()
     deleteAppt(mtgid,cursor,cnx)
 
 #Purpose: add meeting to the current meetings database
-def createAppt(mtgName, mtgid, doctor, patient, start_time, joinURL, cursor, cnx):
+def createAppt(mtgName, mtgid, provider, patient, start_time, joinURL, cursor, cnx):
     formatInsert = ("INSERT INTO apptTable "
-                   "(mtgID, doctor,patient,mtgName,"
+                   "(mtgID, provider,patient,mtgName,"
                     "startTime,joinURL) "
                    "VALUES (%s, %s,%s, %s,%s, %s)") #NOTE: use %s even with numbers
-    insertContent = (mtgid, doctor, patient, mtgName, start_time, joinURL)
+    insertContent = (mtgid, provider, patient, mtgName, start_time, joinURL)
     cursor.execute(formatInsert, insertContent)
     cnx.commit()
     return "success create"
@@ -66,9 +66,9 @@ def deleteAppt(mtgid, cursor, cnx):
     #     return "deleted "+mtgid
  
 #Purpose: return an array of appointment class objects where each obj holds an appt
-#   that the username is involved in (patient or dr)
+#   that the username is involved in (patient or provider)
 def getAllApptsFromUsername(username, tempcursor, cursor, cnx):
-    query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable WHERE doctor = %s OR patient = %s")         
+    query = ("SELECT mtgID, provider, patient, mtgName, startTime, joinURL FROM apptTable WHERE provider = %s OR patient = %s")         
     cursor.execute(query, (username, username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     apptArr = []
     for mI, d, p, mN, sT, jU in cursor:  
@@ -82,7 +82,7 @@ def getAllApptsFromUsername(username, tempcursor, cursor, cnx):
 
 #Purpose: return an appointment class object that holds all details of queried mtg
 def getApptFromMtgId(mtgid, cursor, cnx):
-    query = ("SELECT mtgID, doctor, patient, mtgName, startTime, joinURL FROM apptTable WHERE mtgID = %s")         
+    query = ("SELECT mtgID, provider, patient, mtgName, startTime, joinURL FROM apptTable WHERE mtgID = %s")         
     cursor.execute(query, (mtgid,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
     for mI, d, p, mN, sT, jU in cursor:  

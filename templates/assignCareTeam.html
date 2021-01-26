@@ -27,13 +27,13 @@
 	<input readonly type="text" class="login-field" placeholder="username" name="username" value={{username}} >
 <label class="login-field-icon fui-user" for="login-name"></label></div>
 <div class="control-group">
-    <input required placeholder="Dietician" id = "dietician" type="text" name = "dietician" value={{dietician}}  >
+    <input required placeholder="Dietitian" id = "dietitian" type="text" name = "dietitian" value={{dietitian}}  >
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
 <div class="control-group">
     <input required placeholder="Physician" id = "physician" type="text" name = "physician" value={{physician}}  >
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
 <div class="control-group">
-    <input required placeholder="Health Coach" id = "healthcoach" type="text" name = "healthcoach" value={{healthcoach}}  >
+    <input required placeholder="Health Coach" id = "coach" type="text" name = "coach" value={{coach}}  >
 <label class="login-field-icon fui-lock" for="login-pass"></label></div>
 
 
@@ -47,8 +47,8 @@
 </form>
 
 <script>
-    $('#dietician').autocomplete({
-        serviceUrl: '/dieticianList',
+    $('#dietitian').autocomplete({
+        serviceUrl: '/dietitianList',
         dataType: 'json',
         onSearchComplete: function (query, suggestions) {
           console.log(query);
@@ -63,8 +63,8 @@
         }
     });
 
-    $('#healthcoach').autocomplete({
-        serviceUrl: '/healthcoachList',
+    $('#coach').autocomplete({
+        serviceUrl: '/coachList',
         dataType: 'json',
         onSearchComplete: function (query, suggestions) {
           console.log(query);

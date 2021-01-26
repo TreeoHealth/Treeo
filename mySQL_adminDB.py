@@ -22,7 +22,7 @@ pwd_context = CryptContext(
     )
 
 #Purpose: returns an array of the search dropdown items (username + first name + last name)
-#   for admin, doctor and patient users 
+#   for admin, provider and patient users 
 def adminAllSearchUsers(cursor, cnx): 
     query=("SELECT username, fname, lname FROM patientTable")
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
@@ -30,7 +30,7 @@ def adminAllSearchUsers(cursor, cnx):
     for un,fn,ln in cursor:
         tmp = str(un+" - "+ln+", "+fn)
         nameArr.append(tmp)
-    query=("SELECT username, fname, lname FROM doctorTable")
+    query=("SELECT username, fname, lname FROM providerTable")
     cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     for un,fn,ln in cursor:
         tmp = str(un+" - "+ln+", "+fn)
@@ -92,7 +92,7 @@ def verifyAdminLogin(un, pwrd, cursor, cnx):
     
     query = ("SELECT username, password FROM adminTable WHERE username = %s")
     cursor.execute(query, (un, ))
-    for un, pw in cursor: #this loop will not be entered if it does not exist in the doctorDB
+    for un, pw in cursor: #this loop will not be entered if it does not exist in the providerDB
         if( True==(pwd_context.verify(pwrd, pw))):
             return True
         else: #because there can only be 1 match, this query can only be run 1 time max (not O(n^2))

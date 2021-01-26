@@ -13,7 +13,7 @@ import mysql.connector
 import mySQL_apptDB
 import mySQL_userDB
 import mySQL_adminDB
-from classFile import adminUserClass, apptObjectClass, patientUserClass, doctorUserClass
+from classFile import adminUserClass, apptObjectClass, patientUserClass, providerUserClass
 import zoomtest_post
 
 #global variables for paging, connection to database, password checking and some username arrays
@@ -74,7 +74,7 @@ def check_login():
         return render_template('login.html', errorMsg="Incorrect username or password.")
     else:
         acct_info = mySQL_userDB.getAcctFromUsername(request.form['username'],cursor, cnx)
-        if(type(acct_info)==doctorUserClass):
+        if(type(acct_info)==providerUserClass):
             if(request.form['username'] in mySQL_userDB.getAllUnapprovedDrs(cursor, cnx)):
                 return render_template('login.html', errorMsg="You have not been verified. Check your email for updates.")
             session['logged_in_d']=True
@@ -94,7 +94,7 @@ def check_login():
 @app.route('/homepage')
 def displayLoggedInHome():
     if(session.get('logged_in_d')):
-        docStatus = 'doctor'
+        docStatus = 'provider'
         return render_template('homePageDr.html',
                                docStat = docStatus,
                                docType= mySQL_userDB.getDrTypeOfAcct(session['username'], cursor, cnx),
@@ -117,7 +117,7 @@ def emailcheck():
     except EmailNotValidError as e:
         if(type(e)==EmailSyntaxError):
             text=""
-            return "Incorrectly formatted email address."
+            return "Incorrectly formatted email adprovideress."
         if(type(e)==EmailUndeliverableError):
             text=""
             return "Invalid domain."
@@ -155,7 +155,7 @@ def namecheck():
 
 #Endpoint trigger: when user submits "register" form
 #Purpose: verify username is unique and try to insert the user type into the database (read reaponse to see if it worked).
-#   if it was inserted, log the user in (unless dr user). if it was not, render appropriate error msg with filled out register pg.
+#   if it was inserted, log the user in (unless provider user). if it was not, render appropriate error msg with filled out register pg.
 @app.route('/register', methods=['POST','GET'])
 def new_register():
     if(mySQL_userDB.isUsernameTaken(request.form['username'],cursor, cnx)):
@@ -177,8 +177,8 @@ def new_register():
     docType=""
     reply = ""
     if(docStatus!='patient'):
-        docType = request.form['drType']
-        reply = mySQL_userDB.insertDoctor(request.form['username'], 
+        docType = request.form['providerType']
+        reply = mySQL_userDB.insertProvider(request.form['username'], 
                             request.form['password'], 
                             request.form['email'], 
                             request.form['fname'], 
@@ -201,7 +201,7 @@ def new_register():
         session['username'] = request.form['username']
         session['name'] = request.form['fname']+" "+request.form['lname']
         emailBody=""
-        if(docStatus=='doctor'):
+        if(docStatus=='provider'):
             emailBody = "Hello "+session['name']+",\r\nWelcome to Treeo!\r\nYou are not approved as a care provider yet, but we'll get right on verification. Let us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
             sendAutomatedAcctMsg(request.form['username'],"Welcome to Treeo!",emailBody) 
             return render_template('login.html', errorMsg="You have not been verified. Check your email for updates.")
@@ -326,8 +326,8 @@ def usernamecheck():
   
 #******************admin functions**********************************************************************************************************
 
-#Endpoint trigger: when admin user clicks the "approved doctors"
-#Purpose: get all approved doctors from database and send to page in array for list display
+#Endpoint trigger: when admin user clicks the "approved providers"
+#Purpose: get all approved providers from database and send to page in array for list display
 @app.route('/approved', methods=['POST','GET'])
 def adminListApproved():
     listPat = mySQL_userDB.getAllApprovedDrs(cursor, cnx)
@@ -337,8 +337,8 @@ def adminListApproved():
         return render_template("approvedList.html",
                            options = listPat)
 
-#Endpoint trigger: when admin user clicks the "unapproved doctors"
-#Purpose: get all unapproved doctors from database and send to page in array for list display
+#Endpoint trigger: when admin user clicks the "unapproved providers"
+#Purpose: get all unapproved providers from database and send to page in array for list display
 @app.route('/unapproved', methods=['POST','GET'])
 def adminListUnapproved():
     listPat = mySQL_userDB.getAllUnapprovedDrs(cursor, cnx)
@@ -359,18 +359,18 @@ def adminListUnassigned():
         return render_template("unassignedList.html",
                            options = listPat)
 
-#Endpoint trigger: when admin user clicks a doctor user's name in the unapproved list
-#Purpose: approve the dr user in the db and send an automated message then render confirmation pg
+#Endpoint trigger: when admin user clicks a provider user's name in the unapproved list
+#Purpose: approve the provider user in the db and send an automated message then render confirmation pg
 @app.route('/approve/<username>', methods=['POST','GET'])
 def approveForm(username):
-    mySQL_userDB.verifyDoctor(username, cursor, cnx)
-    drAcctName = mySQL_userDB.getNameFromUsername(username, cursor, cnx)
-    emailBody = "Hello "+drAcctName+",\r\nWelcome to Treeo!\r\nYou are now approved as a care provider!\r\n\r\nWelcome to the team! Let us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
+    mySQL_userDB.verifyProvider(username, cursor, cnx)
+    providerAcctName = mySQL_userDB.getNameFromUsername(username, cursor, cnx)
+    emailBody = "Hello "+providerAcctName+",\r\nWelcome to Treeo!\r\nYou are now approved as a care provider!\r\n\r\nWelcome to the team! Let us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
     sendAutomatedAcctMsg(username,"Treeo Approval - Welcome",emailBody) 
-    emailBody = "Hello "+session['name']+",\r\nYou have approved "+drAcctName+ " (" +username+") as a care provider. If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
+    emailBody = "Hello "+session['name']+",\r\nYou have approved "+providerAcctName+ " (" +username+") as a care provider. If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
     sendAutomatedAcctMsg(session['username'],"Provider Approved",emailBody) 
     return render_template("approveConfirmation.html",
-                           drname  = str(username + " - " +drAcctName))
+                           providername  = str(username + " - " +providerAcctName))
 
 #Endpoint trigger: when admin user clicks a patient user's name in the unassigned list
 #Purpose: render the form to assign 3 care providers to patient user
@@ -379,57 +379,57 @@ def assignForm(username):
     userObject = mySQL_userDB.getAcctFromUsername(username, cursor, cnx)
     return render_template("assignCareTeam.html",
                            username  = username,
-                           dietician = userObject.dietician if userObject.dietician !="N/A" else "",
+                           dietitian = userObject.dietitian if userObject.dietitian !="N/A" else "",
                            physician = userObject.physician if userObject.physician !="N/A" else "",
-                           healthcoach = userObject.healthcoach if userObject.healthcoach !="N/A" else "",)
+                           coach = userObject.coach if userObject.coach !="N/A" else "",)
 
 #Endpoint trigger: when admin user submits form to assign 3 care providers to patient user
 #Purpose: validate if all 3 providers selected are valid 
 #   if they are, assign, send auto msgs and render patient acct pg. if they are not, render error pg
 @app.route('/assignCareTeam', methods=['POST','GET'])
 def assignTeam(): #submit update form
-    dr1 = request.form['dietician'].split(" - ")[0]
-    dr2 = request.form['physician'].split(" - ")[0]
-    dr3 = request.form['healthcoach'].split(" - ")[0]
-    if(mySQL_userDB.isDrDietician(dr1, cursor, cnx)==False):
+    provider1 = request.form['dietitian'].split(" - ")[0]
+    provider2 = request.form['physician'].split(" - ")[0]
+    provider3 = request.form['coach'].split(" - ")[0]
+    if(mySQL_userDB.isDrDietitian(provider1, cursor, cnx)==False):
         return render_template("assignCareTeam.html",
-                            errorMsg = "Invalid dietician user (does not exist or is unapproved).",
+                            errorMsg = "Invalid dietitian user (does not exist or is unapproved).",
                            username  = request.form['username'],
-                           dietician = dr1,
-                           physician = dr2,
-                           healthcoach=dr3)
-    elif(mySQL_userDB.isDrPhysician(dr2, cursor, cnx)==False):
+                           dietitian = provider1,
+                           physician = provider2,
+                           coach=provider3)
+    elif(mySQL_userDB.isDrPhysician(provider2, cursor, cnx)==False):
         return render_template("assignCareTeam.html",
                             errorMsg = "Invalid physician user (does not exist or is unapproved).",
                            username  = request.form['username'],
-                           dietician = dr1,
-                           physician = dr2,
-                           healthcoach=dr3)
-    elif mySQL_userDB.isDrHealthCoach(dr3, cursor, cnx)==False:
+                           dietitian = provider1,
+                           physician = provider2,
+                           coach=provider3)
+    elif mySQL_userDB.isDrCoach(provider3, cursor, cnx)==False:
         return render_template("assignCareTeam.html",
                             errorMsg = "Invalid health coach user (does not exist or is unapproved).",
                            username  = request.form['username'],
-                           dietician = dr1,
-                           physician = dr2,
-                           healthcoach=dr3)     
+                           dietitian = provider1,
+                           physician = provider2,
+                           coach=provider3)     
     else:
-        mySQL_userDB.assignPatientCareTeam(request.form['username'], dr1, dr2, dr3, cursor, cnx) 
-        emailBody = "Hello,\r\nYou have been assigned a care team.\r\n\r\n\tDietician: "
-        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr1,cursor, cnx)+" ("+dr1+")\r\n\tPhysician: "
-        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr2,cursor, cnx)+" ("+dr2+")\r\n\tHealth Coach: "
-        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr3,cursor, cnx)+" ("+dr3+")\r\n"
+        mySQL_userDB.assignPatientCareTeam(request.form['username'], provider1, provider2, provider3, cursor, cnx) 
+        emailBody = "Hello,\r\nYou have been assigned a care team.\r\n\r\n\tDietitian: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(provider1,cursor, cnx)+" ("+provider1+")\r\n\tPhysician: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(provider2,cursor, cnx)+" ("+provider2+")\r\n\tHealth Coach: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(provider3,cursor, cnx)+" ("+provider3+")\r\n"
         emailBody = emailBody+"\r\nPlease reach out with any questions or concerns.\r\nSincerely,\r\n    Your Treeo Team"
         sendAutomatedAcctMsg(request.form['username'],"Care Team Assignment",emailBody) 
         
         emailBody = "Hello,\r\nYou have been assigned to a patient: "
-        emailBody=emailBody+mySQL_userDB.getNameFromUsername(request.form['username'],cursor, cnx)+" ("+request.form['username'] +")\r\n Here is your team:\r\n\r\n\tDietician: "
-        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr1,cursor, cnx)+" ("+dr1+")\r\n\tPhysician: "
-        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr2,cursor, cnx)+" ("+dr2+")\r\n\tHealth Coach: "
-        emailBody=emailBody+mySQL_userDB.getNameFromUsername(dr3,cursor, cnx)+" ("+dr3+")\r\n"
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(request.form['username'],cursor, cnx)+" ("+request.form['username'] +")\r\n Here is your team:\r\n\r\n\tDietitian: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(provider1,cursor, cnx)+" ("+provider1+")\r\n\tPhysician: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(provider2,cursor, cnx)+" ("+provider2+")\r\n\tHealth Coach: "
+        emailBody=emailBody+mySQL_userDB.getNameFromUsername(provider3,cursor, cnx)+" ("+provider3+")\r\n"
         emailBody =emailBody+"\r\nPlease reach out with any questions or concerns.\r\nSincerely,\r\n    Your Treeo Admins"
-        sendAutomatedAcctMsg(dr1,"Care Team Assignment",emailBody) 
-        sendAutomatedAcctMsg(dr2,"Care Team Assignment",emailBody) 
-        sendAutomatedAcctMsg(dr3,"Care Team Assignment",emailBody) 
+        sendAutomatedAcctMsg(provider1,"Care Team Assignment",emailBody) 
+        sendAutomatedAcctMsg(provider2,"Care Team Assignment",emailBody) 
+        sendAutomatedAcctMsg(provider3,"Care Team Assignment",emailBody) 
         return patientAcct(request.form['username'])
 
 #Endpoint trigger: when admin selects the "create new admin user" from home page
@@ -472,12 +472,12 @@ def createNewAdmin():
     return
  
 #Endpoint trigger: when admin is typing in 1st input on assign page (every char entered triggers this)
-#Purpose: sends a list of autocomplete values containing username/first name/last name of all dieticians
-@app.route("/dieticianList")
+#Purpose: sends a list of autocomplete values containing username/first name/last name of all dietitians
+@app.route("/dietitianList")
 def dAutocomplete():
    jsonSuggest = []
    query = request.args.get('query')
-   listDr=mySQL_userDB.getAllDrDietician(cursor, cnx)
+   listDr=mySQL_userDB.getAllDrDietitian(cursor, cnx)
    for username in listDr:
        if(query.lower() in username.lower()):
            jsonSuggest.append({'value':username,'data':username})
@@ -490,7 +490,7 @@ def displayAdminHome():
 
 #Endpoint trigger: when admin is typing in 3rd input on assign page (every char entered triggers this)
 #Purpose: sends a list of autocomplete values containing username/first name/last name of all health coaches
-@app.route("/healthcoachList")
+@app.route("/coachList")
 def hcAutocomplete():
    jsonSuggest = []
    query = request.args.get('query')
@@ -512,31 +512,31 @@ def pAutocomplete():
            jsonSuggest.append({'value':username,'data':username})
    return jsonify({"suggestions":jsonSuggest})
 
-#Endpoint trigger: when admin user clicks a doctor user's name in the approved list
-#Purpose: remove approval of the dr user in the db and send an automated message then render confirmation pg
+#Endpoint trigger: when admin user clicks a provider user's name in the approved list
+#Purpose: remove approval of the provider user in the db and send an automated message then render confirmation pg
 @app.route('/removeapproval/<username>', methods=['POST','GET'])
 def unapproveForm(username):
-    mySQL_userDB.unverifyDoctor(username, cursor, cnx)
-    drAcctName = mySQL_userDB.getNameFromUsername(username, cursor, cnx)
-    emailBody = "Hello "+drAcctName+",\r\You have been suspended from being a care provider temporarily.\r\n\r\nLet us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
+    mySQL_userDB.unverifyProvider(username, cursor, cnx)
+    providerAcctName = mySQL_userDB.getNameFromUsername(username, cursor, cnx)
+    emailBody = "Hello "+providerAcctName+",\r\You have been suspended from being a care provider temporarily.\r\n\r\nLet us know if you have any questions.\r\nSincerely,\r\n    Your Treeo Team"
     sendAutomatedAcctMsg(username,"Provider Account Suspended",emailBody) 
-    emailBody = "Hello "+session['name']+",\r\nYou have removed provider approval for "+drAcctName+ " (" +username+"). If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
+    emailBody = "Hello "+session['name']+",\r\nYou have removed provider approval for "+providerAcctName+ " (" +username+"). If this was a mistake, please remedy immediately.\r\nSincerely,\r\n    Your Treeo Team"
     sendAutomatedAcctMsg(session['username'],"Provider Approval Revoked",emailBody) 
     
-    drAccType = mySQL_userDB.getDrTypeOfAcct(username, cursor, cnx)
+    providerAccType = mySQL_userDB.getDrTypeOfAcct(username, cursor, cnx)
     assignedPatients = mySQL_userDB.returnPatientsAssignedToDr(username, cursor, cnx)
     for patientUser in assignedPatients:
-        emailBody = "Hello "+patientUser+",\r\nYour "+drAccType+" ("+drAcctName+" - "+username+") on your care team has been removed from the system.\r\nWe will assign a replacement ASAP.\r\nSincerely,\r\n\tYour Treeo Team"
+        emailBody = "Hello "+patientUser+",\r\nYour "+providerAccType+" ("+providerAcctName+" - "+username+") on your care team has been removed from the system.\r\nWe will assign a replacement ASAP.\r\nSincerely,\r\n\tYour Treeo Team"
         sendAutomatedAcctMsg(patientUser, "Care Team Revision", emailBody)
     mySQL_userDB.removeDrFromAllCareTeams(username, cursor, cnx)
     return render_template("unapproveConfirmation.html",
-                           drname  = str(username + " - " +drAcctName))
+                           providername  = str(username + " - " +providerAcctName))
 
 
 
 #******************search functions**********************************************************************************************************
 
-#Endpoint trigger: when dr user changes the size of search result page (dropdown)
+#Endpoint trigger: when provider user changes the size of search result page (dropdown)
 #Purpose: gets array stitched into pg ("x,x,x|y,y,y|...") and splits into a different size of pg 
 #   (resplit array and parse into new string). Rerender the page with the same contents but diff size (updates page marker).
 @app.route('/changePgSize', methods=['POST','GET'])
@@ -612,22 +612,22 @@ def displayPagedSearch(patientList, listSize):
                             fullPagesArr=result,
                                pgSize = selectSize)
 
-#Endpoint trigger: when link for dr acct is clicked from patient detail page or from curr care team page
-#Purpose: if dr had "emptyDr", render a preset page, else render the acct info for that dr acct
-@app.route('/doctors/<username>', methods=['POST','GET'])
-def doctorAcctPage(username):
+#Endpoint trigger: when link for provider acct is clicked from patient detail page or from curr care team page
+#Purpose: if provider had "emptyDr", render a preset page, else render the acct info for that provider acct
+@app.route('/providers/<username>', methods=['POST','GET'])
+def providerAcctPage(username):
     if(username == "emptyDr"):
-        return render_template("drDoesNotExist.html")
-    drInfoObj = mySQL_userDB.getAcctFromUsername(str(username),cursor, cnx)
-    return render_template("doctorAcctDetails.html",
+        return render_template("providerDoesNotExist.html")
+    providerInfoObj = mySQL_userDB.getAcctFromUsername(str(username),cursor, cnx)
+    return render_template("providerAcctDetails.html",
                            username=username,
-                           nm=drInfoObj.fname+" "+drInfoObj.lname,
-                           email=drInfoObj.email,
-                           createDate=drInfoObj.creationDate)
+                           nm=providerInfoObj.fname+" "+providerInfoObj.lname,
+                           email=providerInfoObj.email,
+                           createDate=providerInfoObj.creationDate)
     
 
-#Endpoint trigger: when dr user clicks "assigned patients" option from home page
-#Purpose: queries for all patient usernames that are assigned to the curr dr user
+#Endpoint trigger: when provider user clicks "assigned patients" option from home page
+#Purpose: queries for all patient usernames that are assigned to the curr provider user
 #   and returns the paged search page (10 patients per pg)
 @app.route('/patientsAssigned', methods=['POST','GET'])
 def list_assigned_patients():
@@ -637,7 +637,7 @@ def list_assigned_patients():
     currPg=0
     return displayPagedSearch(listStr, 10)
 
-#Endpoint trigger: when dr user clicks "List all patients" option from home page
+#Endpoint trigger: when provider user clicks "List all patients" option from home page
 #Purpose: queries for all patient usernames and returns the paged search page (10 patients per pg)
 @app.route('/patients', methods=['POST','GET'])
 def list_patients():
@@ -647,7 +647,7 @@ def list_patients():
     currPg=0
     return displayPagedSearch(listStr, 10)
 
-#Endpoint trigger: when dr user presses next/prev buttons on the search page
+#Endpoint trigger: when provider user presses next/prev buttons on the search page
 #Purpose: take the page str stitched into the html pg ("x,x,x|y,y,y|...") and decide which direction we went
 #    (update currPg value) and decide which page to render and what patient users go on the page
 @app.route('/page', methods=['POST','GET'])
@@ -723,28 +723,28 @@ def nextPg():
                            ppgnum=currPg-1,
                             npgnum=currPg+1)
 
-#Endpoint trigger: when dr user clicks on patient user link from search list
+#Endpoint trigger: when provider user clicks on patient user link from search list
 #Purpose: queries for that patient acct info and renders in readonly form (care team included)
 @app.route('/patients/<username>', methods=['POST','GET'])
 def patientAcct(username):
-    ##dr will not be given the option to edit any details
+    ##provider will not be given the option to edit any details
     ##this is where medical details will eventually be rendered
     patientInfoObj = mySQL_userDB.getAcctFromUsername(str(username),cursor, cnx)
-    drList = mySQL_userDB.getCareTeamOfUser(str(username),cursor, cnx)
+    providerList = mySQL_userDB.getCareTeamOfUser(str(username),cursor, cnx)
     return render_template('patientAcctDetails.html', 
                            username=username,
                            nm=patientInfoObj.fname + " " +patientInfoObj.lname,
                            email=patientInfoObj.email,
-                           d1Username= "emptyDr" if patientInfoObj.dietician=="N/A" else patientInfoObj.dietician,
-                           drOne=drList[0],
+                           d1Username= "emptyDr" if patientInfoObj.dietitian=="N/A" else patientInfoObj.dietitian,
+                           providerOne=providerList[0],
                            d2Username="emptyDr" if patientInfoObj.physician=="N/A" else patientInfoObj.physician,
-                           drTwo=drList[1],
-                           d3Username="emptyDr" if patientInfoObj.healthcoach=="N/A" else patientInfoObj.healthcoach,
-                           drThree=drList[2],
+                           providerTwo=providerList[1],
+                           d3Username="emptyDr" if patientInfoObj.coach=="N/A" else patientInfoObj.coach,
+                           providerThree=providerList[2],
                            createDate = patientInfoObj.creationDate
                            )
 
-#Endpoint trigger: when dr is typing in search box input on search page (every char entered triggers this)
+#Endpoint trigger: when provider is typing in search box input on search page (every char entered triggers this)
 #Purpose: sends a list of autocomplete values containing username/first name/last name of all patient users
 @app.route("/search/<string:box>")
 def process(box):
@@ -756,9 +756,9 @@ def process(box):
             jsonSuggest.append({'value':username,'data':username})
     return jsonify({"suggestions":jsonSuggest})
 
-#Endpoint trigger: when dr user submits a search in the search form
+#Endpoint trigger: when provider user submits a search in the search form
 #Purpose: if search was blank, return all patients in paged search page (10 patients per pg).
-#   if dr used the autocomplete to select a specific patient -> take them to the account page directly.
+#   if provider used the autocomplete to select a specific patient -> take them to the account page directly.
 #   if they just did a general search, render list of patient accts that match the query (10 patients per pg)  
 @app.route('/searchResult', methods=['POST','GET'])
 def search_page():
@@ -777,17 +777,17 @@ def search_page():
         #if the username exists and the user used the autocomplete -> take them to the account page directly
         
         patientInfoObj = mySQL_userDB.getAcctFromUsername(str(actualUsername),cursor, cnx)
-        drList = mySQL_userDB.getCareTeamOfUser(str(actualUsername),cursor, cnx)
+        providerList = mySQL_userDB.getCareTeamOfUser(str(actualUsername),cursor, cnx)
         return render_template('patientAcctDetails.html', 
                            username=actualUsername,
                            nm=patientInfoObj.fname + " " +patientInfoObj.lname,
                            email=patientInfoObj.email,
-                           d1Username=patientInfoObj.dietician,
-                           drOne=drList[0],
+                           d1Username=patientInfoObj.dietitian,
+                           providerOne=providerList[0],
                            d2Username=patientInfoObj.physician,
-                           drTwo=drList[1],
-                           d3Username=patientInfoObj.healthcoach,
-                           drThree=drList[2],
+                           providerTwo=providerList[1],
+                           d3Username=patientInfoObj.coach,
+                           providerThree=providerList[2],
                            createDate = patientInfoObj.creationDate
                            )
 
@@ -806,8 +806,8 @@ def search_page():
     currPg=0
     return displayPagedSearch(listStr,10)
 
-#Endpoint trigger: when dr user clicks "Search patients" option from home page
-#Purpose: renders form for dr to search for patients
+#Endpoint trigger: when provider user clicks "Search patients" option from home page
+#Purpose: renders form for provider to search for patients
 @app.route('/searchpgrender', methods=['POST','GET'])
 def search_patients():
     return render_template('searchPg.html')
@@ -823,7 +823,7 @@ def acct_details():
     acct_info = mySQL_userDB.getAcctFromUsername(str(session['username']),cursor, cnx)
     return render_template('ownAcctPg.html', 
                            username=acct_info.username,
-                           docstatus= ("patient" if type(acct_info) == patientUserClass else acct_info.doctorType),
+                           docstatus= ("patient" if type(acct_info) == patientUserClass else acct_info.providerType),
                            nm=acct_info.fname+" "+acct_info.lname,
                            email=acct_info.email,
                            createDate = acct_info.creationDate
@@ -849,25 +849,25 @@ def deactivateAllMsgsUsername(oldUsername):
 #   deletes all notifications, updates archived appts (username), and logs the user out
 @app.route('/acctDelete', methods=['POST','GET'])
 def deleteAccount():
-    drUsername = str(request.form['username'])
-    userAcctObj = mySQL_userDB.getAcctFromUsername(drUsername, cursor, cnx)
+    providerUsername = str(request.form['username'])
+    userAcctObj = mySQL_userDB.getAcctFromUsername(providerUsername, cursor, cnx)
     
-    if(type(userAcctObj)==doctorUserClass):
-        assignedPatients = mySQL_userDB.returnPatientsAssignedToDr(drUsername, cursor, cnx)
+    if(type(userAcctObj)==providerUserClass):
+        assignedPatients = mySQL_userDB.returnPatientsAssignedToDr(providerUsername, cursor, cnx)
         for patientUser in assignedPatients:
-            emailBody = "Hello "+patientUser+",\r\nYour "+userAcctObj.doctorType+" ("+userAcctObj.fname+" "+userAcctObj.lname+" - "+drUsername+") on your care team has been removed from the system.\r\nWe will assign a replacement ASAP.\r\nSincerely,\r\n\tYour Treeo Team"
+            emailBody = "Hello "+patientUser+",\r\nYour "+userAcctObj.providerType+" ("+userAcctObj.fname+" "+userAcctObj.lname+" - "+providerUsername+") on your care team has been removed from the system.\r\nWe will assign a replacement ASAP.\r\nSincerely,\r\n\tYour Treeo Team"
             sendAutomatedAcctMsg(patientUser, "Care Team Revision", emailBody)
         
-        mySQL_userDB.removeDrFromAllCareTeams(drUsername, cursor, cnx)
+        mySQL_userDB.removeDrFromAllCareTeams(providerUsername, cursor, cnx)
         
-    allAppts = mySQL_apptDB.getAllApptsFromUsername(drUsername, tmpcursor, cursor, cnx)
+    allAppts = mySQL_apptDB.getAllApptsFromUsername(providerUsername, tmpcursor, cursor, cnx)
     for apptInfo in allAppts:
         autoDeleteMtg(apptInfo.meetingID)
         
-    mySQL_userDB.deleteUserAcct(drUsername, cursor, cnx)
-    deactivateAllMsgsUsername(drUsername)
+    mySQL_userDB.deleteUserAcct(providerUsername, cursor, cnx)
+    deactivateAllMsgsUsername(providerUsername)
     deleteAllNotifDeactive()
-    mySQL_apptDB.deactivateAllArchivedAppts(drUsername,cursor, cnx )
+    mySQL_apptDB.deactivateAllArchivedAppts(providerUsername,cursor, cnx )
     
     return logout()
   
@@ -957,12 +957,12 @@ def editAcctDetails():
                            fname=acct_info.fname,
                            lname=acct_info.lname
                            )
-    emailAddr=str(request.form['email'])
+    emailAdprovider=str(request.form['email'])
     try:
-        valid = validate_email(emailAddr)
+        valid = validate_email(emailAdprovider)
     except:
         return render_template('editProfile.html',
-                           errorMsg="Invalid email address format.",
+                           errorMsg="Invalid email adprovideress format.",
                            username=session['username'],
                            pword1="",
                            pwordNew1="",
@@ -999,7 +999,7 @@ def editAcctRender():
                            )
 
 
-#Endpoint trigger: when user clicks "Send Message" from patient acct details pg OR  dr acct details pg
+#Endpoint trigger: when user clicks "Send Message" from patient acct details pg OR  provider acct details pg
 #Purpose: opens a new email with that username as the reciever
 @app.route('/new_message/<username>', methods=['POST','GET'])
 def composeNewMsg(username):
@@ -1016,18 +1016,18 @@ def composeNewMsg(username):
 #******************meeting CRUD**********************************************************************************************************
 
 #Purpose: if mtgID is valid, cancels the appt via the mtgID, sends 2 automated notifications to patient and 
-#   dr, and deletes appt from zoom API then renders confirmation (if not valid id, render the manual delete form)
+#   provider, and deletes appt from zoom API then renders confirmation (if not valid id, render the manual delete form)
 def autoDeleteMtg(mtgid):
    
     if (mySQL_apptDB.isMeetingIDValid(str(mtgid), cursor, cnx)==True):
         mtgDetailsObject = mySQL_apptDB.getApptFromMtgId(str(mtgid), cursor, cnx)
         
-        emailBody="Hello "+mtgDetailsObject.patient+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetailsObject.doctor, cursor, cnx)+" ("+mtgDetailsObject.doctor+") has been cancelled. \r\n\r\n\t"
+        emailBody="Hello "+mtgDetailsObject.patient+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetailsObject.provider, cursor, cnx)+" ("+mtgDetailsObject.provider+") has been cancelled. \r\n\r\n\t"
         emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetailsObject.startTime[:10]+"\r\nTime: "+mtgDetailsObject.startTime[11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
         sendAutomatedApptMsg(mtgDetailsObject.patient,"Appointment Cancelled",emailBody)
-        emailBody="Hello "+mtgDetailsObject.doctor+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetailsObject.patient, cursor, cnx)+" ("+mtgDetailsObject.patient+") has been cancelled. \r\n\r\n\t"
+        emailBody="Hello "+mtgDetailsObject.provider+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetailsObject.patient, cursor, cnx)+" ("+mtgDetailsObject.patient+") has been cancelled. \r\n\r\n\t"
         emailBody= emailBody+"Appointment details: \r\nDate: "+mtgDetailsObject.startTime[:10]+"\r\nTime: "+mtgDetailsObject.startTime[11:]+"\r\n\r\nThis has been removed from your calendar. Let us know if there are any issues or you wish to reschedule.\r\nSincerely,\r\n\tYour Treeo Team"
-        sendAutomatedApptMsg(mtgDetailsObject.doctor,"Appointment Cancelled",emailBody)
+        sendAutomatedApptMsg(mtgDetailsObject.provider,"Appointment Cancelled",emailBody)
         
         zoomtest_post.deleteMtgFromID(str(mtgid), cursor, cnx)
         
@@ -1035,9 +1035,9 @@ def autoDeleteMtg(mtgid):
     else:
         return deletePg()
 
-#Endpoint trigger: when dr user submits form to create mtg
+#Endpoint trigger: when provider user submits form to create mtg
 #Purpose: tries to create mtg through zoompost call (if it throws error, render error msg),
-#   if mtg was created, send automated msgs to dr and patient and render appt details page.
+#   if mtg was created, send automated msgs to provider and patient and render appt details page.
 @app.route('/createmtg', methods=['POST','GET'])
 def create_mtg():
     if session['logged_in_p']:
@@ -1075,14 +1075,14 @@ def create_mtg():
         sendAutomatedApptMsg(session['username'],"New Appointment Scheduled",emailBody)
         return render_template('apptDetail.html',
                                mtgnum=apptClassObj.meetingID,
-                               doctor =session['username'],
+                               provider =session['username'],
                                patient = patientUsername,
                                mtgname=apptClassObj.meetingName,
                                mtgtime=str(time[11:]),
                                mtgdate=str(date))
     ##make a joinURL field on this AND the mtg detail page
 
-#Endpoint trigger: when dr user selects "create meeting" option from dr home pg
+#Endpoint trigger: when provider user selects "create meeting" option from provider home pg
 #Purpose: renders the form for creating an appt
 @app.route('/createrender', methods=['POST','GET'])
 def createPg():
@@ -1092,7 +1092,7 @@ def createPg():
                            errorMsg = "",
                            patientUser = "")
 
-#Endpoint trigger: when dr is typing in patient input on create mtg form (every char entered triggers this)
+#Endpoint trigger: when provider is typing in patient input on create mtg form (every char entered triggers this)
 #Purpose: autocompletes entered text with matching dropdown items from the database (username/first name/last name)
 @app.route('/create_search', methods=['POST','GET'])
 def createUserSearch():
@@ -1105,7 +1105,7 @@ def createUserSearch():
             
     return jsonify({"suggestions":jsonSuggest})
 
-#Endpoint trigger: when dr user selects "+ meeting" option from listed users in search result
+#Endpoint trigger: when provider user selects "+ meeting" option from listed users in search result
 #Purpose: renders the form for creating an appt
 @app.route('/createrender/<username>', methods=['POST','GET'])
 def createWithUsername(username):
@@ -1116,14 +1116,14 @@ def createWithUsername(username):
                            errorMsg = "",
                            patientUser = username)
 
-#Endpoint trigger: when dr manually submits a mtg ID to be cancelled in the delete mtg form
+#Endpoint trigger: when provider manually submits a mtg ID to be cancelled in the delete mtg form
 #Purpose: invokes cancellation process for the appt via the mtgID
 @app.route("/deletemtg", methods=['POST','GET'])
 def deleteMtg():
    return autoDeleteMtg(str(request.form['mtgID']))
 
-#Endpoint trigger: when dr clicks "delete mtg" option from home pg
-#Purpose: renders form to allow dr to manually enter a mtg id to be cancelled
+#Endpoint trigger: when provider clicks "delete mtg" option from home pg
+#Purpose: renders form to allow provider to manually enter a mtg id to be cancelled
 @app.route("/deleterender", methods=['POST','GET'])
 def deletePg():
     if session['logged_in_p']:
@@ -1136,7 +1136,7 @@ def deletePg():
 def deletePgNum():
     return autoDeleteMtg(str(request.form['mtgnum']))
 
-#Endpoint trigger: when dr user clicks "edit appt" option from details page
+#Endpoint trigger: when provider user clicks "edit appt" option from details page
 #Purpose: gets the appt detail from the database and zoom API and renders details in editable (pre-filled) form
 @app.route("/editrender/", methods=['POST','GET'])
 def editPgFromID():
@@ -1158,8 +1158,8 @@ def editPgFromID():
                            mtgtime=str(time[11:]),
                            mtgdate=str(date))
 
-#Endpoint trigger: when dr user submits edit appt form
-#Purpose: updates meeting time in zoom API and database, send automated notification to dr and patient
+#Endpoint trigger: when provider user submits edit appt form
+#Purpose: updates meeting time in zoom API and database, send automated notification to provider and patient
 #   and renders appt detail (if time is passed, don't let them have the option to edit again)
 @app.route("/editmtg", methods=['POST','GET'])
 def editSubmit():
@@ -1191,20 +1191,20 @@ def editSubmit():
     
     #split and display
     date=time[:10]
-    docUser = mtgDetails.doctor
+    docUser = mtgDetails.provider
     patUser = mtgDetails.patient
     if(time[-1]=='Z'):
         time = time[:-1] #takes off the 'z'
-    emailBody="Hello "+mtgDetails.patient+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails.patient, cursor, cnx)+" ("+mtgDetails.doctor+") has been updated. \r\n\r\n\t"
+    emailBody="Hello "+mtgDetails.patient+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails.patient, cursor, cnx)+" ("+mtgDetails.provider+") has been updated. \r\n\r\n\t"
     emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails.joinURL+"\r\n\r\nThis has been changed in your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
     sendAutomatedApptMsg(mtgDetails.patient,"Appointment Updated",emailBody)
-    emailBody="Hello "+mtgDetails.doctor+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails.patient, cursor, cnx)+" ("+mtgDetails.patient+") has been updated. \r\n\r\n\t"
+    emailBody="Hello "+mtgDetails.provider+",\r\nYour appointment with "+mySQL_userDB.getNameFromUsername(mtgDetails.patient, cursor, cnx)+" ("+mtgDetails.patient+") has been updated. \r\n\r\n\t"
     emailBody= emailBody+"Updated appointment details: \r\nDate: "+date+"\r\nTime: "+time[11:]+"\r\nJoinURL: "+mtgDetails.joinURL+"\r\n\r\nThis has been changed your calendar. Let us know if there are any issues or you wish to cancel.\r\nSincerely,\r\n\tYour Treeo Team"
-    sendAutomatedApptMsg(mtgDetails.doctor,"Appointment Updated",emailBody)
+    sendAutomatedApptMsg(mtgDetails.provider,"Appointment Updated",emailBody)
     if(mySQL_apptDB.isMtgStartTimePassed(request.form['mtgnum'], cursor, cnx)==True): #if it is passed so it should not be edited
         return render_template('apptDetail.html',
                                mtgnum=str(request.form['mtgnum']),
-                               doctor=docUser,
+                               provider=docUser,
                                patient = patUser,
                                mtgname=str(jsonResp.get("topic")),
                                mtgtime=str(time[11:]),
@@ -1212,7 +1212,7 @@ def editSubmit():
     else:
         return render_template('apptDetailDrOptions.html',
                        mtgnum=str(request.form['mtgnum']),
-                       doctor =docUser,
+                       provider =docUser,
                        patient = patUser,
                        mtgname=str(jsonResp.get("topic")),
                        mtgtime=str(time[11:]),
@@ -1262,17 +1262,17 @@ def return_data():
 @app.route('/user_careteam', methods=['POST','GET'])
 def show_care_team():
     userObj = mySQL_userDB.getAcctFromUsername(session['username'], cursor, cnx)
-    drList = mySQL_userDB.getCareTeamOfUser(session['username'], cursor, cnx)
+    providerList = mySQL_userDB.getCareTeamOfUser(session['username'], cursor, cnx)
     
     return render_template("careTeamDetails.html",
                            username = session['username'],
                            nm = session['name'],
-                           d1Username= "emptyDr" if userObj.dietician=="N/A" else userObj.dietician,
-                           drOne=drList[0],
+                           d1Username= "emptyDr" if userObj.dietitian=="N/A" else userObj.dietitian,
+                           providerOne=providerList[0],
                            d2Username="emptyDr" if userObj.physician=="N/A" else userObj.physician,
-                           drTwo=drList[1],
-                           d3Username="emptyDr" if userObj.healthcoach=="N/A" else userObj.healthcoach,
-                           drThree=drList[2])
+                           providerTwo=providerList[1],
+                           d3Username="emptyDr" if userObj.coach=="N/A" else userObj.coach,
+                           providerThree=providerList[2])
 
 
 #Endpoint trigger: when user navigates to calendar from home page or nav bar
@@ -1282,7 +1282,7 @@ def show_mtg():
     return render_template("calendar.html")
 
 #Endpoint trigger: when user clicks an appt from the calendar
-#Purpose: gets the appt detail from the database and zoom API and displays details. if user is a dr, 
+#Purpose: gets the appt detail from the database and zoom API and displays details. if user is a provider, 
 #   render pg to allow editing. if user is patient or time is past the start, render pg that does not allow editing.
 @app.route('/showmtgdetail/<mtgid>', methods=['POST','GET'])
 def show_mtgdetail(mtgid):     
@@ -1293,12 +1293,12 @@ def show_mtgdetail(mtgid):
     date=time[:10]
     if(time[-1]=='Z'):
         time = time[:-1] #takes off the 'z'
-    docUser = apptDetail.doctor
+    docUser = apptDetail.provider
     patUser = apptDetail.patient
     if(session.get('logged_in_p')):
         return render_template('apptDetail.html',
                                mtgnum=mtgid,
-                               doctor=docUser,
+                               provider=docUser,
                                patient = session['username'],
                                mtgname=str(apptDetail.meetingName),
                                mtgtime=str(time[11:]),
@@ -1307,7 +1307,7 @@ def show_mtgdetail(mtgid):
         if(mySQL_apptDB.isMtgStartTimePassed(mtgid, cursor, cnx)==True): #if it is passed so it should not be edited
             return render_template('apptDetail.html',
                                mtgnum=mtgid,
-                               doctor=docUser,
+                               provider=docUser,
                                patient = patUser,
                                mtgname=str(apptDetail.meetingName),
                                mtgtime=str(time[11:]),
@@ -1315,7 +1315,7 @@ def show_mtgdetail(mtgid):
         else:
             return render_template('apptDetailDrOptions.html',
                        mtgnum=mtgid,
-                       doctor =docUser,
+                       provider =docUser,
                        patient = patUser,
                        mtgname=str(apptDetail.meetingName),
                        mtgtime=str(time[11:]),
@@ -2124,7 +2124,7 @@ def undoTrash(msgIDList, username):
 
 #Endpoint trigger: when user is typing in To: input on email compose page (every char entered triggers this)
 #Purpose: sends a list of autocomplete values containing username/first name/last name of all possible users
-#   (patient can only message care team and help acct, dr can msg dr/patients, admins can msg all users)
+#   (patient can only message care team and help acct, provider can msg provider/patients, admins can msg all users)
 @app.route("/emailsearch/<string:box>")
 def usernameSearch(box):
    jsonSuggest = []

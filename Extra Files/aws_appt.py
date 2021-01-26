@@ -1,9 +1,9 @@
 #search for patient users
 #when the create mtg is called in zoomtest_post, make it call a function here
     #search for patient user to add to this appt by both name and username
-    #insert an item into the appt table that has dr name (un), patient name (un), appt time/day, join url
+    #insert an item into the appt table that has provider name (un), patient name (un), appt time/day, join url
 #invite a user to an already created appt? make this a part of edit functionality
-#query all appts involving a user by username (dr and patient)
+#query all appts involving a user by username (provider and patient)
 #query user's name from username
 
 import boto3
@@ -71,7 +71,7 @@ def getAllApptsFromUsername(username):
     todayDate= str(date_time_obj.date())
     apptList = []
     for i in response['Items']:
-        if i['doctor'] == username or i['patient']==username:
+        if i['provider'] == username or i['patient']==username:
             ##check that the appts happen after the current day (only chack day, not time)
             ##if it's not, delete it (so it doesn't come back up)
             if(todayDate<=i['start_time'][:10]):
@@ -95,7 +95,7 @@ def getApptFromMtgId(mtgid):
         print(e.response['Error']['Message'])
 
 
-def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
+def createApptAWS(mtgName, mtgid, provider, patient, start_time, joinURL):
     mtgid=str(mtgid)
     if(len(mtgid)!=11): #does not insert a bad mtgid
         return "THE MTG NUMBER WAS INVALID"
@@ -107,12 +107,12 @@ def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
     try:
         response = dynamo_client.get_item(TableName= 'users',
             Key={
-                'username': {"S":doctor}
+                'username': {"S":provider}
             }
         )
         isDoc=response.get('Item').get('docStatus').get('S')
-        if isDoc!="doctor":
-            return "The doctor username sent was not a doctor account."
+        if isDoc!="provider":
+            return "The provider username sent was not a provider account."
         dError = False
         response = dynamo_client.get_item(TableName= 'users',
             Key={
@@ -132,7 +132,7 @@ def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
         else:
             print("INVALID PATIENT NAME.")
             return "Error retrieving the account information for patient account."
-    #if the doctor and patient are both valid
+    #if the provider and patient are both valid
 
         #error checking the date for extra :00s
     time = str(start_time)
@@ -145,7 +145,7 @@ def createApptAWS(mtgName, mtgid, doctor, patient, start_time, joinURL):
        Item={
             'mtgName':{"S":mtgName},
             'mtgid':{'S':str(mtgid)},
-            'doctor': {"S":doctor},
+            'provider': {"S":provider},
             'patient': {"S":patient},
             'start_time': {"S":start_time},
             'joinurl':{"S":joinURL}
@@ -197,7 +197,7 @@ def updateUserAcct(username, email,fname, lname,password):
     return "no"
 
 
-def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl(?) will not change
+def updateApptAWS(mtgName, mtgid,start_time): #provider, pat and joinurl(?) will not change
 #error checking the date for extra :00s
     mtgid=str(mtgid)
     time = str(start_time)
@@ -229,7 +229,7 @@ def updateApptAWS(mtgName, mtgid,start_time): #dr, pat and joinurl(?) will not c
         return "ERROR. Could not update the meeting."
 
 def testCal():
-    arrOfMtgs =getAllApptsFromUsername('doctor1')
+    arrOfMtgs =getAllApptsFromUsername('provider1')
     #print(arrOfMtgs)
     mtgList = []#mtgList = jsonResp.get("meetings")
     finalStr = ""
@@ -254,10 +254,10 @@ def testCal():
         return input_data.read()
 
 #print(len(getAcctFromUsername('aasdfasd')))
-#print(updateUserAcct('doctor1', 'testu@gmail.ocm','fake', 'name','d1'))
-#print(getAcctFromUsername('doctor1'))
+#print(updateUserAcct('provider1', 'testu@gmail.ocm','fake', 'name','d1'))
+#print(getAcctFromUsername('provider1'))
 #print(getApptFromMtgId(75274348158))
 #print(updateApptAWS("NEWTEST", 77353368533, "........"))
 #print(getApptFromMtgId(77353368533))
-##print(createApptAWS('b', None, 'doctor1', 'ads', 'asdf', 'asdf'))
+##print(createApptAWS('b', None, 'provider1', 'ads', 'asdf', 'asdf'))
 #print(testCal())

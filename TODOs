@@ -39,9 +39,9 @@ Fix spacing/centering of search box/search button
 #profile -- Change picture (upload) 
 #SOLVE LATENCY ***
 	#think of ways to reduce aws queries
-	-keep a list of patient on the backend (only query for it once on log in bc it won't change while the dr is logged in)
+	-keep a list of patient on the backend (only query for it once on log in bc it won't change while the provider is logged in)
 	-make query for appts better/more efficient?
-	-keep list of current appts (like patients)? (how to deal with dr making an appt while patient is logged in?)
+	-keep list of current appts (like patients)? (how to deal with provider making an appt while patient is logged in?)
 #SEND THE USER AN EMAIL (not confirmation, just notification of being added to an appt/delete and acct udated) 
 	#NOT MARKED AS SPAMMMM
 
@@ -51,15 +51,15 @@ Fix spacing/centering of search box/search button
 #let them delete their account
 	#update messages -- from deactivated user [have deac pat and doc] [make part of the username a forbidden char so no one can make an account with that name] 
 	#(don't let them reply)
-Make a notification system (notify patients when a dr invites them to an appt)
+Make a notification system (notify patients when a provider invites them to an appt)
 ##email validation? (valid domain at least)
 ###validation of zoom acct on creation??? Not possible
 ##TODO -- radio buttons for recurring meetings (how to line up recurring mtgs)
 ###form integration
-###how to make Zoom doctor sub users under the main admin acct -- are they in the secret/encrypted in the JWT key??
+###how to make Zoom provider sub users under the main admin acct -- are they in the secret/encrypted in the JWT key??
 	#####will the same key have the ability to query all of the sub users+CRUD their meetings?
 	###-- how to get the meetings that the patients have been invited to without them being owners of the JWT app/not being encrypted in the key?
-#(eventually) make doctor users only able to be created after approval by admins
+#(eventually) make provider users only able to be created after approval by admins
 #(eventually) validate acct (through email) - confirmation
 #(eventually) forgot password/recover acct
 	
@@ -68,50 +68,50 @@ Make a notification system (notify patients when a dr invites them to an appt)
 #x#if the patient is invalid, make an error
 #x#if the person creating is a patient, error
 #x#check unique username 
-#x--#block patients from using the doctor CRUD pages via links/urls
+#x--#block patients from using the provider CRUD pages via links/urls
 ##x#session constant of username and (not zoom-affiliated) email
 #x##change all of this to the info of the logged in user, not hard coded userid
 ##x#make calendar, and meeting create/delete behind the login wall
 ##x#once the user logs in, make a home page
 ##x#meeting -- update (fill in a form with already existing mtg info for meeting info to be updated)
 ##x#how to invite a user to the meeting who doesn't own it
-#TODO ADD "creator"/doctor param to createMtg
+#TODO ADD "creator"/provider param to createMtg
 #DONE cannot link to any page that has a [POST] method, not sure how to make them able to be navigated to ? Nav bar?
 #TODO -- make an entry for changing the patient
 #TODO make sure username+email aren't used by other users (errormsg)
 #x---those functions only return the mtgid then the jsonResp can come from zoom_post.py
 #x---MAKE FUNCTIONS IN .PY THAT QUERY AWS FOR THE USER INFO (NO ZOOM API CALL)
 ##TODO --> store appt info in aws away from zoom api
-#####implement doctor/patient accts
+#####implement provider/patient accts
         #*****************
     #xMAKE THE CREATE MEETING ONLY OPEN TO DOCTOR USERS
     #xMAKE THE CALENDAR ONLY DISPLAY THE APPTS THE USER OWNS/HAS BEEN ADDED TO
         #query the database for the appts those users are in on
         #make an option to add a patient on creation of the appt
-#let doctor/admin users invite the patient to a meeting
+#let provider/admin users invite the patient to a meeting
 #inviting user via id (add appt to that user's calendar and give them the join url)
 #store appt info in aws database for the user
-    #(for the appt, have a doctor user id field and patient user id field, date, time, join url)
+    #(for the appt, have a provider user id field and patient user id field, date, time, join url)
 #####TODO -- make a link in each entry to an EDITABLE/EXTENDED appt description
 #####in this area, make a button for each mtg that when pushed will delet the mtg by sending /deletemtg and the mtgID
 # TODO ---(make this calendar) Or when the calendar is clicked, have it call the show mtgs and format each mtg to show up correctly
 #####TODO -- make a function+page that allows you to view/edit specific mtg details?
 #####TODO -- figure out why the info transfers to the other page but the mtgID is not seen as valid?? ALL deletions are not working??
 #make a page to hold the appt details (don't just return the plain text) + nav bar *************<-------------
-##make the doctor able to view a list of patients ******<--------------
+##make the provider able to view a list of patients ******<--------------
 #FOR DETAILS PAGE --> EDIT HOW THE "delete"/"edit" buttons look (NOT JUST LINKS) <--------0
 ##change inline code (edit/delete) to buttons that are sent the mtgid link but are a button **********<-------------1
 #Make the calendar start on the current month (highlight current day?)
 #TODO MAKE PATIENTS UNABLE TO CRUD<------------0
 #MAKE THE EDIT BUTTON ONLY OPEN TO DOCTOR USERS<----------0
-##Make a patient and doctor field <-----------------------------------0
+##Make a patient and provider field <-----------------------------------0
 #register new user
     #TODO
         #change form to have first name last name x
         #change schema to have first name last name x
         #remove all accts to prevent conflicts x
         #change acct detail to combine the names x
-        #if the user doesn't choose doctor/patient radio -> default patient x
+        #if the user doesn't choose provider/patient radio -> default patient x
 #mkae the patient list page an actual page and format/print nicely <-------2 ***
 	#have a generic patient profile pictures/usernames	
 	#make it an array of pictures/usernames (variable)
@@ -119,7 +119,7 @@ Make a notification system (notify patients when a dr invites them to an appt)
 #patient list
 	#make it a link (clickable)
 	#make it able to link to a page with acct details
-#make the patients a "link" from dr list (let drs see the details when clicking) <-----------0
+#make the patients a "link" from provider list (let providers see the details when clicking) <-----------0
 ##MAKE acct details page (not editable yet)<-------------2
 #fix the "blank" render (no 'placeholder' in the box)
 #Decrease latency of connection to tables (don't import?)
@@ -151,7 +151,7 @@ Make search result page (from drop down results)
 ---------check usernames dynamically
 ---------check name length dynamically
 ---------#make an autocomplete for patient appt create somehow (having 100+ usernames, a dropdown is not viable)
-	#make a search functionality for when the doctor is adding patients to the appt
+	#make a search functionality for when the provider is adding patients to the appt
 	#can use binary search bc we will have it sorted
 #Verify valid domain/email format
 #make week/day view version of the calendar

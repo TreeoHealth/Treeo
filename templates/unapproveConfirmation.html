@@ -17,10 +17,10 @@
 </div>
 <div class="login-form">
 <div class="control-group">
-	<label class="login-field-icon fui-user" for="login-name">Successfully Removed Doctor Approval</label>
-	<input readonly type="text" class="login-field" value="{{drname}}" name="drname">
+	<label class="login-field-icon fui-user" for="login-name">Successfully Removed Provider Approval</label>
+	<input readonly type="text" class="login-field" value="{{providername}}" name="providername">
 </div>
-<a href="{{ url_for('adminListApproved') }}" class="btn btn-primary btn-large btn-block">Approved Doctors</a>
+<a href="{{ url_for('adminListApproved') }}" class="btn btn-primary btn-large btn-block">Approved Providers</a>
 <br>
 <a href="{{ url_for('displayLoggedInHome') }}" class="btn btn-primary btn-large btn-block">Home</a>
 <br>
