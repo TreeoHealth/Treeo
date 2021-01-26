@@ -894,8 +894,8 @@ def index():
 #- DONE :) -in the sent folder, change the sender to who the recipient is
 
 #WRITE QUERY FOR SELECTIVE RETURNS
-    #when they are a patient user, the dropdown should only have doctors
-    #when they are a doctor user, the dropdown should only be doctors/patients
+    #when they are a patient user, the dropdown should only have providers
+    #when they are a provider user, the dropdown should only be providers/patients
 
 #*--read up on if AWS can support paged queries (only query for items on that page?)
 

@@ -375,10 +375,10 @@ def selectSent():
 def process(box):
    jsonSuggest = []
    query = request.args.get('query')
-   if(session['docStatus']=='doctor'):
+   if(session['docStatus']=='provider'):
         listPatients= mySQL_userDB.allSearchUsers(cursor, cnx)
    else:
-        listPatients= mySQL_userDB.searchDoctorList(cursor, cnx)
+        listPatients= mySQL_userDB.searchProviderList(cursor, cnx)
    for username in listPatients:
        if(query in username):
            jsonSuggest.append({'value':username,'data':username})
@@ -760,7 +760,7 @@ def user1():
 @app.route('/u2')
 def user2():
    session['username'] = "second_user"
-   session['docStatus'] = 'doctor'
+   session['docStatus'] = 'provider'
    return openInbox()
 
 @app.route('/u3')
@@ -863,21 +863,21 @@ if __name__ == '__main__':
 #- DONE :) -change all aws dependency in zoom post and apptest
 
 #- DONE :) -Change schema to have a care team assignment
-    #- DONE :) -doctor - fn ln un email pw drtype (dietician/dr/lifes)
-    #- DONE :) -patient - fn ln un email pw dr1 dr2 dr3
+    #- DONE :) -provider - fn ln un email pw providertype (dietitian/provider/lifes)
+    #- DONE :) -patient - fn ln un email pw provider1 provider2 provider3
     #- DONE :) -change queries in mySQL_apptDB to check both for login/validity/etc
-    #- DONE :) -change info (dr vs patient) -- name
+    #- DONE :) -change info (provider vs patient) -- name
     #- DONE :) -change search users list functions
-    #- DONE :) -add user (split into dr/patient)
+    #- DONE :) -add user (split into provider/patient)
     #- DONE :) -other etc. utility functions
 ##- DONE :) -WRITE QUERY FOR SELECTIVE RETURNS
-    #- DONE :) -when they are a doctor user, the dropdown should be all doctors/patients
+    #- DONE :) -when they are a provider user, the dropdown should be all providers/patients
 #- DONE :) -fix own acct detail pg styling
 #- DONE :) -include inbox link in nav bar pages
-#- DONE :) -FIX QUERY (rn doctor1 has admin's appt on his calendar)
+#- DONE :) -FIX QUERY (rn provider1 has admin's appt on his calendar)
 #TODO - DONE :) - make a sendAutomatedMsg(username, msgBody)
     #- DONE :) -when we send an automated msg, always send it from TreeoNotification
-#- DONE :) -TODO test -when they are a patient user, the dropdown should only have THEIR doctors
+#- DONE :) -TODO test -when they are a patient user, the dropdown should only have THEIR providers
 #- DONE :) -TEST ALL ABOVE FUNCTIONALITY (via apptest.py) + DEBUG
 
 #-DONE :) --make an ADMIN dashboard 
@@ -889,16 +889,16 @@ if __name__ == '__main__':
         #-- DONE :) -make ADMIN "TreeoHelp" account that they can msg even if they don't have a care team yet
         #- DONE :) -MAKE SURE TO HANDLE THE "No assigned care team" message so it is not treated as a username -> crash
 #- DONE :) -if the user type is admin, go to admin dashboard
-#-- DONE :) -show error message when <3 drs assigned (or incorrect username used)
-#-- DONE :) -hook up 3 dropdown autocompletes for the 3 types of drs 
-    #  - DONE :) -(only allow the dr to be assigned if it is in that dropdown/is that type of dr)
-#-- DONE :) -assign 1 dr of each type to unassigned patient
+#-- DONE :) -show error message when <3 providers assigned (or incorrect username used)
+#-- DONE :) -hook up 3 dropdown autocompletes for the 3 types of providers 
+    #  - DONE :) -(only allow the provider to be assigned if it is in that dropdown/is that type of provider)
+#-- DONE :) -assign 1 provider of each type to unassigned patient
 #-- DONE :) -send automated msg to inbox of patient telling them they have been assigned to a care team
 
 #TODO -DONE :)- fix spacing of TreeoNotification messages
 #- DONE :) -FIX MYSQL TIMEOUT ERRORS -- what acct is the server on??
 # DONE :) FIX ZOOM Api call tokens (jwt)
-#TODO -DONE :)- send automsg to drsx3 and patient when assigned
+#TODO -DONE :)- send automsg to providersx3 and patient when assigned
 #TODO -DONE :)- send other automated messages (acct creation/acct update/appt create/appt change/appt delete)
     #-DONE :)-acct stuff -> TreeoNotification
         #DONE :)care team assignment x4
@@ -912,13 +912,13 @@ if __name__ == '__main__':
     #DONE :)make an option fo patients to cancel an appt through mtg detail page
 #DONE :)CHANGE how delte is done (no form, just run delete when they hit the cancel btn)
 #DONE :) when appt is created/updated/deleted -> notify patient with automated msg
-# TODO -DONE :)- unapproved drs in admin dashboard
+# TODO -DONE :)- unapproved providers in admin dashboard
     #-DONE :)- send email to registered email when they are approved
     #-DONE :)- do not let them log in until they are approved
-#-DONE :)- make a way for the dr to be unapproved by an admin
-#-DONE :)- give patient the ability to cancel appt (<24h = fee warning) -> notify dr + update calendar
-#-DONE :)- make utility function to allow drs to view all patients they are assigned to/are on the care team for
-    #-DONE :)- make a page in the dr portal for it
+#-DONE :)- make a way for the provider to be unapproved by an admin
+#-DONE :)- give patient the ability to cancel appt (<24h = fee warning) -> notify provider + update calendar
+#-DONE :)- make utility function to allow providers to view all patients they are assigned to/are on the care team for
+    #-DONE :)- make a page in the provider portal for it
 #-DONE :)-when deleting, check if it is from a notification account 
    #-DONE :)-(if it is, permadelete immediately so dtb is not inflated with delted notification msgs)
 
@@ -935,7 +935,7 @@ if __name__ == '__main__':
     #DONE :) show apptTable time in calendar positioning
 #-DONE :)-Calendar -> when querying, remove all appts that happened before the current day 
     #-DONE :)-when editing an appt, if curr time>end time do not let them edit (same day)
-#-DONE :)-AUTO SET title of meeting (do not let dr set)
+#-DONE :)-AUTO SET title of meeting (do not let provider set)
 #-DONE :)-make autocomplete noncase sensitive
 #-DONE :)-check/fix username check on register
     
@@ -944,7 +944,7 @@ if __name__ == '__main__':
         #-DONE :)-DO NOT ALLOW RESPONSES
     #-DONE :)-on patient acct deletion, GO INTO ARCHIVE AND UPDATE ALL APPTS? -- only if both accts are deleted
         #-DONE :)-on patient acct delteion, change name of patient to username+"[deleted]" so if that username is signed up for again, those appts won't show as that user's
-#-DONE :)-need to make functions for getting specific drs assigned to a specific user (not just a list)
+#-DONE :)-need to make functions for getting specific providers assigned to a specific user (not just a list)
     #-DONE :)--treeo help should not appear as an assigned provider   
 
 #-DONE :)-CLEAN UP ALL COMMENTS
@@ -956,16 +956,16 @@ if __name__ == '__main__':
     #-DONE :)-2->update all msgs to/from them to be to/from "deletedAccount"
         #BUT if they are notif, perma delete    
     #-DONE :)-Do not allow reply to msg + implement perma delete from dtb
-    #-DONE :)-3->update all archive appts to be dr + [deactivated] patient   
+    #-DONE :)-3->update all archive appts to be provider + [deactivated] patient   
      
 #-DONE :)-need to enforce that time for appt needs to be at least 30min in future (both for creation and update)
 #-DONE :)-view password on edit acct page x3
-#-DONE :)-dr dropdown selections only verified (does not let admin assign unverified drs to a patient)
+#-DONE :)-provider dropdown selections only verified (does not let admin assign unverified providers to a patient)
 
 #-DONE :)-notify patient if care team changes (deleted acct or remove approval)
-#-DONE :)-dr deletion
+#-DONE :)-provider deletion
     #-DONE :)-for partial patient assignments, prefill out the care team assignment team 
-    #-DONE :)-update patient account to have "n/a" dr again (for all patients assigned to that dr)
+    #-DONE :)-update patient account to have "n/a" provider again (for all patients assigned to that provider)
     #-DONE :)-update all appts in archive
     #-DONE :)-update all msgs (if both accts are delted, perma remove)
 #-DONE :)-fix formatting on msgInfoNoReply.html (no reply btn)
@@ -974,26 +974,33 @@ if __name__ == '__main__':
         #-DONE :)-cancel appt    
 
 #confirmation alert
-        #approve dr
+        #approve provider
         #permadelete msgs
         
 #-DONE :)-fix all info formatting/styling 
 #-DONE :)-have button on patient portal to list current care team  
 #-DONE :)-autofill for patient (+mtg with x) no longer working -createmtg.html
-#-DONE :)- make patient detail page that lists drs take you to a dr profile page (link)
+#-DONE :)- make patient detail page that lists providers take you to a provider profile page (link)
     #-DONE :)-curr care team pg
     #-DONE :)-patient acct details
+#-DONE :)-On user acct page/in search result have a "send message" button that takes you to a pre-filled out inbox page
 
-#On user acct page/in search result have a "send message" button that takes you to a pre-filled out inbox page
+#ADMIN - list/search ALL users (search + see user accts including providers)
+    #have a tally for # of unapproved patients/providers on home page
+#TODO -- make +msg button into icon
+    #-- add +mtg button/icon to patient acct pg (but only for provider, NOT ADMIN)
+    #TODO -- remove the links of admin inbox to calendar/etc (make seperate admin pages)
+        #-all malibox? (or just remove nav on all mailbox except inbox + only have sep inbox?)
+        #-patient acct detail pg
 #TODO -- FIX input/icon/label alignment for care team pg + acct details pg
 
 
+#DO not let them delete after appt time ends (after it is over) -- it should go in archive
+#make appt times 0/15/30/1h (round times only)
+    #make appt not overlapping (enforce no overlap for providers and for patients)
 #make a <24h cancellation warning for patients (fee) -- ask again before cancelling
 
-#ADMIN - list/search ALL users (search + see user accts including drs)
-    #have a tally for # of unapproved patients/drs on home page
-#make appt times 0/15/30/1h (round times only)
-    #make appt not overlapping (enforce no overlap for drs and for patients)
+
 
 #Split apptest.py into smaller files
     #cannot abstract --> T^T
@@ -1009,28 +1016,31 @@ if __name__ == '__main__':
         #user/acct mgmt
         #patient fucntions
         #admin functions
-        #dr functions
+        #provider functions
         #appt mgmt
         #inbox
 
 
-#make appt requested option + do automated message x1 (patient req so only notify dr)
+#make appt requested option + do automated message x1 (patient req so only notify provider)
     #what mechnaism for requests?? - form for requesting a range on a certian day? just req a certain day? 
-    #make an availability window potion of the appts db for drs, allow patients to request an appt at any point that is not booked
+    #make an availability window potion of the appts db for providers, allow patients to request an appt at any point that is not booked
     #(unbooked appts still block out that time until accepted or rejected so the requests don't overlap)
 
 #Maintenence/QOL
-    #--fix all calendar styling (wrapper-c id children)
+    #--fix all calendar styling (wrapper-c id chilprovideren)
         #fix tiny formatting issues with search page/all info forms
-    #in the function where patients and drs are mixed, figure out how to distinguish them
+    #in the function where patients and providers are mixed, figure out how to distinguish them
         #conditional formatting of the dropdown (CSS)
-    #when there is an error in register, do not dewfault to dietician/patient
-
-    #TODO -- remove the links of admin inbox to calendar/etc (make seperate admin pages)
-        #-all malibox? (or just remove nav on all mailbox except inbox + only have sep inbox?)
-        #-patient acct detail pg
+    #when there is an error in register, do not dewfault to dietitian/patient
 
 
+
+
+# Change all variables that say provider or d to PROVIDER
+## Drop and rename providerTable
+## Change all functions and vars
+# Within providers, the three classifications are physician, dietitian, coach (short for health coach)
+## Change all logic and naming
 
 
 
@@ -1038,9 +1048,9 @@ if __name__ == '__main__':
 
 #Archive
     #-DONE :)-(have an archive table for past appts/appt history ) -- not deleted appts, only appts that passed and we removed ourselves
-    #-DONE :)-only store patient/dr/date/time
-    #allow patients/drs to view summary/access dr notes
-    #EVENTUALLY -- allow drs to upload docs/make notes on appt (***HIPAA***)
+    #-DONE :)-only store patient/provider/date/time
+    #allow patients/providers to view summary/access provider notes
+    #EVENTUALLY -- allow providers to upload docs/make notes on appt (***HIPAA***)
 #EVENTUALLY - can store user's time zone in the db for easier adjustment  
 
 
@@ -1056,6 +1066,7 @@ if __name__ == '__main__':
 
 #--eventually - give admin way to delete/ban patient users
     #--when patients are inappropriate on messaging, give notif to admin
+#--Eventually - contact
 
 
 

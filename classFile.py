@@ -1,24 +1,24 @@
-class doctorUserClass:
-    def __init__(self, username, password, email, fname, lname, creationDate, doctorType):
+class providerUserClass:
+    def __init__(self, username, password, email, fname, lname, creationDate, providerType):
         self.username = username
         self.password = password
         self.email = email
         self.fname = fname
         self.lname = lname
         self.creationDate = creationDate
-        self.doctorType = doctorType
+        self.providerType = providerType
 
 class patientUserClass:
-    def __init__(self, username, password, email, fname, lname, creationDate, dr1User, dr2User, dr3User):
+    def __init__(self, username, password, email, fname, lname, creationDate, provider1User, provider2User, provider3User):
         self.username = username
         self.password = password
         self.email = email
         self.fname = fname
         self.lname = lname
         self.creationDate = creationDate
-        self.dietician = dr1User
-        self.physician = dr2User
-        self.healthcoach = dr3User
+        self.dietitian = provider1User
+        self.physician = provider2User
+        self.coach = provider3User
         
 class adminUserClass:
     def __init__(self, username, password, fname, lname, creationDate):
@@ -29,9 +29,9 @@ class adminUserClass:
         self.creationDate = creationDate
         
 class apptObjectClass:
-    def __init__(self, mtgID, doctor, patient, mtgName, startTime, joinURL):
+    def __init__(self, mtgID, provider, patient, mtgName, startTime, joinURL):
         self.meetingID = mtgID
-        self.doctor = doctor
+        self.provider = provider
         self.patient = patient
         self.meetingName = mtgName
         self.startTime = startTime

@@ -61,10 +61,10 @@ def convert_datetime_timezone(dt, tz1, tz2):
     return dtO
 
 #Purpose: creates a meeting through the zoom api and adds the appt to the database through a call
-def createMtg(time, password, doctor, patient, cursor, cnx):
+def createMtg(time, password, provider, patient, cursor, cnx):
     #add 5 hrs to time
     conn = http.client.HTTPSConnection("api.zoom.us")
-    topic = doctor+" + "+patient+" appt"
+    topic = provider+" + "+patient+" appt"
     payload={
       "topic":topic,
       "type": 2,
@@ -94,7 +94,7 @@ def createMtg(time, password, doctor, patient, cursor, cnx):
     
     #change time to zoom time-5h (UTC->EST) but take off the 'z' to match the format
     zoomAdjustedTime = convert_datetime_timezone(data.get("start_time")[:-1], 'UTC',"US/Eastern")
-    mySQL_apptDB.createAppt(topic, str(data.get("id")), doctor, patient, zoomAdjustedTime, str(data.get("join_url")), cursor, cnx)
+    mySQL_apptDB.createAppt(topic, str(data.get("id")), provider, patient, zoomAdjustedTime, str(data.get("join_url")), cursor, cnx)
     conn.close()
     return data
 

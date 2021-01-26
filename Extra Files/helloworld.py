@@ -7,10 +7,10 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     option = []
-    option.append("Doctor1")
-    option.append("Doctor2")
-    option.append("Doctor3")
-    option.append("Doctor4")
+    option.append("Provider1")
+    option.append("Provider2")
+    option.append("Provider3")
+    option.append("Provider4")
     return render_template("testForm.html", options=option)
 
 @app.route('/approve', methods=['POST','GET'])
@@ -19,9 +19,9 @@ def approve():
 
 @app.route('/approve/<username>', methods=['POST','GET'])
 def approveForm(username):
-    #mySQL_userDB.verifyDoctor(username, cursor, cnx)
+    #mySQL_userDB.verifyProvider(username, cursor, cnx)
     return render_template("approveTest.html",
-                           drname  = username)
+                           providername  = username)
 
 
 # def usernamencheck():
