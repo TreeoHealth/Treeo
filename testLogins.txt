@@ -6,6 +6,7 @@ fourth_user --- 4TH_Us3r
 fifth_user --- 5TH_Us3r
 sixth_user --- 6TH_Us3r
 seventh_user --- 7TH_Us3r
+george      --- George123
 doctor1 --- DOCTOR11
 doctor2 --- DOCTOR22
 doctor3 --- DOCTOR33
