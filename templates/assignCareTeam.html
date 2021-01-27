@@ -1,79 +1,85 @@
 <link rel="stylesheet" href="/static/style.css" type="text/css">
+
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js"></script>
-  </head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js"></script>
+</head>
 
 <!--&#123;% block body %&#125;-->
 <html>
-  <div id="wrapper">
-  <div id = "navwrapper">
-		<nav> 
-			&nbsp;<a href="{{ url_for('home') }}">Home</a>
-			<a href="{{ url_for('openInbox') }}">Inbox</a>
-			<a href="{{ url_for('logout') }}">Logout</a>
-		</nav>
-		</div>
-<form action="/assignCareTeam" method="POST">
-<div class="login">
-<div class="login-screen">
-<div class="app-title">
-<h1>Assign Care Team For {{username}}</h1>
-</div>
-<div class="login-form">
-<div class="error">{{errorMsg}}</div>
-<div class="control-group">
-	<input readonly type="text" class="login-field" placeholder="username" name="username" value={{username}} >
-<label class="login-field-icon fui-user" for="login-name"></label></div>
-<div class="control-group">
-    <input required placeholder="Dietitian" id = "dietitian" type="text" name = "dietitian" value={{dietitian}}  >
-<label class="login-field-icon fui-lock" for="login-pass"></label></div>
-<div class="control-group">
-    <input required placeholder="Physician" id = "physician" type="text" name = "physician" value={{physician}}  >
-<label class="login-field-icon fui-lock" for="login-pass"></label></div>
-<div class="control-group">
-    <input required placeholder="Health Coach" id = "coach" type="text" name = "coach" value={{coach}}  >
-<label class="login-field-icon fui-lock" for="login-pass"></label></div>
+<div id="wrapper">
+  <div id="navwrapper">
+    <nav>
+      &nbsp;<a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('openInbox') }}">Inbox</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+  </div>
+  <form action="/assignCareTeam" method="POST">
+    <div class="login">
+      <div class="login-screen">
+        <div class="app-title">
+          <h1>Assign Care Team For {{username}}</h1>
+        </div>
+        <div class="login-form">
+          <div class="error">{{errorMsg}}</div>
+          <div class="control-group">
+            <input readonly type="text" class="login-field" placeholder="username" name="username" value={{username}}>
+            <label class="login-field-icon fui-user" for="login-name"></label>
+          </div>
+          <div class="control-group">
+            <input required placeholder="Dietitian" id="dietitian" type="text" name="dietitian" value={{dietitian}}>
+            <label class="login-field-icon fui-lock" for="login-pass"></label>
+          </div>
+          <div class="control-group">
+            <input required placeholder="Physician" id="physician" type="text" name="physician" value={{physician}}>
+            <label class="login-field-icon fui-lock" for="login-pass"></label>
+          </div>
+          <div class="control-group">
+            <input required placeholder="Health Coach" id="coach" type="text" name="coach" value={{coach}}>
+            <label class="login-field-icon fui-lock" for="login-pass"></label>
+          </div>
 
 
 
-<input type="submit" value="Assign" id = "myBtn" class="btn btn-primary btn-large btn-block">
+          <input type="submit" value="Assign" id="myBtn" class="btn btn-primary btn-large btn-block">
 
-</div>
-</div>
-</div>
+        </div>
+      </div>
+    </div>
 </div>
 </form>
 
 <script>
-    $('#dietitian').autocomplete({
-        serviceUrl: '/dietitianList',
-        dataType: 'json',
-        onSearchComplete: function (query, suggestions) {
-          console.log(query);
-        }
-    });
+  $('#dietitian').autocomplete({
+    serviceUrl: '/dietitianList',
+    dataType: 'json',
+    onSearchComplete: function (query, suggestions) {
+      console.log(query);
+    }
+  });
 
-    $('#physician').autocomplete({
-        serviceUrl: '/physicianList',
-        dataType: 'json',
-        onSearchComplete: function (query, suggestions) {
-          console.log(query);
-        }
-    });
+  $('#physician').autocomplete({
+    serviceUrl: '/physicianList',
+    dataType: 'json',
+    onSearchComplete: function (query, suggestions) {
+      console.log(query);
+    }
+  });
 
-    $('#coach').autocomplete({
-        serviceUrl: '/coachList',
-        dataType: 'json',
-        onSearchComplete: function (query, suggestions) {
-          console.log(query);
-        }
-    });
-  
-  
- 
-  
-  </script>
+  $('#coach').autocomplete({
+    serviceUrl: '/coachList',
+    dataType: 'json',
+    onSearchComplete: function (query, suggestions) {
+      console.log(query);
+    }
+  });
+
+
+
+
+</script>
 
 </html>

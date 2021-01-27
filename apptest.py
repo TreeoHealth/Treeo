@@ -1667,7 +1667,7 @@ def moveToTrash(msgIDList, del_username):
             cursor.execute(query, (msgID,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
             
             try:
-                for (sender) in cursor:
+                for (sender,) in cursor:
                     if sender[0] == del_username:
                         updateFormat = ("UPDATE messageDB SET sender_loc = %s "
                                             "WHERE messageID = %s")
