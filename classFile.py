@@ -9,7 +9,7 @@ class providerUserClass:
         self.providerType = providerType
 
 class patientUserClass:
-    def __init__(self, username, password, email, fname, lname, creationDate, provider1User, provider2User, provider3User):
+    def __init__(self, username, password, email, fname, lname, creationDate, provider1User, provider2User, provider3User, verified):
         self.username = username
         self.password = password
         self.email = email
@@ -19,6 +19,7 @@ class patientUserClass:
         self.dietitian = provider1User
         self.physician = provider2User
         self.coach = provider3User
+        self.verified = verified
         
 class adminUserClass:
     def __init__(self, username, password, fname, lname, creationDate):

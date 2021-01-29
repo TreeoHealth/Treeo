@@ -5,15 +5,18 @@ import email_validator
 from datetime import date, datetime,timezone
 import mySQL_userDB
 
-config = {
-  'host':'treeo-server.mysql.database.azure.com',
-  'user':'treeo_master@treeo-server',
-  'password':'Password1',
-  'database':'treeohealthdb'
-}
-cnx = mysql.connector.connect(**config)
+
+# config = {
+#   'host':'treeo-server.mysql.database.azure.com',
+#   'user':'treeo_master@treeo-server',
+#   'password':'Password1',
+#   'database':'treeohealthdb'
+# }
+# cnx = mysql.connector.connect(**config)
+cnx = mysql.connector.connect(user='root', password='password',
+                              host='127.0.0.1')
 cursor = cnx.cursor()
-cursor.execute("USE treeoHealthDB")
+cursor.execute("USE treeo_health_db")
 
 pwd_context = CryptContext(
         schemes=["pbkdf2_sha256"],

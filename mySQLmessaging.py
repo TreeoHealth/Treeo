@@ -13,17 +13,19 @@ from mysql.connector import errorcode
 app = Flask(__name__)
 #cnx = mysql.connector.connect(user='root', password='password',
 #                              host='127.0.0.1')
-config = {
-  'host':'treeo-server.mysql.database.azure.com',
-  'user':'treeo_master@treeo-server',
-  'password':'Password1',
-  'database':'treeohealthdb'
-}
-cnx = mysql.connector.connect(**config)
+# config = {
+#   'host':'treeo-server.mysql.database.azure.com',
+#   'user':'treeo_master@treeo-server',
+#   'password':'Password1',
+#   'database':'treeohealthdb'
+# }
+# cnx = mysql.connector.connect(**config)
+cnx = mysql.connector.connect(user='root', password='password',
+                              host='127.0.0.1')
 tmpcursor = cnx.cursor(buffered=True) #THIS IS TO FIX "Unread result found error"
-tmpcursor.execute("USE treeoHealthDB")
+tmpcursor.execute("USE treeo_health_db")
 cursor = cnx.cursor(buffered=True) #THIS IS TO FIX "Unread result found error"
-cursor.execute("USE treeoHealthDB")
+cursor.execute("USE treeo_health_db")
 
 @app.route('/submitEmail', methods=['POST','GET'])
 def formatEmail():

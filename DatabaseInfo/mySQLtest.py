@@ -28,7 +28,7 @@ else:
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~ONE TIME CODE FOR DB SETUP ~~~~~~~~~~~~~~~~~~~~~~
 
-DB_NAME = 'treeoHealthDB'
+DB_NAME = 'treeo_health_db'
 cursor.execute("USE {}".format(DB_NAME))
 # cursor.execute("DROP TABLE IF EXISTS userTable;")
 # cursor.execute("DROP TABLE IF EXISTS providerTable;")
@@ -37,22 +37,22 @@ cursor.execute("USE {}".format(DB_NAME))
 
 # cursor.execute("DROP TABLE IF EXISTS apptTable;")
 cursor.execute("DROP TABLE IF EXISTS patientTable;")
-cursor.execute("DROP TABLE IF EXISTS doctorTable;")
+#cursor.execute("DROP TABLE IF EXISTS doctorTable;")
 # cursor.execute("DROP TABLE IF EXISTS archiveApptTable;")
 print("Finished dropping table (if existed).")
 
-cursor.execute("CREATE TABLE providerTable ("
-       "  username varchar(30) NOT NULL,"
-       "  password varchar(100) NOT NULL,"
-       "  email varchar(50) NOT NULL,"
-       "  fname varchar(30) NOT NULL,"
-       "  lname varchar(30) NOT NULL,"
-       "  providerType varchar(30) NOT NULL,"
-       "  creationDate varchar(50) NOT NULL,"
-       "  verified varchar(10) NOT NULL,"
-       "  PRIMARY KEY (username), UNIQUE KEY username (username)"
-       ") ENGINE=InnoDB"
-   )
+# cursor.execute("CREATE TABLE providerTable ("
+#        "  username varchar(30) NOT NULL,"
+#        "  password varchar(100) NOT NULL,"
+#        "  email varchar(50) NOT NULL,"
+#        "  fname varchar(30) NOT NULL,"
+#        "  lname varchar(30) NOT NULL,"
+#        "  providerType varchar(30) NOT NULL,"
+#        "  creationDate varchar(50) NOT NULL,"
+#        "  verified varchar(10) NOT NULL,"
+#        "  PRIMARY KEY (username), UNIQUE KEY username (username)"
+#        ") ENGINE=InnoDB"
+#    )
 
 cursor.execute("CREATE TABLE patientTable ("
        "  username varchar(30) NOT NULL,"
@@ -64,6 +64,7 @@ cursor.execute("CREATE TABLE patientTable ("
        "  providerOne varchar(50) NOT NULL,"
        "  providerTwo varchar(50) NOT NULL,"
        "  providerThree varchar(50) NOT NULL,"
+       "  verified varchar(50) NOT NULL,"
        "  PRIMARY KEY (username), UNIQUE KEY username (username)"
        ") ENGINE=InnoDB"
    )
