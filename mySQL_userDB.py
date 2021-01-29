@@ -8,15 +8,17 @@ from email_validator import validate_email, EmailNotValidError, EmailSyntaxError
 from datetime import date, datetime,timezone
 
 #global declarations to connect to the database
-config = {
-  'host':'treeo-server.mysql.database.azure.com',
-  'user':'treeo_master@treeo-server',
-  'password':'Password1',
-  'database':'treeohealthdb'
-}
-cnx = mysql.connector.connect(**config)
+# config = {
+#   'host':'treeo-server.mysql.database.azure.com',
+#   'user':'treeo_master@treeo-server',
+#   'password':'Password1',
+#   'database':'treeohealthdb'
+# }
+# cnx = mysql.connector.connect(**config)
+cnx = mysql.connector.connect(user='root', password='password',
+                              host='127.0.0.1')
 cursor = cnx.cursor()
-cursor.execute("USE treeoHealthDB")
+cursor.execute("USE treeo_health_db")
 
 #Purpose: returns an array of the search dropdown items (username + first name + last name)
 #   for provider and patient users 
@@ -101,11 +103,11 @@ def getAcctFromUsername(username, cursor, cnx):
         providerClassObj = providerUserClass( u, p, e, f, l, cD, dT)
         return providerClassObj
     
-    query = ("SELECT username, password, fname, lname, email, creationDate, providerOne, providerTwo, providerThree FROM patientTable WHERE username = %s")   
+    query = ("SELECT username, password, fname, lname, email, creationDate, providerOne, providerTwo, providerThree, verified FROM patientTable WHERE username = %s")   
     cursor.execute(query, (username, ))
-    for u, p,f, l, e, cD, d1, d2, d3 in cursor:
+    for u, p,f, l, e, cD, d1, d2, d3, v in cursor:
         patientClassObj = patientUserClass(u,p,e, f, l, cD, 
-                                            d1, d2, d3)
+                                            d1, d2, d3, v)
         return patientClassObj
     
     query = ("SELECT username, password, fname, lname, creationDate FROM adminTable WHERE username = %s")   
@@ -166,16 +168,28 @@ def getAllUnapprovedDrs(cursor, cnx):
         docArr.append(un)
     return docArr
 
-#Purpose: returns an array of all usernames for patients that have at least 1
+#Purpose: returns an array of all usernames for VERIFIED patients that have at least 1
 #   provider on their care team not yet assigned
 def getAllUnassignedPatients(cursor, cnx):
     
-    query = ("SELECT username, creationDate FROM patientTable WHERE providerOne = %s OR providerTwo=%s OR providerThree=%s" )
-    cursor.execute(query, ("N/A","N/A","N/A"))
+    query = ("SELECT username, creationDate FROM patientTable WHERE verified = %s AND (providerOne = %s OR providerTwo=%s OR providerThree=%s)" )
+    cursor.execute(query, ("1","N/A","N/A","N/A"))
     unassigned = []
     for un, cd in cursor:
         unassigned.append(un)
     return unassigned
+
+#Purpose: returns an array of all usernames for patients that have not verified their
+#   external email address
+def getAllUnverifiedPatients(cursor, cnx):
+    
+    query = ("SELECT username, creationDate FROM patientTable WHERE verified = %s" )
+    cursor.execute(query, ("0",))
+    unverified = []
+    for un, cd in cursor:
+        unverified.append(un)
+    return unverified
+
 
 #Purpose: returns an array of the 3 providers that are assigned to a patient user
 #   for care team detail purposes
@@ -332,8 +346,8 @@ def insertProvider(username, password, email, fname, lname, providerType, cursor
 
     return "success"
 
-#Purpose: verifies all information given and either returns a string with an error 
-#   or inserts the item into the patient database
+#Purpose: checks all information given and either returns a string with an error 
+#   or inserts the item into the patient database (unverified)
 def insertPatient(username, password, email, fname, lname, cursor, cnx):
     if(isUsernameTaken(username,cursor, cnx)):
         return "taken error"
@@ -366,11 +380,14 @@ def insertPatient(username, password, email, fname, lname, cursor, cnx):
 
     formatInsert = ("INSERT INTO patientTable "
                    "(username, password,email,fname,"
-                    "lname,providerOne, providerTwo, providerThree,creationDate) "
-                   "VALUES (%s, %s,%s, %s,%s, %s,%s, %s,%s)") #NOTE: use %s even with numbers
+                    "lname,providerOne, providerTwo, providerThree,"
+                    "creationDate, verified) "
+                   "VALUES (%s, %s,%s, %s,%s, %s,%s, %s,%s, %s)") #NOTE: use %s even with numbers
     
         #their care team is not assigned at creation, so N/A
-    insertContent = (username, pwd_context.hash(password), email, fname, lname, "N/A", "N/A", "N/A", str(date.today().strftime("%B %d, %Y")))
+    insertContent = (username, pwd_context.hash(password), email, fname, 
+                     lname, "N/A", "N/A", "N/A", 
+                     str(date.today().strftime("%B %d, %Y")), "0")
     cursor.execute(formatInsert, insertContent)
     cnx.commit()
 
@@ -399,6 +416,17 @@ def isDrPhysician(username, cursor, cnx):
     for provider in cursor:
         return True
     return False
+
+#Purpose: checks if patient acct is verified (returns true if it is, false otherwise)
+def isPatientVerified(username, cursor, cnx):
+    query = ("SELECT username, verified FROM patientTable WHERE username=%s ")         
+    cursor.execute(query, (username,)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    for un, v in cursor:
+        if v=="1": #is verified
+            return True
+        else: #is not verified
+            return False
+    return False #username DNE in table
 
 #Purpose: checks if username is taken by checking all 3 user databases (returns true if it is)
 def isUsernameTaken(username, cursor, cnx): 
@@ -470,21 +498,21 @@ def returnAllTakenUsernames(cursor, cnx):
         
     return userArr
 
-#Purpose: returns an array of all usernames in the patient table that have been assigned this 
+#Purpose: returns an array of all VERIFIED usernames in the patient table that have been assigned this 
 #   provider user as part of their care team
 def returnPatientsAssignedToDr(username, cursor, cnx): 
-    query = ("SELECT username FROM patientTable WHERE providerOne = %s OR providerTwo = %s OR providerThree = %s")         
-    cursor.execute(query, (username,username,username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    query = ("SELECT username FROM patientTable WHERE verified = %s AND (providerOne = %s OR providerTwo = %s OR providerThree = %s)")         
+    cursor.execute(query, ("1",username,username,username)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
     for un in cursor:
         patientArr.append(un[0])
     return patientArr
 
 #Purpose: returns an array of the search dropdown items (username + first name + last name)
-#   for provider users
+#   for VERIFIED provider users
 def searchProviderList(cursor, cnx):
-    query = ("SELECT username, fname, lname FROM providerTable")         
-    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    query = ("SELECT username, fname, lname FROM providerTable WHERE verified = %s")         
+    cursor.execute(query, ("1",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     docArr = []
     for un,fn,ln in cursor:
         tmp = str(un+" - "+ln+", "+fn)
@@ -493,10 +521,10 @@ def searchProviderList(cursor, cnx):
     return docArr
 
 #Purpose: returns an array of the search dropdown items (username + first name + last name)
-#   for patient users
+#   for VERIFIED patient users
 def searchPatientList(cursor, cnx):
-    query = ("SELECT username, fname, lname FROM patientTable")         
-    cursor.execute(query) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
+    query = ("SELECT username, fname, lname FROM patientTable WHERE verified = %s")         
+    cursor.execute(query, ("1",)) #NOTE: even if there is only 1 condition, you have to make the item passed to the query into a TUPLE
     patientArr = []
     for un,fn,ln in cursor:
         patientArr.append(str(un+" - "+ln+", "+fn))
@@ -585,14 +613,24 @@ def userAcctInfo(user, cursor, cnx):
         providerClassObj = providerUserClass( u, p, e, f, l, cD, dT)
         return providerClassObj
     
-    query = ("SELECT username, password, fname, lname, email, creationDate, providerOne, providerTwo, providerThree FROM patientTable WHERE username = %s")   
+    query = ("SELECT username, password, fname, lname, email, creationDate, providerOne, providerTwo, providerThree, verified FROM patientTable WHERE username = %s")   
     cursor.execute(query, (user, ))
-    for u, p,f, l, e, cD, d1, d2, d3 in cursor:
+    for u, p,f, l, e, cD, d1, d2, d3, v in cursor:
         patientClassObj = patientUserClass(u,p,e, f, l, cD, 
-                                            d1, d2, d3)
+                                            d1, d2, d3,v)
         return patientClassObj
 
     return
+
+#Purpose: update patient account to be verified (after they verify through email)
+def verifyPatient(username, cursor, cnx):
+    update_test = (
+                "UPDATE patientTable SET verified = %s "
+                "WHERE username = %s")
+    cursor.execute(update_test, ("1",username ))
+    cnx.commit()
+    return "success"
+
     
 #Purpose: update provider user to be verified (done by admin)
 def verifyProvider(username, cursor, cnx):
