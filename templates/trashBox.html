@@ -1,0 +1,59 @@
+<link rel="stylesheet" href="/static/messageCss.css" type="text/css">
+
+<header>
+  <h1>messages</h1>
+  <div class="navwrapper">
+    <nav> 
+      &nbsp;<a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('show_mtg') }}">Calendar</a>
+      <a href="{{ url_for('acct_details') }}">Account Details</a>
+      <a href="{{ url_for('openInbox') }}">Inbox</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    </div>
+</header>
+
+<div class="mailbox">
+  <div class="nav">
+    <a href="{{ url_for('newEmail') }}">compose</a>
+    <a href="{{ url_for('openInbox') }}">inbox {{inboxUnread}}</a>
+    <a href="{{ url_for('sentFolder') }}" >sent</a>
+    <a href="{{ url_for('trashFolder') }}" class="active">trash {{trashUnread}}</a>
+  </div>
+  
+
+  <div class="messages">
+
+  <form action="/permTrash" method="POST">
+  <input type = "image" name = "undotrash" value="Undo Trash Action" class = "trashBtn" src="/static/undoTrash.png" title="Undo Trash Action" />
+  <input type = "image" name = "permdel" value="Delete" class = "trashBtn"  src="/static/permenantDelete.png" title="Permenantly Delete" />
+  <input type="image" class = "prevBtn" {%if noPrev %} disabled style="background-color:red;" {%endif%} name = "prevPg" title= "Newer" src="/static/backward.png"/>
+  <input type="image" class = "nextBtn" {%if noNext %} disabled style="background-color:red;" {%endif%}  name = "nextPg" title= "Older" src="/static/forward.png"/>
+  <span class="emailCount">{{startEmailNum}}-{{endEmailNum}} of {{totalEmailNum}}</span>
+  <input hidden name = "currPageNum" value={{currPageNum}}></input>
+  <br>
+    <input  class = "selectAll"  name = "selectAll" onClick="toggle(this)" type="checkbox" />
+    {%for date, mID,s_header,sender, s_date, title,unread in msgList%}
+	<a href="/msg/{{mID}}">
+    <div  {%if unread %} class="message unreadMsg" {%else%} class="message readMsg" {%endif%} >
+      <input class="selectCheck" name = "{{mID}}" value = {{mID}} type="checkbox" />
+      <span class="sender">{{s_header}}&nbsp;{{sender}} </span>
+	  <span class="title">{{title}}</span>
+      <span class="date">{{date}} <span>
+      
+    </div>
+	</a>
+    {%endfor%}
+    
+  </div>
+  </form>
+</div>
+
+<script language="JavaScript">
+function toggle(source) {
+  checkboxes = document.getElementsByClassName("selectCheck");
+  for(var i=0, n=checkboxes.length;i<n;i++) {
+    checkboxes[i].checked = source.checked;
+  }
+}
+</script>

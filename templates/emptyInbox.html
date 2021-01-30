@@ -1,0 +1,40 @@
+<link rel="stylesheet" href="/static/messageCss.css" type="text/css">
+
+<header>
+  <h1>messages</h1>
+  <div class="inboxnav">
+    <nav> 
+      &nbsp;<a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('show_mtg') }}">Calendar</a>
+      <a href="{{ url_for('acct_details') }}">Account Details</a>
+      <a href="{{ url_for('openInbox') }}">Inbox</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    </div>
+</header>
+
+<div class="mailbox">
+  <div class="nav">
+    <a href="{{ url_for('newEmail') }}">compose</a>
+    <a href="{{ url_for('openInbox') }}" class="active">inbox {{inboxUnread}}</a>
+    <a href="{{ url_for('sentFolder') }}">sent</a>
+    <a href="{{ url_for('trashFolder') }}">trash {{trashUnread}}</a>
+  </div>
+  
+  
+  
+  <div class="messages">
+  
+  <form action="/selectOption" method="POST">
+  <input type="image" name = "trash" class = "trashBtn" value="Trash" src="/static/moveToTrash.png" title="Move to Trash" />
+  <input type = "image" name = "mar" value="Mark as read" class = "trashBtn" src="/static/markAsRead.png" title="Mark as Read" >
+  <input type = "image" name = "mau" value="Mark as unread"class = "trashBtn" src="/static/markAsUnread.png" title="Mark as Unread" >
+  <input type="image" class = "prevBtn" disabled style="background-color:red;" name = "prevPg" title= "Newer" src="/static/backward.png"/>
+  <input type="image" class = "nextBtn" disabled style="background-color:red;" name = "nextPg" title= "Older" src="/static/forward.png"/>
+<br><input class = "selectAll" name = "selectAll" onClick="toggle(this)" type="checkbox" /><br>  
+<div class="emptyFolder">No messages in inbox</div>
+    
+  
+  </div>
+  </form>
+</div>

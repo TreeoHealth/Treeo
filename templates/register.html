@@ -1,0 +1,155 @@
+<link rel="stylesheet" href="/static/style.css" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
+<!--&#123;% block body %&#125;-->
+<html>
+
+<form action="/register" method="POST">
+<div class="login">
+<div class="login-screen">
+<div class="app-title">
+<h1>Register</h1>
+</div>
+<div class="login-form">
+<div class="error">{{errorMsg}}</div>
+<div class="error" id="usernameCheckNotif"></div>
+<div class="control-group">
+				<input type="text" class="login-field" id="username_form_input" required placeholder="username" name="username" value={{username}} >
+<label class="login-field-icon fui-user" for="login-name"></label></div>
+<div class="control-group">
+				<input type="password" class="login-field" id="password_form_input" required placeholder="password" name="password" value={{password}}>
+				<i style="margin-left: -30px;cursor: pointer;" class="far fa-eye" id="togglePassword"></i>
+<label class="login-field-icon fui-lock" for="login-pass"></label></div>
+<div class="error" id="passCheckNotif"></div>
+<div class="control-group">
+				<input type="text" class="login-field" required placeholder="email" name="email" id="email_input" value={{email}}>
+<label class="login-field-icon fui-lock" for="login-name"></label></div>
+<div class="error" id="emailCheck"></div>
+<div class="control-group">
+				<input type="text" class="login-field" required id="fn_form_input" placeholder="first name" name="fname" value={{fname}}>
+<label class="login-field-icon fui-lock" for="login-name"></label></div>
+<div class="error" id="nameLengthCheck"></div>
+<div class="control-group">
+				<input type="text" class="login-field" required id="ln_form_input" placeholder="last name" name="lname" value={{lname}}>
+<label class="login-field-icon fui-lock" for="login-name"></label></div>
+
+<input type="radio" name="docStatus" value="provider">
+<label for="provider">Provider</label><br>
+<select name="providerType">
+  <option value="dietitian">Dietitian</option>
+  <option value="physician">Physician</option>
+  <option value="coach">Health Coach</option>
+</select>
+<input type="radio" selected name="docStatus" value="patient">
+<label for="patient">Patient</label><br>
+
+<input type="submit" value="Register" id = "myBtn" class="btn btn-primary btn-large btn-block">
+
+</div>
+</div>
+</div>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script>
+	const togglePassword = document.querySelector('#togglePassword');
+	const password = document.querySelector('#password_form_input');
+	togglePassword.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    // toggle the eye slash icon
+    this.classList.toggle('fa-eye-slash');
+});
+
+$("#username_form_input").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/usernamecheck",
+      type: "get",//post
+      data: {jsdata: text},
+      success: function(response) {
+        $("#usernameCheckNotif").html(response);
+		document.getElementById("myBtn").disabled = true;
+		if(response=="")
+		{
+			document.getElementById("myBtn").disabled = false;
+		}
+		else
+		{
+			document.getElementById("myBtn").disabled = true;
+		}
+      }//,
+      //error: function(xhr) {
+        //Do Something to handle error
+      //}
+    });
+});
+
+$("#password_form_input").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/pwStrengthCheck",
+      type: "post",
+      data: {jsdata: text},
+      success: function(response) {
+        $("#passCheckNotif").html(response);
+      }//,
+      //error: function(xhr) {
+        //Do Something to handle error
+      //}
+    });
+});
+
+$("#fn_form_input").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/nameLengthCheck",
+      type: "get",//post
+      data: {jsdata: text},
+      success: function(response) {
+        $("#nameLengthCheck").html(response);
+      }//,
+      //error: function(xhr) {
+        //Do Something to handle error
+      //}
+    });
+});
+
+$("#ln_form_input").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/nameLengthCheck",
+      type: "get",//post
+      data: {jsdata: text},
+      success: function(response) {
+        $("#nameLengthCheck").html(response);
+      }//,
+      //error: function(xhr) {
+        //Do Something to handle error
+      //}
+    });
+});
+
+$("#email_input").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/emailCheck",
+      type: "get",//post
+      data: {jsdata: text},
+      success: function(response) {
+        $("#emailCheck").html(response);
+      }//,
+      //error: function(xhr) {
+        //Do Something to handle error
+      //}
+    });
+});
+</script>
+</html>

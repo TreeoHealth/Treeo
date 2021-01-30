@@ -1,0 +1,32 @@
+<!--<img src={{ url_for('static', filename='profile.png') }}>-->
+<!--need to make the picture into a link??? want to avoid making a form for each patient (x200?? - not good)-->
+
+<link rel="stylesheet" href="/static/style.css" type="text/css">
+<!--&#123;% block body %&#125;-->
+<div id="wrapper">
+  <div id = "navwrapper">
+		<nav> 
+			&nbsp;<a href="{{ url_for('home') }}">Home</a>
+			<a href="{{ url_for('openInbox') }}">Inbox</a>
+			<a href="{{ url_for('logout') }}">Logout</a>
+		</nav>
+		</div>
+<div class="listwhitespace">
+<div class="login-screen">
+<div class="profile-box">
+{% for item in options %}
+<!--make (+) that will auto fill a create mtg form-->
+<div class='testWrapAbt'>
+	<img class = "profile-pic" src='/static/profile.png' alt="My Pic" height ="50" width = "50" ></img>
+	<a href="/removeapproval/{{item}}" class="btn apptbutton">Remove Approval</a>
+  <p class="assign-username">{{item}}</p> <br>
+
+</div>
+  {% endfor %}
+</div>
+</div>
+</div>
+</div>
+
+
+

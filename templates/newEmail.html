@@ -1,0 +1,94 @@
+<link rel="stylesheet" href="/static/messageCss.css" type="text/css">
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js"></script>
+</head>
+
+<header class = "hlabel">
+  <h1>messages</h1>
+  <div class="inboxnav">
+    <nav> 
+      &nbsp;<a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('show_mtg') }}">Calendar</a>
+      <a href="{{ url_for('acct_details') }}">Account Details</a>
+      <a href="{{ url_for('openInbox') }}">Inbox</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    </div>
+</header>
+
+
+<div class="mailboxDetail">
+  <div class="nav">
+    <a href="{{ url_for('newEmail') }}">compose</a>
+    <a href="{{ url_for('openInbox') }}"  class="active">inbox {{inboxUnread}}</a>
+    <a href="{{ url_for('sentFolder') }}">sent</a>
+    <a href="{{ url_for('trashFolder') }}">trash {{trashUnread}}</a>
+  </div>
+  
+
+  <form action="/submitEmail" method="POST" >
+  
+  <br><br>
+
+<div class = "msgDetail">
+<label >FROM: </label><br>
+<input  readonly class="msgTextOutline"  type="text"name = "sender_username" value = {{sender_username}}>
+<br><div class="error">{{errorMsg}}</div><br>
+<label >TO: </label> <div class="error">{{userNotif}}</div>
+<input required class="msgTextOutline" placeholder="To:" id = "reciever_username" type="text" name = "reciever_username" value={{reciever_username}}  >
+<br><br>
+<label >SUBJECT: </label><br>
+<input required class="msgTextOutline"  id = "subject" type="text" size = "50"maxlength = "50" placeholder="Subject" name = "subject" value="{{subject}}" >
+<span class = "error" id="subjCount"></span>
+<br><br>
+<label>BODY: </label><span class = "error" id="bodyCount"></span>
+<textarea  id = "msgbody" maxlength="600" placeholder="Write here..." class="msgTextOutline" cols = "113" rows="8" name = "email_body" value ="{{email_body}}" required>{{email_body}}</textarea>
+<br>
+</div>
+<input class = "sendBtn"type="submit" value = "Send"></input>
+</form>
+</div>
+
+
+
+
+
+<script>
+  $('#reciever_username').autocomplete({
+      serviceUrl: '/emailsearch/reciever_username',
+      dataType: 'json',
+      onSearchComplete: function (query, suggestions) {
+        console.log(query);
+      }
+  });
+
+
+$("#subject").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/subjWordCheck",
+      type: "get",
+      data: {jsdata: text},
+      success: function(response) {
+        $("#subjCount").html(response);
+      }
+    });
+});
+
+$("#msgbody").keyup(function(){
+    var text = $(this).val();
+
+    $.ajax({
+      url: "/bodyWordCheck",
+      type: "get",
+      data: {jsdata: text},
+      success: function(response) {
+        $("#bodyCount").html(response);
+      }
+    });
+});
+
+</script>
