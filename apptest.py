@@ -28,7 +28,7 @@ currPg = 0
 #   'database':'treeohealthdb'
 # }
 # cnx = mysql.connector.connect(**config)
-cnx = mysql.connector.connect(user='root', password='password',
+cnx = mysql.connector.connect(user='root', password='#GGnorem8',
                               host='127.0.0.1')
 
 # NOTE: NEED 2 cursors for nested queries!!!

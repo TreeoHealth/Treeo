@@ -20,7 +20,7 @@ app = Flask(__name__)
 #   'database':'treeohealthdb'
 # }
 # cnx = mysql.connector.connect(**config)
-cnx = mysql.connector.connect(user='root', password='password',
+cnx = mysql.connector.connect(user='root', password='#GGnorem8',
                               host='127.0.0.1')
 tmpcursor = cnx.cursor(buffered=True) #THIS IS TO FIX "Unread result found error"
 tmpcursor.execute("USE treeo_health_db")

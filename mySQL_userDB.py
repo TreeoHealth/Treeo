@@ -15,7 +15,7 @@ from datetime import date, datetime,timezone
 #   'database':'treeohealthdb'
 # }
 # cnx = mysql.connector.connect(**config)
-cnx = mysql.connector.connect(user='root', password='password',
+cnx = mysql.connector.connect(user='root', password='#GGnorem8',
                               host='127.0.0.1')
 cursor = cnx.cursor()
 cursor.execute("USE treeo_health_db")

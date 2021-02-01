@@ -14,7 +14,7 @@ from datetime import date, datetime,timezone
 # }
 
 try:
-  conn = mysql.connector.connect(user='root', password='password',
+  conn = mysql.connector.connect(user='root', password='#GGnorem8',
                               host='127.0.0.1')
   #  conn = mysql.connector.connect(**config)
   print("Connection established")

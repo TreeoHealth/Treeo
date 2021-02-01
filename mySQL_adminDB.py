@@ -9,11 +9,11 @@ import mySQL_userDB
 # config = {
 #   'host':'treeo-server.mysql.database.azure.com',
 #   'user':'treeo_master@treeo-server',
-#   'password':'Password1',
+#   '#GGnorem8':'Password1',
 #   'database':'treeohealthdb'
 # }
 # cnx = mysql.connector.connect(**config)
-cnx = mysql.connector.connect(user='root', password='password',
+cnx = mysql.connector.connect(user='root', password='#GGnorem8',
                               host='127.0.0.1')
 cursor = cnx.cursor()
 cursor.execute("USE treeo_health_db")
