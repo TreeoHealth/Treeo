@@ -1,0 +1,54 @@
+DJANGO
+pip install django
+WSGI = web server gateway interface
+ASGI = Async server gateway intereface
+
+SETUP
+cd into target folder to store project
+run "django-admin startproject projectname" command to autogen
+
+
+To run -- python manage.py runserver {optional: port #} (dflt 8000)
+Create an app in a project -- python manage.py startapp app_name
+    ->create a URLconf in the app directory (create a file called urls.py)
+App - web app with a function vs 
+Project -  a collection of configuration and apps for a particular website (mult apps)
+
+Routing
+    LINK -> project (treeo) -> treeo urls.py -> 
+    routing (cuts off part of LINK and sends to correct included urls.py from various apps) ->
+    testApp urls.py -> testApp views.py (included into urls for urlpatterns)
+
+RESOURCES
+    HOW django does URLs -> https://docs.djangoproject.com/en/3.1/topics/http/urls/
+    Django design principles - https://docs.djangoproject.com/en/3.1/misc/design-philosophies/
+        -data model (DRY principle = don't repeat yourself - only 1 copy of any data)
+
+path()
+    -called in urlpatterns[] for each urls.py url
+    -path(route, view, (optional) kwargs, (optional) name)
+        --route = string to be cut off of the routing ('test_Url/') -- DOES not include Get/Post info
+            When processing a request, Django starts at the first pattern in urlpatterns and makes its way down
+             the list, comparing the requested URL against each pattern until it finds one that matches.
+        --view = where to go to find the specific routing for given 
+
+Database - create database through workbench (in localhost server)
+    -change settings.py for project (treeo) -> update time zone and change DATABASES dictionary to be our info
+    -run 'python manage.py migrate' (creates needed tables in db based on INSTALLED_APPS in settings.py) 
+        ->run 'Use database_name;Show tables;' in workbench to see all created tables
+
+TABLE generation
+    Make model schemas in models.py
+        -MySQL foreign key - on_delete options (DO_NOTHING or CASCADE, etc)
+        [https://medium.com/@inem.patrick/django-database-integrity-foreignkey-on-delete-option-db7d160762e4]
+    Go to app (testApp) apps.py and find the Config classname there (TestappConfig)
+    Add classname to INSTALLED_APPS in PROJECT settings.py (in '')
+        appname.apps.classname (testApp.apps.TestappConfig)
+    run 'python manage.py makemigrations {app name (testApp)}' 
+    run 'python manage.py sqlmigrate {app name (testApp)} 0001' -- prints autogen schema to console (does not create yet)
+    run 'python manage.py migrate' -- ACTUALLY create the tables (use the autogen tables from last cmd)
+
+Change database schema
+    Change your models (in models.py).
+    Run python manage.py makemigrations to create migrations for those changes.
+    Run python manage.py migrate to apply those changes to the database.
