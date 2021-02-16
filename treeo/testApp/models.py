@@ -5,6 +5,10 @@ class patientUser(models.Model):
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
     creation_date = models.DateTimeField('creation date')
+    def usernameContainsA(self):
+        return ('a' in str(self.username))
+    def __str__(self): #makes the shell print username instead of object type
+        return self.username
     
 class providerUser(models.Model):
     username = models.CharField(max_length=50)

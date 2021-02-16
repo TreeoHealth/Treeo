@@ -1,0 +1,19 @@
+RUN "python manage.py shell" (opens an instance in the shell with django)
+
+from testApp.models import patientUser, providerUser, appointmentObject
+from django.utils import timezone
+p = patientUser(username = "first_user", password = "abcd", creation_date=timezone.now())
+p.save()
+d=providerUser(username="dr",password="pw",creation_date=timezone.now())
+d.save()
+a = appointmentObject(appointment_name="name_appt",patient= p,provider= d, startDate=timezone.now())
+a.save()
+a.patient.username #should come back as p's username
+providerUser.objects.get(pk=1)
+p2 = patientUser(username = "alphabet", password = "abcd", creation_date=timezone.now())
+p2.save()
+p.usernameContainsA() #should be False
+    #this function is defined in the patientUser class
+p2.usernameContainsA() #should be True
+    #this function is defined in the patientUser class
+patientUser.objects.all()

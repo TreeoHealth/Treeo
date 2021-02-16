@@ -1,6 +1,6 @@
 DJANGO
 pip install django
-WSGI = web server gateway interface
+WSGI = web server gateway interface (what treeo will use)
 ASGI = Async server gateway intereface
 
 SETUP
@@ -11,13 +11,13 @@ run "django-admin startproject projectname" command to autogen
 To run -- python manage.py runserver {optional: port #} (dflt 8000)
 Create an app in a project -- python manage.py startapp app_name
     ->create a URLconf in the app directory (create a file called urls.py)
-App - web app with a function vs 
-Project -  a collection of configuration and apps for a particular website (mult apps)
+App - web app with a function (can belong to multiple projects) vs 
+    Project -  a collection of configuration and apps for a particular website (contains mult apps)
 
 Routing
     LINK -> project (treeo) -> treeo urls.py -> 
     routing (cuts off part of LINK and sends to correct included urls.py from various apps) ->
-    testApp urls.py -> testApp views.py (included into urls for urlpatterns)
+    testApp urls.py -> testApp views.py (included into urls for urlpatterns) -> correct view function (show https)
 
 RESOURCES
     HOW django does URLs -> https://docs.djangoproject.com/en/3.1/topics/http/urls/
@@ -35,7 +35,7 @@ path()
 Database - create database through workbench (in localhost server)
     -change settings.py for project (treeo) -> update time zone and change DATABASES dictionary to be our info
     -run 'python manage.py migrate' (creates needed tables in db based on INSTALLED_APPS in settings.py) 
-        ->run 'Use database_name;Show tables;' in workbench to see all created tables
+        ->***run 'Use database_name;Show tables;' in workbench to see all created tables***
 
 TABLE generation
     Make model schemas in models.py
@@ -52,3 +52,23 @@ Change database schema
     Change your models (in models.py).
     Run python manage.py makemigrations to create migrations for those changes.
     Run python manage.py migrate to apply those changes to the database.
+
+Add functions to model does not change the schema
+    -BUT if you are using the shell and make changes, you have to restart the shell to use the new functions
+    -use function in a model obj -> declaredObject.functionName()
+
+in model definition, add this function for readability
+    def __str__(self): #makes the shell print username instead of object type
+        return self.username
+    #Before -> <patientUser: patientUser object (1)>
+    #After -> <patientUser: first_user>
+
+ADMIN USER 
+    -run "python manage.py createsuperuser"
+    -enter username, dummy email, password
+    -run "python manage.py runserver" and go to http://127.0.0.1:8000/admin/ (+ login)
+    -add admin.site.register(modelName) instructions to {app name (testApp)} admin.py to add to interface
+
+Views -> URL patterns and mapping through URLconf
+    -pass values through URL -> add parameter to view function and add '.../<paramType:paramName>/...' to the URL
+    -create a templates folder in the app directory (put html files in there)
