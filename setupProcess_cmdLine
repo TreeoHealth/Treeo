@@ -1,0 +1,2130 @@
+
+C:\Users\12488>cd SP_Treeo
+
+C:\Users\12488\SP_Treeo>python manage.py runserver
+python: can't open file 'manage.py': [Errno 2] No such file or directory
+
+C:\Users\12488\SP_Treeo>cd Treeo
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py runserver
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "C:\Python38\lib\threading.py", line 932, in _bootstrap_inner
+    self.run()
+  File "C:\Python38\lib\threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Python38\lib\site-packages\django\utils\autoreload.py", line 53, in wrapper
+    fn(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\runserver.py", line 110, in inner_run
+    autoreload.raise_last_exception()
+  File "C:\Python38\lib\site-packages\django\utils\autoreload.py", line 76, in raise_last_exception
+    raise _exception[1]
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 357, in execute
+    autoreload.check_errors(django.setup)()
+  File "C:\Python38\lib\site-packages\django\utils\autoreload.py", line 53, in wrapper
+    fn(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "C:\Python38\lib\site-packages\django\apps\registry.py", line 114, in populate
+    app_config.import_models()
+  File "C:\Python38\lib\site-packages\django\apps\config.py", line 211, in import_models
+    self.models_module = import_module(models_module_name)
+  File "C:\Python38\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "C:\Users\12488\SP_Treeo\Treeo\patient_log\models.py", line 2, in <module>
+    from users_acc.models import *
+  File "C:\Users\12488\SP_Treeo\Treeo\users_acc\models.py", line 9, in <module>
+    from PIL import Image
+ModuleNotFoundError: No module named 'PIL'
+C:\Users\12488\SP_Treeo\Treeo\users_acc\models.py changed, reloading.
+Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "C:\Python38\lib\threading.py", line 932, in _bootstrap_inner
+    self.run()
+  File "C:\Python38\lib\threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Python38\lib\site-packages\django\utils\autoreload.py", line 53, in wrapper
+    fn(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\runserver.py", line 110, in inner_run
+    autoreload.raise_last_exception()
+  File "C:\Python38\lib\site-packages\django\utils\autoreload.py", line 76, in raise_last_exception
+    raise _exception[1]
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 357, in execute
+    autoreload.check_errors(django.setup)()
+  File "C:\Python38\lib\site-packages\django\utils\autoreload.py", line 53, in wrapper
+    fn(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "C:\Python38\lib\site-packages\django\apps\registry.py", line 114, in populate
+    app_config.import_models()
+  File "C:\Python38\lib\site-packages\django\apps\config.py", line 211, in import_models
+    self.models_module = import_module(models_module_name)
+  File "C:\Python38\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "C:\Users\12488\SP_Treeo\Treeo\apptArchive\models.py", line 2, in <module>
+    from ReqAppt.models import *
+  File "C:\Users\12488\SP_Treeo\Treeo\ReqAppt\models.py", line 3, in <module>
+    from users_acc.models import *
+  File "C:\Users\12488\SP_Treeo\Treeo\users_acc\models.py", line 9, in <module>
+    from PIL import Image
+ModuleNotFoundError: No module named 'PIL'
+
+C:\Users\12488\SP_Treeo\Treeo>python -m pip install -r requirements.txt
+Requirement already satisfied: Django in c:\python38\lib\site-packages (from -r requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: mysql-connector-python in c:\python38\lib\site-packages (from -r requirements.txt (line 2)) (8.0.22)
+Collecting django-chartJS (from -r requirements.txt (line 3))
+  Downloading https://files.pythonhosted.org/packages/5a/c8/88e0c9b490b1a3cda5bdda83b9291672ad9bebbf8ca9ad665723babc2c34/django_chartjs-2.2.1-py3-none-any.whl (609kB)
+     |████████████████████████████████| 614kB 3.2MB/s
+Collecting pillow (from -r requirements.txt (line 4))
+  Downloading https://files.pythonhosted.org/packages/56/a8/769f1def4d283e71393319eee44f0c04ca49805a91d07dcba15b490f2395/Pillow-8.1.1-cp38-cp38-win_amd64.whl (2.2MB)
+     |████████████████████████████████| 2.2MB 6.4MB/s
+Collecting babel (from -r requirements.txt (line 5))
+  Downloading https://files.pythonhosted.org/packages/dd/a5/81076e10b5ef74493cf08a8e419e61b64324c9c55db4aa7f89c0240c4873/Babel-2.9.0-py2.py3-none-any.whl (8.8MB)
+     |████████████████████████████████| 8.8MB 6.8MB/s
+Requirement already satisfied: zoomus in c:\python38\lib\site-packages (from -r requirements.txt (line 6)) (1.1.3)
+Requirement already satisfied: twilio in c:\python38\lib\site-packages (from -r requirements.txt (line 7)) (6.53.0)
+Collecting django-phonenumber-field[phonenumbers] (from -r requirements.txt (line 8))
+  Downloading https://files.pythonhosted.org/packages/94/dd/0fe7c5a041290160256c00f15e6642b2baeb92dc6ab6d8d32a22ed85d27a/django_phonenumber_field-5.0.0-py3-none-any.whl (53kB)
+     |████████████████████████████████| 61kB 4.1MB/s
+Requirement already satisfied: asgiref<4,>=3.2.10 in c:\python38\lib\site-packages (from Django->-r requirements.txt (line 1)) (3.3.1)
+Requirement already satisfied: pytz in c:\python38\lib\site-packages (from Django->-r requirements.txt (line 1)) (2020.5)
+Requirement already satisfied: sqlparse>=0.2.2 in c:\python38\lib\site-packages (from Django->-r requirements.txt (line 1)) (0.4.1)
+Collecting protobuf>=3.0.0 (from mysql-connector-python->-r requirements.txt (line 2))
+  Downloading https://files.pythonhosted.org/packages/bd/a8/ea0da788573c3cd1339825863bfc4ea02464d2b1c0d2c7674f5e1d979337/protobuf-3.15.5-py2.py3-none-any.whl (173kB)
+     |████████████████████████████████| 174kB ...
+Requirement already satisfied: requests in c:\python38\lib\site-packages (from zoomus->-r requirements.txt (line 6)) (2.23.0)
+Requirement already satisfied: PyJWT in c:\python38\lib\site-packages (from zoomus->-r requirements.txt (line 6)) (1.7.1)
+Requirement already satisfied: six in c:\python38\lib\site-packages (from twilio->-r requirements.txt (line 7)) (1.15.0)
+Collecting phonenumbers>=7.0.2; extra == "phonenumbers" (from django-phonenumber-field[phonenumbers]->-r requirements.txt (line 8))
+  Downloading https://files.pythonhosted.org/packages/a0/f5/c2b7b4bdce10a25afd9c06f4f6096470f04511a4b520d577b49e60754197/phonenumbers-8.12.19-py2.py3-none-any.whl (2.6MB)
+     |████████████████████████████████| 2.6MB 6.4MB/s
+Requirement already satisfied: urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1 in c:\python38\lib\site-packages (from requests->zoomus->-r requirements.txt (line 6)) (1.25.9)
+Requirement already satisfied: chardet<4,>=3.0.2 in c:\python38\lib\site-packages (from requests->zoomus->-r requirements.txt (line 6)) (3.0.4)
+Requirement already satisfied: idna<3,>=2.5 in c:\python38\lib\site-packages (from requests->zoomus->-r requirements.txt (line 6)) (2.9)
+Requirement already satisfied: certifi>=2017.4.17 in c:\python38\lib\site-packages (from requests->zoomus->-r requirements.txt (line 6)) (2020.4.5.1)
+Installing collected packages: django-chartJS, pillow, babel, phonenumbers, django-phonenumber-field, protobuf
+Successfully installed babel-2.9.0 django-chartJS-2.2.1 django-phonenumber-field-5.0.0 phonenumbers-8.12.19 pillow-8.1.1 protobuf-3.15.5
+WARNING: You are using pip version 19.2.3, however version 21.0.1 is available.
+You should consider upgrading via the 'python -m pip install --upgrade pip' command.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 233, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+_mysql_connector.MySQLInterfaceError: Access denied for user 'root'@'localhost' (using password: YES)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 219, in ensure_connection
+    self.connect()
+  File "C:\Python38\lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 200, in connect
+    self.connection = self.get_new_connection(conn_params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 335, in get_new_connection
+    cnx = mysql.connector.connect(**conn_params)
+  File "C:\Python38\lib\site-packages\mysql\connector\__init__.py", line 270, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 86, in __init__
+    self.connect(**kwargs)
+  File "C:\Python38\lib\site-packages\mysql\connector\abstracts.py", line 985, in connect
+    self._open_connection()
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 235, in _open_connection
+    raise errors.get_mysql_exception(msg=exc.msg, errno=exc.errno,
+mysql.connector.errors.ProgrammingError: 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\threading.py", line 932, in _bootstrap_inner
+    self.run()
+  File "C:\Python38\lib\threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Python38\lib\site-packages\django\utils\autoreload.py", line 53, in wrapper
+    fn(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\runserver.py", line 121, in inner_run
+    self.check_migrations()
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 459, in check_migrations
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 18, in __init__
+    self.loader = MigrationLoader(self.connection)
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 53, in __init__
+    self.build_graph()
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 216, in build_graph
+    self.applied_migrations = recorder.applied_migrations()
+  File "C:\Python38\lib\site-packages\django\db\migrations\recorder.py", line 77, in applied_migrations
+    if self.has_table():
+  File "C:\Python38\lib\site-packages\django\db\migrations\recorder.py", line 55, in has_table
+    with self.connection.cursor() as cursor:
+  File "C:\Python38\lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 259, in cursor
+    return self._cursor()
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 235, in _cursor
+    self.ensure_connection()
+  File "C:\Python38\lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 219, in ensure_connection
+    self.connect()
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 219, in ensure_connection
+    self.connect()
+  File "C:\Python38\lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 200, in connect
+    self.connection = self.get_new_connection(conn_params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 335, in get_new_connection
+    cnx = mysql.connector.connect(**conn_params)
+  File "C:\Python38\lib\site-packages\mysql\connector\__init__.py", line 270, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 86, in __init__
+    self.connect(**kwargs)
+  File "C:\Python38\lib\site-packages\mysql\connector\abstracts.py", line 985, in connect
+    self._open_connection()
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 235, in _open_connection
+    raise errors.get_mysql_exception(msg=exc.msg, errno=exc.errno,
+django.db.utils.ProgrammingError: (1045, "1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)", '28000')
+C:\Users\12488\SP_Treeo\Treeo\Treeo\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "C:\Python38\lib\threading.py", line 932, in _bootstrap_inner
+    self.run()
+  File "C:\Python38\lib\threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Python38\lib\site-packages\django\utils\autoreload.py", line 53, in wrapper
+    fn(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\runserver.py", line 121, in inner_run
+    self.check_migrations()
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 459, in check_migrations
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 18, in __init__
+    self.loader = MigrationLoader(self.connection)
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 53, in __init__
+    self.build_graph()
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 255, in build_graph
+    self.graph.validate_consistency()
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 195, in validate_consistency
+    [n.raise_error() for n in self.node_map.values() if isinstance(n, DummyNode)]
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 195, in <listcomp>
+    [n.raise_error() for n in self.node_map.values() if isinstance(n, DummyNode)]
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 58, in raise_error
+    raise NodeNotFoundError(self.error_message, self.key, origin=self.origin)
+django.db.migrations.exceptions.NodeNotFoundError: Migration apptArchive.0002_auto_20210304_1322 dependencies reference nonexistent parent node ('users_acc', '0001_initial')
+C:\Users\12488\SP_Treeo\Treeo\Treeo\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "C:\Python38\lib\threading.py", line 932, in _bootstrap_inner
+    self.run()
+  File "C:\Python38\lib\threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Python38\lib\site-packages\django\utils\autoreload.py", line 53, in wrapper
+    fn(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\runserver.py", line 121, in inner_run
+    self.check_migrations()
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 459, in check_migrations
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 18, in __init__
+    self.loader = MigrationLoader(self.connection)
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 53, in __init__
+    self.build_graph()
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 255, in build_graph
+    self.graph.validate_consistency()
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 195, in validate_consistency
+    [n.raise_error() for n in self.node_map.values() if isinstance(n, DummyNode)]
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 195, in <listcomp>
+    [n.raise_error() for n in self.node_map.values() if isinstance(n, DummyNode)]
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 58, in raise_error
+    raise NodeNotFoundError(self.error_message, self.key, origin=self.origin)
+django.db.migrations.exceptions.NodeNotFoundError: Migration apptArchive.0002_auto_20210304_1322 dependencies reference nonexistent parent node ('users_acc', '0001_initial')
+^C
+C:\Users\12488\SP_Treeo\Treeo>
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+?: (mysql.W002) MySQL Strict Mode is not set for database connection 'default'
+        HINT: MySQL's Strict Mode fixes many data integrity problems in MySQL, such as data truncation upon insertion, by escalating warnings into errors. It is strongly recommended you activate it. See: https://docs.djangoproject.com/en/3.1/ref/databases/#mysql-sql-mode
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 330, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 371, in execute
+    output = self.handle(*args, **options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 85, in wrapped
+    res = handle_func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\migrate.py", line 92, in handle
+    executor = MigrationExecutor(connection, self.migration_progress_callback)
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 18, in __init__
+    self.loader = MigrationLoader(self.connection)
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 53, in __init__
+    self.build_graph()
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 255, in build_graph
+    self.graph.validate_consistency()
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 195, in validate_consistency
+    [n.raise_error() for n in self.node_map.values() if isinstance(n, DummyNode)]
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 195, in <listcomp>
+    [n.raise_error() for n in self.node_map.values() if isinstance(n, DummyNode)]
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 58, in raise_error
+    raise NodeNotFoundError(self.error_message, self.key, origin=self.origin)
+django.db.migrations.exceptions.NodeNotFoundError: Migration apptArchive.0002_auto_20210304_1322 dependencies reference nonexistent parent node ('users_acc', '0001_initial')
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 330, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 371, in execute
+    output = self.handle(*args, **options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 85, in wrapped
+    res = handle_func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\makemigrations.py", line 87, in handle
+    loader = MigrationLoader(None, ignore_no_migrations=True)
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 53, in __init__
+    self.build_graph()
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 255, in build_graph
+    self.graph.validate_consistency()
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 195, in validate_consistency
+    [n.raise_error() for n in self.node_map.values() if isinstance(n, DummyNode)]
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 195, in <listcomp>
+    [n.raise_error() for n in self.node_map.values() if isinstance(n, DummyNode)]
+  File "C:\Python38\lib\site-packages\django\db\migrations\graph.py", line 58, in raise_error
+    raise NodeNotFoundError(self.error_message, self.key, origin=self.origin)
+django.db.migrations.exceptions.NodeNotFoundError: Migration apptArchive.0002_auto_20210304_1322 dependencies reference nonexistent parent node ('users_acc', '0001_initial')
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'blogsys':
+  blogsys\migrations\0001_initial.py
+    - Create model PostQ
+Migrations for 'apptArchive':
+  apptArchive\migrations\0001_initial.py
+    - Create model ApptArchive
+    - Create model Notes
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+?: (mysql.W002) MySQL Strict Mode is not set for database connection 'default'
+        HINT: MySQL's Strict Mode fixes many data integrity problems in MySQL, such as data truncation upon insertion, by escalating warnings into errors. It is strongly recommended you activate it. See: https://docs.djangoproject.com/en/3.1/ref/databases/#mysql-sql-mode
+Operations to perform:
+  Apply all migrations: admin, apptArchive, auth, blogsys, contenttypes, sessions
+Running migrations:
+  Applying apptArchive.0001_initial...Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 504, in cmd_query
+    self._cmysql.query(query,
+_mysql_connector.MySQLInterfaceError: Cannot add foreign key constraint
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+mysql.connector.errors.DatabaseError: 1215 (HY000): Cannot add foreign key constraint
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 330, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 371, in execute
+    output = self.handle(*args, **options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 85, in wrapped
+    res = handle_func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\migrate.py", line 243, in handle
+    post_migrate_state = executor.migrate(
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 117, in migrate
+    state = self._migrate_all_forwards(state, plan, full_plan, fake=fake, fake_initial=fake_initial)
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 147, in _migrate_all_forwards
+    state = self.apply_migration(state, migration, fake=fake, fake_initial=fake_initial)
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 229, in apply_migration
+    migration_recorded = True
+  File "C:\Python38\lib\site-packages\django\db\backends\base\schema.py", line 115, in __exit__
+    self.execute(sql)
+  File "C:\Python38\lib\site-packages\django\db\backends\base\schema.py", line 142, in execute
+    cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+django.db.utils.DatabaseError: (1215, '1215 (HY000): Cannot add foreign key constraint', 'HY000')
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+No changes detected
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations spptArchive
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+No installed app with label 'spptArchive'.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations apptArchive
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+No changes detected in app 'apptArchive'
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations blogsys
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+No changes detected in app 'blogsys'
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Operations to perform:
+  Apply all migrations: admin, apptArchive, auth, blogsys, contenttypes, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying admin.0001_initial...Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 504, in cmd_query
+    self._cmysql.query(query,
+_mysql_connector.MySQLInterfaceError: Failed to open the referenced table 'users_acc_user'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+mysql.connector.errors.DatabaseError: 1824 (HY000): Failed to open the referenced table 'users_acc_user'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 330, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 371, in execute
+    output = self.handle(*args, **options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 85, in wrapped
+    res = handle_func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\migrate.py", line 243, in handle
+    post_migrate_state = executor.migrate(
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 117, in migrate
+    state = self._migrate_all_forwards(state, plan, full_plan, fake=fake, fake_initial=fake_initial)
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 147, in _migrate_all_forwards
+    state = self.apply_migration(state, migration, fake=fake, fake_initial=fake_initial)
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 229, in apply_migration
+    migration_recorded = True
+  File "C:\Python38\lib\site-packages\django\db\backends\base\schema.py", line 115, in __exit__
+    self.execute(sql)
+  File "C:\Python38\lib\site-packages\django\db\backends\base\schema.py", line 142, in execute
+    cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+django.db.utils.DatabaseError: (1824, "1824 (HY000): Failed to open the referenced table 'users_acc_user'", 'HY000')
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py sqlmigrate 0001
+usage: manage.py sqlmigrate [-h] [--database DATABASE] [--backwards] [--version] [-v {0,1,2,3}] [--settings SETTINGS]
+                            [--pythonpath PYTHONPATH] [--traceback] [--no-color] [--force-color] [--skip-checks]
+                            app_label migration_name
+manage.py sqlmigrate: error: the following arguments are required: migration_name
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py users_acc_user sqlmigrate 0001
+Unknown command: 'users_acc_user'
+Type 'manage.py help' for usage.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py users_acc sqlmigrate 0001
+Unknown command: 'users_acc'
+Type 'manage.py help' for usage.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations users_acc
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'users_acc':
+  users_acc\migrations\0001_initial.py
+    - Create model User
+    - Create model Provider
+    - Create model Patient
+    - Create model Admin
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 330, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 371, in execute
+    output = self.handle(*args, **options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 85, in wrapped
+    res = handle_func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\migrate.py", line 95, in handle
+    executor.loader.check_consistent_history(connection)
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 302, in check_consistent_history
+    raise InconsistentMigrationHistory(
+django.db.migrations.exceptions.InconsistentMigrationHistory: Migration admin.0001_initial is applied before its dependency users_acc.0001_initial on database 'default'.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate users_acc
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 330, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 371, in execute
+    output = self.handle(*args, **options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 85, in wrapped
+    res = handle_func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\migrate.py", line 95, in handle
+    executor.loader.check_consistent_history(connection)
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 302, in check_consistent_history
+    raise InconsistentMigrationHistory(
+django.db.migrations.exceptions.InconsistentMigrationHistory: Migration admin.0001_initial is applied before its dependency users_acc.0001_initial on database 'default'.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\apps\registry.py", line 156, in get_app_config
+    return self.app_configs[app_label]
+KeyError: 'admin'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 330, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 371, in execute
+    output = self.handle(*args, **options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 85, in wrapped
+    res = handle_func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\migrate.py", line 75, in handle
+    self.check(databases=[database])
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 392, in check
+    all_issues = checks.run_checks(
+  File "C:\Python38\lib\site-packages\django\core\checks\registry.py", line 70, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+  File "C:\Python38\lib\site-packages\django\core\checks\urls.py", line 13, in check_url_config
+    return check_resolver(resolver)
+  File "C:\Python38\lib\site-packages\django\core\checks\urls.py", line 23, in check_resolver
+    return check_method()
+  File "C:\Python38\lib\site-packages\django\urls\resolvers.py", line 408, in check
+    for pattern in self.url_patterns:
+  File "C:\Python38\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Python38\lib\site-packages\django\urls\resolvers.py", line 589, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "C:\Python38\lib\site-packages\django\utils\functional.py", line 48, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "C:\Python38\lib\site-packages\django\urls\resolvers.py", line 582, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "C:\Python38\lib\importlib\__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1014, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 991, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 975, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 671, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 783, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "C:\Users\12488\SP_Treeo\Treeo\Treeo\urls.py", line 24, in <module>
+    path('admin/', admin.site.urls),
+  File "C:\Python38\lib\site-packages\django\utils\functional.py", line 240, in inner
+    self._setup()
+  File "C:\Python38\lib\site-packages\django\contrib\admin\sites.py", line 540, in _setup
+    AdminSiteClass = import_string(apps.get_app_config('admin').default_site)
+  File "C:\Python38\lib\site-packages\django\apps\registry.py", line 163, in get_app_config
+    raise LookupError(message)
+LookupError: No installed app with label 'admin'.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Traceback (most recent call last):
+  File "manage.py", line 21, in <module>
+    main()
+  File "manage.py", line 17, in main
+    execute_from_command_line(sys.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "C:\Python38\lib\site-packages\django\core\management\__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 330, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 371, in execute
+    output = self.handle(*args, **options)
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 85, in wrapped
+    res = handle_func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\migrate.py", line 95, in handle
+    executor.loader.check_consistent_history(connection)
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 302, in check_consistent_history
+    raise InconsistentMigrationHistory(
+django.db.migrations.exceptions.InconsistentMigrationHistory: Migration admin.0001_initial is applied before its dependency users_acc.0001_initial on database 'default'.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Operations to perform:
+  Apply all migrations: admin, apptArchive, auth, blogsys, contenttypes, sessions, users_acc
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying users_acc.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying apptArchive.0001_initial... OK
+  Applying blogsys.0001_initial... OK
+  Applying sessions.0001_initial... OK
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+March 05, 2021 - 17:04:17
+Django version 3.1.6, using settings 'Treeo.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+Not Found: /test_Url
+[05/Mar/2021 17:04:35] "GET / HTTP/1.1" 302 0
+Not Found: /test_Url
+----------------------------------------
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 65378)
+Exception happened during processing of request from ('127.0.0.1', 65379)
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+----------------------------------------
+[05/Mar/2021 17:04:49] "GET /login/ HTTP/1.1" 200 2903
+[05/Mar/2021 17:04:50] "GET /static/css/style.css HTTP/1.1" 200 50156
+[05/Mar/2021 17:04:50] "GET /static/img/TreeoLogo.png HTTP/1.1" 200 34965
+[05/Mar/2021 17:04:50] "GET /static/img/TwitterLogo.png HTTP/1.1" 200 34974
+[05/Mar/2021 17:04:50] "GET /static/img/InstagramLogo.png HTTP/1.1" 200 31049
+[05/Mar/2021 17:04:50] "GET /static/img/FacebookLogo.png HTTP/1.1" 200 23899
+Not Found: /favicon.ico
+[05/Mar/2021 17:04:50] "GET /favicon.ico HTTP/1.1" 404 6661
+^C
+C:\Users\12488\SP_Treeo\Treeo>python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+March 05, 2021 - 17:05:05
+Django version 3.1.6, using settings 'Treeo.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+[05/Mar/2021 17:05:07] "GET /login/ HTTP/1.1" 200 2903
+[05/Mar/2021 17:05:11] "GET / HTTP/1.1" 302 0
+[05/Mar/2021 17:05:11] "GET /login/ HTTP/1.1" 200 2903
+[05/Mar/2021 17:05:16] "GET /register/ HTTP/1.1" 200 3791
+[05/Mar/2021 17:08:03] "POST /register/ HTTP/1.1" 200 3944
+[05/Mar/2021 17:08:40] "POST /register/ HTTP/1.1" 200 4018
+[05/Mar/2021 17:09:15] "POST /register/ HTTP/1.1" 200 4082
+[05/Mar/2021 17:09:25] "GET / HTTP/1.1" 302 0
+[05/Mar/2021 17:09:25] "GET /login/ HTTP/1.1" 200 2903
+[05/Mar/2021 17:09:28] "POST /login/ HTTP/1.1" 200 2932
+[05/Mar/2021 17:09:35] "POST /login/ HTTP/1.1" 200 2932
+[05/Mar/2021 17:09:38] "GET /register/ HTTP/1.1" 200 3791
+[05/Mar/2021 17:09:43] "GET /password-reset/ HTTP/1.1" 200 2678
+[05/Mar/2021 17:09:43] "GET /static/img/T.png HTTP/1.1" 200 20960
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 65407)
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 65489)
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+Internal Server Error: /password-reset/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python38\lib\site-packages\django\views\generic\base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\utils\decorators.py", line 43, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\utils\decorators.py", line 130, in _wrapped_view
+    response = view_func(request, *args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\views.py", line 222, in dispatch
+    return super().dispatch(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\views\generic\base.py", line 98, in dispatch
+    return handler(request, *args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\views\generic\edit.py", line 142, in post
+    return self.form_valid(form)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\views.py", line 235, in form_valid
+    form.save(**opts)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\forms.py", line 323, in save
+    self.send_mail(
+  File "C:\Python38\lib\site-packages\django\contrib\auth\forms.py", line 273, in send_mail
+    email_message.send()
+  File "C:\Python38\lib\site-packages\django\core\mail\message.py", line 284, in send
+    return self.get_connection(fail_silently).send_messages([self])
+  File "C:\Python38\lib\site-packages\django\core\mail\backends\smtp.py", line 109, in send_messages
+    sent = self._send(message)
+  File "C:\Python38\lib\site-packages\django\core\mail\backends\smtp.py", line 125, in _send
+    self.connection.sendmail(from_email, recipients, message.as_bytes(linesep='\r\n'))
+  File "C:\Python38\lib\smtplib.py", line 886, in sendmail
+    (code, resp) = self.data(msg)
+  File "C:\Python38\lib\smtplib.py", line 564, in data
+    raise SMTPDataError(code, repl)
+smtplib.SMTPDataError: (421, b'4.3.0 Temporary System Problem.  Try again later (10). m7sm2947846qti.33 - gsmtp')
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 65516)
+[05/Mar/2021 17:11:30] "POST /password-reset/ HTTP/1.1" 500 133845
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 65519)
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 49154)
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 65528)
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 65534)
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 65525)
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 65522)
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 65531)
+Traceback (most recent call last):
+  File "C:\Python38\lib\socketserver.py", line 650, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Python38\lib\socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Python38\lib\socketserver.py", line 720, in __init__
+    self.handle()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 174, in handle
+    self.handle_one_request()
+  File "C:\Python38\lib\site-packages\django\core\servers\basehttp.py", line 182, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+  File "C:\Python38\lib\socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+[05/Mar/2021 17:11:45] "GET / HTTP/1.1" 302 0
+[05/Mar/2021 17:11:45] "GET /login/ HTTP/1.1" 200 2903
+[05/Mar/2021 17:11:48] "GET /register/ HTTP/1.1" 200 3791
+[05/Mar/2021 17:12:52] "POST /register/ HTTP/1.1" 302 0
+[05/Mar/2021 17:12:52] "GET /account_activation_sent/ HTTP/1.1" 200 1375
+[05/Mar/2021 17:12:52] "GET /static/img/EmailClick.png HTTP/1.1" 200 11017
+1
+[05/Mar/2021 17:13:11] "GET /%5Eactivate/(%3FPMQ%5B0-9A-Za-z_%5C-%5D+)/(%3FPaj1rlo-1f00e336f67b172471753ce363af62db%5B0-9A-Za-z%5D%7B1,13%7D-%5B0-9A-Za-z%5D%7B1,20%7D)/$ HTTP/1.1" 200 1533
+[05/Mar/2021 17:13:12] "GET /static/img/Checkmark.png HTTP/1.1" 200 55481
+[05/Mar/2021 17:13:17] "GET / HTTP/1.1" 200 2690
+[05/Mar/2021 17:13:18] "GET /media/img/profile.png HTTP/1.1" 200 3511
+[05/Mar/2021 17:13:22] "GET / HTTP/1.1" 200 2690
+Internal Server Error: /ReqAppt/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 504, in cmd_query
+    self._cmysql.query(query,
+_mysql_connector.MySQLInterfaceError: Table 'treeohealthdb.reqappt_appttable' doesn't exist
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+mysql.connector.errors.ProgrammingError: 1146 (42S02): Table 'treeohealthdb.reqappt_appttable' doesn't exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\decorators.py", line 21, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\ReqAppt\views.py", line 80, in home
+    return Patient_view(request)
+  File "C:\Users\12488\SP_Treeo\Treeo\ReqAppt\views.py", line 178, in Patient_view
+    for i in x:
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 287, in __iter__
+    self._fetch_all()
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "C:\Python38\lib\site-packages\django\db\models\sql\compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+django.db.utils.ProgrammingError: (1146, "1146 (42S02): Table 'treeohealthdb.reqappt_appttable' doesn't exist", '42S02')
+[05/Mar/2021 17:13:23] "GET /ReqAppt/ HTTP/1.1" 500 161077
+[05/Mar/2021 17:13:28] "GET / HTTP/1.1" 200 2690
+Internal Server Error: /upload_download/download/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 504, in cmd_query
+    self._cmysql.query(query,
+_mysql_connector.MySQLInterfaceError: Table 'treeohealthdb.upload_download_uploaded_file' doesn't exist
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+mysql.connector.errors.ProgrammingError: 1146 (42S02): Table 'treeohealthdb.upload_download_uploaded_file' doesn't exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\decorators.py", line 21, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\upload_download\views.py", line 75, in render_file_download
+    for i in Uploaded_File.objects.filter(usern=request.user):
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 287, in __iter__
+    self._fetch_all()
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "C:\Python38\lib\site-packages\django\db\models\sql\compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+django.db.utils.ProgrammingError: (1146, "1146 (42S02): Table 'treeohealthdb.upload_download_uploaded_file' doesn't exist", '42S02')
+[05/Mar/2021 17:13:38] "GET /upload_download/download/ HTTP/1.1" 500 158305
+Not Found: /upload_download/
+[05/Mar/2021 17:13:49] "GET /upload_download/ HTTP/1.1" 404 7646
+[05/Mar/2021 17:13:56] "GET / HTTP/1.1" 200 2690
+Internal Server Error: /ReqAppt/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 504, in cmd_query
+    self._cmysql.query(query,
+_mysql_connector.MySQLInterfaceError: Table 'treeohealthdb.reqappt_appttable' doesn't exist
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+mysql.connector.errors.ProgrammingError: 1146 (42S02): Table 'treeohealthdb.reqappt_appttable' doesn't exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\decorators.py", line 21, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\ReqAppt\views.py", line 80, in home
+    return Patient_view(request)
+  File "C:\Users\12488\SP_Treeo\Treeo\ReqAppt\views.py", line 178, in Patient_view
+    for i in x:
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 287, in __iter__
+    self._fetch_all()
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "C:\Python38\lib\site-packages\django\db\models\sql\compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+django.db.utils.ProgrammingError: (1146, "1146 (42S02): Table 'treeohealthdb.reqappt_appttable' doesn't exist", '42S02')
+[05/Mar/2021 17:13:58] "GET /ReqAppt/ HTTP/1.1" 500 161077
+[05/Mar/2021 17:14:09] "GET / HTTP/1.1" 200 2690
+[05/Mar/2021 17:14:12] "GET /profile/ HTTP/1.1" 200 2939
+Internal Server Error: /blogsys/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\blogsys\views.py", line 11, in Health_Coach
+    x = PostQ.objects.filter( Thereciever= (request.user.patient.user), Thesender=(request.user.patient.doc_c.user))
+AttributeError: 'NoneType' object has no attribute 'user'
+[05/Mar/2021 17:14:17] "GET /blogsys/ HTTP/1.1" 500 65779
+Internal Server Error: /patient_log/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 504, in cmd_query
+    self._cmysql.query(query,
+_mysql_connector.MySQLInterfaceError: Table 'treeohealthdb.patient_log_patientlog' doesn't exist
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+mysql.connector.errors.ProgrammingError: 1146 (42S02): Table 'treeohealthdb.patient_log_patientlog' doesn't exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\decorators.py", line 21, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\patient_log\views.py", line 40, in patientlog
+    if PatientLog.objects.filter(patient=request.user.patient.id).filter(date__date=today).exists():
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 809, in exists
+    return self.query.has_results(using=self.db)
+  File "C:\Python38\lib\site-packages\django\db\models\sql\query.py", line 535, in has_results
+    return compiler.has_results()
+  File "C:\Python38\lib\site-packages\django\db\models\sql\compiler.py", line 1126, in has_results
+    return bool(self.execute_sql(SINGLE))
+  File "C:\Python38\lib\site-packages\django\db\models\sql\compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+django.db.utils.ProgrammingError: (1146, "1146 (42S02): Table 'treeohealthdb.patient_log_patientlog' doesn't exist", '42S02')
+[05/Mar/2021 17:14:27] "GET /patient_log/ HTTP/1.1" 500 155308
+[05/Mar/2021 17:15:14] "GET /admin HTTP/1.1" 301 0
+[05/Mar/2021 17:15:14] "GET /admin/ HTTP/1.1" 302 0
+[05/Mar/2021 17:15:14] "GET /admin/login/?next=/admin/ HTTP/1.1" 200 2349
+[05/Mar/2021 17:15:14] "GET /static/admin/css/base.css HTTP/1.1" 200 16307
+[05/Mar/2021 17:15:14] "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2138
+[05/Mar/2021 17:15:14] "GET /static/admin/css/login.css HTTP/1.1" 200 1185
+[05/Mar/2021 17:15:14] "GET /static/admin/css/responsive.css HTTP/1.1" 200 18344
+[05/Mar/2021 17:15:14] "GET /static/admin/css/fonts.css HTTP/1.1" 200 423
+[05/Mar/2021 17:15:14] "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 1360
+[05/Mar/2021 17:15:15] "GET /static/admin/fonts/Roboto-Regular-webfont.woff HTTP/1.1" 200 85876
+[05/Mar/2021 17:15:15] "GET /static/admin/fonts/Roboto-Bold-webfont.woff HTTP/1.1" 200 86184
+[05/Mar/2021 17:15:15] "GET /static/admin/fonts/Roboto-Light-webfont.woff HTTP/1.1" 200 85692
+^C
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Operations to perform:
+  Apply all migrations: admin, apptArchive, auth, blogsys, contenttypes, sessions, users_acc
+Running migrations:
+  No migrations to apply.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+No changes detected
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Operations to perform:
+  Apply all migrations: admin, apptArchive, auth, blogsys, contenttypes, sessions, users_acc
+Running migrations:
+  No migrations to apply.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+March 05, 2021 - 17:17:30
+Django version 3.1.6, using settings 'Treeo.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+[05/Mar/2021 17:17:30] "GET / HTTP/1.1" 200 2690
+[05/Mar/2021 17:17:30] "GET /static/css/style.css HTTP/1.1" 304 0
+Internal Server Error: /ReqAppt/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 504, in cmd_query
+    self._cmysql.query(query,
+_mysql_connector.MySQLInterfaceError: Table 'treeohealthdb.reqappt_appttable' doesn't exist
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+mysql.connector.errors.ProgrammingError: 1146 (42S02): Table 'treeohealthdb.reqappt_appttable' doesn't exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\decorators.py", line 21, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\ReqAppt\views.py", line 80, in home
+    return Patient_view(request)
+  File "C:\Users\12488\SP_Treeo\Treeo\ReqAppt\views.py", line 178, in Patient_view
+    for i in x:
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 287, in __iter__
+    self._fetch_all()
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "C:\Python38\lib\site-packages\django\db\models\sql\compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+django.db.utils.ProgrammingError: (1146, "1146 (42S02): Table 'treeohealthdb.reqappt_appttable' doesn't exist", '42S02')
+[05/Mar/2021 17:17:35] "GET /ReqAppt/ HTTP/1.1" 500 161077
+[05/Mar/2021 17:18:08] "GET / HTTP/1.1" 200 2690
+Internal Server Error: /patient_log/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 504, in cmd_query
+    self._cmysql.query(query,
+_mysql_connector.MySQLInterfaceError: Table 'treeohealthdb.patient_log_patientlog' doesn't exist
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+mysql.connector.errors.ProgrammingError: 1146 (42S02): Table 'treeohealthdb.patient_log_patientlog' doesn't exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\decorators.py", line 21, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\patient_log\views.py", line 40, in patientlog
+    if PatientLog.objects.filter(patient=request.user.patient.id).filter(date__date=today).exists():
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 809, in exists
+    return self.query.has_results(using=self.db)
+  File "C:\Python38\lib\site-packages\django\db\models\sql\query.py", line 535, in has_results
+    return compiler.has_results()
+  File "C:\Python38\lib\site-packages\django\db\models\sql\compiler.py", line 1126, in has_results
+    return bool(self.execute_sql(SINGLE))
+  File "C:\Python38\lib\site-packages\django\db\models\sql\compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+django.db.utils.ProgrammingError: (1146, "1146 (42S02): Table 'treeohealthdb.patient_log_patientlog' doesn't exist", '42S02')
+[05/Mar/2021 17:18:11] "GET /patient_log/ HTTP/1.1" 500 155300
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate patient_log
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+CommandError: App 'patient_log' does not have migrations.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate blogsys
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Operations to perform:
+  Apply all migrations: blogsys
+Running migrations:
+  No migrations to apply.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'blogsys':
+  blogsys\migrations\0001_initial.py
+    - Create model PostQ
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Operations to perform:
+  Apply all migrations: admin, apptArchive, auth, blogsys, contenttypes, sessions, users_acc
+Running migrations:
+  No migrations to apply.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+March 05, 2021 - 17:30:55
+Django version 3.1.6, using settings 'Treeo.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+[05/Mar/2021 17:33:18] "GET / HTTP/1.1" 200 2690
+[05/Mar/2021 17:33:18] "GET /static/css/style.css HTTP/1.1" 304 0
+[05/Mar/2021 17:33:18] "GET /media/img/profile.png HTTP/1.1" 304 0
+[05/Mar/2021 17:33:21] "GET /profile/ HTTP/1.1" 200 2939
+Internal Server Error: /blogsys/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\blogsys\views.py", line 11, in Health_Coach
+    x = PostQ.objects.filter( Thereciever= (request.user.patient.user), Thesender=(request.user.patient.doc_c.user))
+AttributeError: 'NoneType' object has no attribute 'user'
+[05/Mar/2021 17:33:24] "GET /blogsys/ HTTP/1.1" 500 65779
+[05/Mar/2021 17:33:34] "GET / HTTP/1.1" 200 2690
+Internal Server Error: /upload_download/download/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 504, in cmd_query
+    self._cmysql.query(query,
+_mysql_connector.MySQLInterfaceError: Table 'treeohealthdb.upload_download_uploaded_file' doesn't exist
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+mysql.connector.errors.ProgrammingError: 1146 (42S02): Table 'treeohealthdb.upload_download_uploaded_file' doesn't exist
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\decorators.py", line 21, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\upload_download\views.py", line 75, in render_file_download
+    for i in Uploaded_File.objects.filter(usern=request.user):
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 287, in __iter__
+    self._fetch_all()
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "C:\Python38\lib\site-packages\django\db\models\sql\compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+django.db.utils.ProgrammingError: (1146, "1146 (42S02): Table 'treeohealthdb.upload_download_uploaded_file' doesn't exist", '42S02')
+[05/Mar/2021 17:33:37] "GET /upload_download/download/ HTTP/1.1" 500 158305
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate upload_download
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+CommandError: App 'upload_download' does not have migrations.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations upload_download
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'upload_download':
+  upload_download\migrations\0001_initial.py
+    - Create model Uploaded_File
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations blogsys
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+No changes detected in app 'blogsys'
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations apptArchive
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+No changes detected in app 'apptArchive'
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations patient_log
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'patient_log':
+  patient_log\migrations\0001_initial.py
+    - Create model PatientLog
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations ReqAppt
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'ReqAppt':
+  ReqAppt\migrations\0001_initial.py
+    - Create model ApptTable
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Operations to perform:
+  Apply all migrations: ReqAppt, admin, apptArchive, auth, blogsys, contenttypes, patient_log, sessions, upload_download, users_acc
+Running migrations:
+  Applying ReqAppt.0001_initial... OK
+  Applying patient_log.0001_initial... OK
+  Applying upload_download.0001_initial... OK
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+March 05, 2021 - 17:36:45
+Django version 3.1.6, using settings 'Treeo.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+[05/Mar/2021 17:36:55] "GET / HTTP/1.1" 200 2690
+[05/Mar/2021 17:36:58] "GET /patient_log/ HTTP/1.1" 200 2981
+[05/Mar/2021 17:37:01] "GET / HTTP/1.1" 200 2690
+[05/Mar/2021 17:37:02] "GET /upload_download/download/ HTTP/1.1" 200 2607
+[05/Mar/2021 17:37:05] "GET /upload_download/upload/ HTTP/1.1" 200 2708
+[05/Mar/2021 17:37:30] "GET /patient_log/ HTTP/1.1" 200 2981
+[05/Mar/2021 17:37:32] "GET /patient_log/ HTTP/1.1" 200 2981
+[05/Mar/2021 17:37:33] "GET / HTTP/1.1" 200 2690
+[05/Mar/2021 17:37:36] "GET /profile/ HTTP/1.1" 200 2939
+Internal Server Error: /blogsys/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\blogsys\views.py", line 11, in Health_Coach
+    x = PostQ.objects.filter( Thereciever= (request.user.patient.user), Thesender=(request.user.patient.doc_c.user))
+AttributeError: 'NoneType' object has no attribute 'user'
+[05/Mar/2021 17:37:37] "GET /blogsys/ HTTP/1.1" 500 65779
+[05/Mar/2021 17:37:45] "GET / HTTP/1.1" 200 2690
+[05/Mar/2021 17:37:48] "GET /ReqAppt/ HTTP/1.1" 200 2285
+GET
+[05/Mar/2021 17:37:50] "GET /ReqAppt/reqAppt_calendar HTTP/1.1" 200 2992
+[05/Mar/2021 17:37:50] "GET /static/css/apptCalendarStyle.css HTTP/1.1" 404 1701
+[05/Mar/2021 17:37:51] "GET /ReqAppt/calendar-events?start=2021-02-28&end=2021-03-07&_=1614983871193 HTTP/1.1" 200 2
+[05/Mar/2021 17:37:55] "GET /ReqAppt/calendar-events?start=2021-02-28&end=2021-04-11&_=1614983871194 HTTP/1.1" 200 2
+[05/Mar/2021 17:38:02] "GET /ReqAppt/ HTTP/1.1" 200 2285
+'NoneType' object has no attribute 'id'
+'NoneType' object has no attribute 'id'
+'NoneType' object has no attribute 'id'
+[05/Mar/2021 17:38:03] "GET /ReqAppt/Appointment HTTP/1.1" 200 4007
+[05/Mar/2021 17:38:08] "GET /apptArchive/ HTTP/1.1" 200 1733
+[05/Mar/2021 17:38:10] "GET /logout/ HTTP/1.1" 200 1468
+[05/Mar/2021 17:38:15] "GET / HTTP/1.1" 302 0
+[05/Mar/2021 17:38:15] "GET /login/ HTTP/1.1" 200 2903
+[05/Mar/2021 17:38:20] "POST /login/ HTTP/1.1" 302 0
+[05/Mar/2021 17:38:20] "GET / HTTP/1.1" 200 2690
+C:\Users\12488\SP_Treeo\Treeo\Treeo\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 233, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+_mysql_connector.MySQLInterfaceError: Access denied for user 'root'@'localhost' (using password: YES)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 219, in ensure_connection
+    self.connect()
+  File "C:\Python38\lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 200, in connect
+    self.connection = self.get_new_connection(conn_params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 335, in get_new_connection
+    cnx = mysql.connector.connect(**conn_params)
+  File "C:\Python38\lib\site-packages\mysql\connector\__init__.py", line 270, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 86, in __init__
+    self.connect(**kwargs)
+  File "C:\Python38\lib\site-packages\mysql\connector\abstracts.py", line 985, in connect
+    self._open_connection()
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 235, in _open_connection
+    raise errors.get_mysql_exception(msg=exc.msg, errno=exc.errno,
+mysql.connector.errors.ProgrammingError: 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\threading.py", line 932, in _bootstrap_inner
+    self.run()
+  File "C:\Python38\lib\threading.py", line 870, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Python38\lib\site-packages\django\utils\autoreload.py", line 53, in wrapper
+    fn(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\core\management\commands\runserver.py", line 121, in inner_run
+    self.check_migrations()
+  File "C:\Python38\lib\site-packages\django\core\management\base.py", line 459, in check_migrations
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+  File "C:\Python38\lib\site-packages\django\db\migrations\executor.py", line 18, in __init__
+    self.loader = MigrationLoader(self.connection)
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 53, in __init__
+    self.build_graph()
+  File "C:\Python38\lib\site-packages\django\db\migrations\loader.py", line 216, in build_graph
+    self.applied_migrations = recorder.applied_migrations()
+  File "C:\Python38\lib\site-packages\django\db\migrations\recorder.py", line 77, in applied_migrations
+    if self.has_table():
+  File "C:\Python38\lib\site-packages\django\db\migrations\recorder.py", line 55, in has_table
+    with self.connection.cursor() as cursor:
+  File "C:\Python38\lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 259, in cursor
+    return self._cursor()
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 235, in _cursor
+    self.ensure_connection()
+  File "C:\Python38\lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 219, in ensure_connection
+    self.connect()
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 219, in ensure_connection
+    self.connect()
+  File "C:\Python38\lib\site-packages\django\utils\asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\db\backends\base\base.py", line 200, in connect
+    self.connection = self.get_new_connection(conn_params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 335, in get_new_connection
+    cnx = mysql.connector.connect(**conn_params)
+  File "C:\Python38\lib\site-packages\mysql\connector\__init__.py", line 270, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 86, in __init__
+    self.connect(**kwargs)
+  File "C:\Python38\lib\site-packages\mysql\connector\abstracts.py", line 985, in connect
+    self._open_connection()
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 235, in _open_connection
+    raise errors.get_mysql_exception(msg=exc.msg, errno=exc.errno,
+django.db.utils.ProgrammingError: (1045, "1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)", '28000')
+C:\Users\12488\SP_Treeo\Treeo\Treeo\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+
+You have 3 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): messaging, patient_log, upload_download.
+Run 'python manage.py migrate' to apply them.
+March 10, 2021 - 10:10:04
+Django version 3.1.6, using settings 'Treeo.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+
+You have 3 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): messaging, patient_log, upload_download.
+Run 'python manage.py migrate' to apply them.
+March 10, 2021 - 10:13:21
+Django version 3.1.6, using settings 'Treeo.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 504, in cmd_query
+    self._cmysql.query(query,
+_mysql_connector.MySQLInterfaceError: Unknown column 'users_acc_user.is_deactivated' in 'field list'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+mysql.connector.errors.ProgrammingError: 1054 (42S22): Unknown column 'users_acc_user.is_deactivated' in 'field list'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\utils\deprecation.py", line 113, in __call__
+    response = self.process_request(request)
+  File "C:\Users\12488\SP_Treeo\Treeo\users_acc\middleware.py", line 20, in process_request
+    if not hasattr(request, "session") or request.user.is_authenticated:
+  File "C:\Python38\lib\site-packages\django\utils\functional.py", line 240, in inner
+    self._setup()
+  File "C:\Python38\lib\site-packages\django\utils\functional.py", line 376, in _setup
+    self._wrapped = self._setupfunc()
+  File "C:\Python38\lib\site-packages\django\contrib\auth\middleware.py", line 23, in <lambda>
+    request.user = SimpleLazyObject(lambda: get_user(request))
+  File "C:\Python38\lib\site-packages\django\contrib\auth\middleware.py", line 11, in get_user
+    request._cached_user = auth.get_user(request)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\__init__.py", line 181, in get_user
+    user = backend.get_user(user_id)
+  File "C:\Python38\lib\site-packages\django\contrib\auth\backends.py", line 157, in get_user
+    user = UserModel._default_manager.get(pk=user_id)
+  File "C:\Python38\lib\site-packages\django\db\models\manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 425, in get
+    num = len(clone)
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 269, in __len__
+    self._fetch_all()
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 1308, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "C:\Python38\lib\site-packages\django\db\models\query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "C:\Python38\lib\site-packages\django\db\models\sql\compiler.py", line 1156, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\django\db\utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Python38\lib\site-packages\django\db\backends\utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python38\lib\site-packages\mysql\connector\django\base.py", line 149, in execute
+    return self.cursor.execute(query, new_args)
+  File "C:\Python38\lib\site-packages\mysql\connector\cursor_cext.py", line 264, in execute
+    result = self._cnx.cmd_query(stmt, raw=self._raw,
+  File "C:\Python38\lib\site-packages\mysql\connector\connection_cext.py", line 508, in cmd_query
+    raise errors.get_mysql_exception(exc.errno, msg=exc.msg,
+django.db.utils.ProgrammingError: (1054, "1054 (42S22): Unknown column 'users_acc_user.is_deactivated' in 'field list'", '42S22')
+[10/Mar/2021 10:13:42] "GET / HTTP/1.1" 500 189032
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations users_acc
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'users_acc':
+  users_acc\migrations\0001_initial.py
+    - Create model User
+    - Create model Provider
+    - Create model Patient
+    - Create model Admin
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations apptArchive
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'apptArchive':
+  apptArchive\migrations\0001_initial.py
+    - Create model ApptArchive
+    - Create model Notes
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations blogsys
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'blogsys':
+  blogsys\migrations\0001_initial.py
+    - Create model PostQ
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations messaging
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'messaging':
+  messaging\migrations\0001_initial.py
+    - Create model message
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations patient_log
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'patient_log':
+  patient_log\migrations\0001_initial.py
+    - Create model PatientLog
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations ReqAppt
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'ReqAppt':
+  ReqAppt\migrations\0001_initial.py
+    - Create model ApptTable
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations upload_download
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Migrations for 'upload_download':
+  upload_download\migrations\0001_initial.py
+    - Create model Uploaded_File
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations us
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+No installed app with label 'us'.
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py makemigrations users_acc
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+No changes detected in app 'users_acc'
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py migrate
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+Operations to perform:
+  Apply all migrations: ReqAppt, admin, apptArchive, auth, blogsys, contenttypes, messaging, patient_log, sessions, upload_download, users_acc
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying users_acc.0001_initial... OK
+  Applying ReqAppt.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying apptArchive.0001_initial... OK
+  Applying blogsys.0001_initial... OK
+  Applying messaging.0001_initial... OK
+  Applying patient_log.0001_initial... OK
+  Applying sessions.0001_initial... OK
+  Applying upload_download.0001_initial... OK
+
+C:\Users\12488\SP_Treeo\Treeo>python manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified some issues:
+
+WARNINGS:
+?: (2_0.W001) Your URL pattern '^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$' [name='activate'] has a route that contains '(?P<', begins with a '^', or ends with a '$'. This was likely an oversight when migrating to django.urls.path().
+
+System check identified 1 issue (0 silenced).
+March 10, 2021 - 10:22:46
+Django version 3.1.6, using settings 'Treeo.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+[10/Mar/2021 10:22:57] "GET / HTTP/1.1" 302 0
+[10/Mar/2021 10:22:57] "GET /login/ HTTP/1.1" 200 2989
+[10/Mar/2021 10:22:58] "GET /static/css/style.css HTTP/1.1" 200 53061
+[10/Mar/2021 10:22:58] "GET /static/img/TreeoLogo.png HTTP/1.1" 200 34965
+[10/Mar/2021 10:22:58] "GET /static/img/TwitterLogo.png HTTP/1.1" 200 34974
+[10/Mar/2021 10:22:58] "GET /static/img/FacebookLogo.png HTTP/1.1" 200 23899
+[10/Mar/2021 10:22:58] "GET /static/img/InstagramLogo.png HTTP/1.1" 200 31049
+[10/Mar/2021 10:22:58] "GET /static/img/favicon.ico HTTP/1.1" 200 4286
+[10/Mar/2021 10:23:01] "POST /login/ HTTP/1.1" 200 3024
+[10/Mar/2021 10:23:06] "POST /login/ HTTP/1.1" 200 3024
+[10/Mar/2021 10:23:19] "POST /login/ HTTP/1.1" 200 3024
+[10/Mar/2021 10:23:25] "GET /password-reset/ HTTP/1.1" 200 2336
+[10/Mar/2021 10:23:25] "GET /static/img/T.png HTTP/1.1" 304 0
+[10/Mar/2021 10:23:44] "POST /password-reset/ HTTP/1.1" 302 0
+[10/Mar/2021 10:23:44] "GET /password-reset/done/ HTTP/1.1" 200 1612
+[10/Mar/2021 10:25:32] "GET /password-reset/confirm/MQ/aj1rq4-7d6df2ab3bd5d885bb954d655e7d7b1a/ HTTP/1.1" 200 2593
+[10/Mar/2021 10:25:33] "GET /static/css/style.css HTTP/1.1" 304 0
+[10/Mar/2021 10:25:50] "GET /password-reset/confirm/MQ/aj1rq4-7d6df2ab3bd5d885bb954d655e7d7b1a/ HTTP/1.1" 200 2593
+[10/Mar/2021 10:25:50] "GET /static/img/favicon.ico HTTP/1.1" 200 4286
+[10/Mar/2021 10:25:56] "POST /password-reset/confirm/MQ/aj1rq4-7d6df2ab3bd5d885bb954d655e7d7b1a/ HTTP/1.1" 200 2593
+[10/Mar/2021 10:26:03] "POST /password-reset/confirm/MQ/aj1rq4-7d6df2ab3bd5d885bb954d655e7d7b1a/ HTTP/1.1" 200 2593
+[10/Mar/2021 10:26:03] "GET /static/img/favicon.ico HTTP/1.1" 200 4286
+[10/Mar/2021 10:28:01] "GET / HTTP/1.1" 302 0
+[10/Mar/2021 10:28:01] "GET /login/ HTTP/1.1" 200 2989
+[10/Mar/2021 10:28:01] "GET /static/css/style.css HTTP/1.1" 304 0
+[10/Mar/2021 10:28:09] "POST /login/ HTTP/1.1" 200 3024
+[10/Mar/2021 10:28:22] "POST /login/ HTTP/1.1" 200 3024
+[10/Mar/2021 10:28:27] "GET /password-reset/ HTTP/1.1" 200 2336
+[10/Mar/2021 10:28:32] "POST /password-reset/ HTTP/1.1" 302 0
+[10/Mar/2021 10:28:32] "GET /password-reset/done/ HTTP/1.1" 200 1612
+[10/Mar/2021 10:29:23] "GET / HTTP/1.1" 302 0
+[10/Mar/2021 10:29:23] "GET /login/ HTTP/1.1" 200 2989
+[10/Mar/2021 10:29:27] "GET /register/ HTTP/1.1" 200 4333
+[10/Mar/2021 10:30:58] "POST /register/ HTTP/1.1" 302 0
+[10/Mar/2021 10:30:58] "GET /account_activation_sent/ HTTP/1.1" 200 1461
+[10/Mar/2021 10:30:58] "GET /static/css/style.css HTTP/1.1" 304 0
+[10/Mar/2021 10:30:59] "GET /static/img/EmailClick.png HTTP/1.1" 200 11017
+1
+[10/Mar/2021 10:33:45] "GET /%5Eactivate/(%3FPMQ%5B0-9A-Za-z_%5C-%5D+)/(%3FPajaije-dc3eec953acca73395ff7f96d9da10fc%5B0-9A-Za-z%5D%7B1,13%7D-%5B0-9A-Za-z%5D%7B1,20%7D)/$ HTTP/1.1" 200 1619
+[10/Mar/2021 10:33:45] "GET /static/css/style.css HTTP/1.1" 304 0
+[10/Mar/2021 10:33:45] "GET /static/img/Checkmark.png HTTP/1.1" 200 55481
+[10/Mar/2021 10:33:49] "GET / HTTP/1.1" 200 2347
+[10/Mar/2021 10:33:49] "GET /media/img/profile.png HTTP/1.1" 304 0
+[10/Mar/2021 10:34:01] "GET /upload_download/upload/ HTTP/1.1" 200 2402
+[10/Mar/2021 10:34:02] "GET /upload_download/download/ HTTP/1.1" 200 2297
+Internal Server Error: /blogsys/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\blogsys\views.py", line 11, in Health_Coach
+    x = PostQ.objects.filter( Thereciever= (request.user.patient.user), Thesender=(request.user.patient.doc_c.user))
+AttributeError: 'NoneType' object has no attribute 'user'
+[10/Mar/2021 10:34:04] "GET /blogsys/ HTTP/1.1" 500 65992
+[10/Mar/2021 10:34:20] "GET /profile/ HTTP/1.1" 200 3479
+[10/Mar/2021 10:34:22] "GET /logout/ HTTP/1.1" 200 1554
+[10/Mar/2021 10:34:25] "GET / HTTP/1.1" 302 0
+[10/Mar/2021 10:34:25] "GET /login/ HTTP/1.1" 200 2989
+[10/Mar/2021 10:34:28] "POST /login/ HTTP/1.1" 302 0
+[10/Mar/2021 10:34:28] "GET / HTTP/1.1" 200 2347
+[10/Mar/2021 10:34:28] "GET /media/img/profile.png HTTP/1.1" 200 3511
+[10/Mar/2021 10:34:30] "GET /patient_log/ HTTP/1.1" 200 3077
+[10/Mar/2021 10:34:33] "GET / HTTP/1.1" 200 2347
+[10/Mar/2021 10:34:33] "GET /ReqAppt/ HTTP/1.1" 200 2374
+'NoneType' object has no attribute 'id'
+'NoneType' object has no attribute 'id'
+'NoneType' object has no attribute 'id'
+[10/Mar/2021 10:34:37] "GET /ReqAppt/Appointment HTTP/1.1" 200 4096
+[10/Mar/2021 10:34:42] "GET /apptArchive/ HTTP/1.1" 200 1822
+'NoneType' object has no attribute 'id'
+'NoneType' object has no attribute 'id'
+'NoneType' object has no attribute 'id'
+[10/Mar/2021 10:34:43] "GET /ReqAppt/Appointment HTTP/1.1" 200 4096
+GET
+[10/Mar/2021 10:34:44] "GET /ReqAppt/reqAppt_calendar HTTP/1.1" 200 3061
+[10/Mar/2021 10:34:44] "GET /static/css/apptCalendarStyle.css HTTP/1.1" 404 1701
+[10/Mar/2021 10:34:45] "GET /ReqAppt/calendar-events?start=2021-03-07&end=2021-03-14&_=1615390484841 HTTP/1.1" 200 2
+[10/Mar/2021 10:34:46] "GET /ReqAppt/ HTTP/1.1" 200 2374
+[10/Mar/2021 10:34:47] "GET / HTTP/1.1" 200 2347
+Internal Server Error: /blogsys/
+Traceback (most recent call last):
+  File "C:\Python38\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "C:\Python38\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\12488\SP_Treeo\Treeo\blogsys\views.py", line 11, in Health_Coach
+    x = PostQ.objects.filter( Thereciever= (request.user.patient.user), Thesender=(request.user.patient.doc_c.user))
+AttributeError: 'NoneType' object has no attribute 'user'
+[10/Mar/2021 10:34:49] "GET /blogsys/ HTTP/1.1" 500 65967
