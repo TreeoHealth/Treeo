@@ -71,4 +71,13 @@ ADMIN USER
 
 Views -> URL patterns and mapping through URLconf
     -pass values through URL -> add parameter to view function and add '.../<paramType:paramName>/...' to the URL
-    -create a templates folder in the app directory (put html files in there)
+    -create a second folder named after the app in app dir and put templates folder in THAT app folder (put html files in there)
+        -testApp>templates>testApp>.html files
+    -pass variables to the page {{}} via a context dictionary object passed with the response
+    -if using loader instead of render, make sure the loader path to the html file is correct (should be correct within the app folder, not project folder)
+        ->html path is testApp/testApp/templates/x.html but to the loader, it is testApp/x.html 
+            (doesn't look outside of its own app folder and ignores the template bc that's the only place it looks for htmls)
+    -USE RENDER 
+
+404 error - raise Http404("Question does not exist") (need to import from django.http)
+Solve "class has no member objects" -> add objects = models.Manager() to all models (don't need to rerun/redo tables)

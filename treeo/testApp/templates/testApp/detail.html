@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="/static/style.css" type="text/css">
+<!--&#123;% block body %&#125;-->
+<div id="wrapper">
+
+<div class="login">
+<div class="login-screen">
+<div class="app-title">
+<h1>Patient {{patient.id}} Profile</h1>
+</div>
+
+<div class="login-form">
+<div class="control-group">
+	<label class="login-field-icon fui-user" for="login-name">Username</label><br>
+	<input readonly type="text" class="login-field" value={{patient.username}} name="username">
+</div>
+<div class="control-group">
+<div class="control-group">
+	<label class="login-field-icon fui-user" for="login-name">Member Since</label><br>
+	<input readonly type="text" class="login-field" value="{{patient.createDate}}" name="createDate">
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>

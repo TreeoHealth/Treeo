@@ -1,0 +1,272 @@
+* {
+    box-sizing: border-box;
+    }
+    
+    *:focus {
+    outline: none;
+    }
+    body {
+    font-family: Arial;
+    background-color: #3498DB;
+    padding: 50px;
+    }
+    .login {
+        width: 300px;
+        margin: 20px auto;
+    
+    }
+    .listwhitespace
+    {
+        margin-top: 20px;
+        margin-left:22%;
+        width: 300px;
+    
+    }
+    .login-screen {
+    background-color: #FFF;
+    padding: 20px;
+    border-radius: 5px;
+    min-width:400px;
+    }
+    
+    .app-title {
+    text-align: center;
+    color: #777;
+    }
+    
+    .profile-box {
+    color: #777;
+    }
+    
+    .profile-pic
+    {
+        float:left;
+        border: 2px solid black;
+        
+    }
+    
+    .profile-username {
+        padding:5px;
+        color: #777;
+        
+        width:200px;
+    }
+    
+    .testWrapAbt p
+    {
+        text-align:center;
+    }
+    
+    .login-form {
+    text-align: center;
+    }
+    
+    .login-field-search {
+        margin:6px;
+        margin-bottom: 10px;
+    }
+    
+    .providerInputField
+    {
+    margin-top: -200px;
+    
+    }
+    
+    .providerLinkImg *
+    {
+        margin-left:5px;
+        padding: 3px;
+        margin-top:15px;
+    }
+    
+    .control-group {
+    margin-bottom: 10px;
+    }
+    
+    .error{
+    color: red;
+    text-align: center;
+    font-size: 12px;
+    }
+    
+    input {
+    text-align: center;
+    background-color: #ECF0F1;
+    border: 2px solid transparent;
+    border-radius: 3px;
+    font-size: 16px;
+    font-weight: 200;
+    padding: 10px 0;
+    width: 250px;
+    transition: border .5s;
+    }
+    
+    input:focus {
+    border: 2px solid #3498DB;
+    box-shadow: none;
+    }
+    
+    #navwrapper
+    {
+        border:2px solid #C5C6C7;
+        padding:3px;
+        background-color:#0B0C10;
+        background-image:none;
+    }
+    #navwrapper nav a
+    {
+        text-decoration:none;
+        /*border:2px solid #C5C6C7;*/
+        padding:3px;
+        color:white;
+        
+    }
+    
+    #navwrapper nav a:hover
+    {
+        color:white;
+    }
+    
+    #navwrapper nav a:visited
+    {
+        color:#45A29E;
+    }
+    
+    .navwrapper
+    {
+        border:2px solid #C5C6C7;
+        padding:3px;
+        background-color:#0B0C10;
+        background-image:none;
+    }
+    
+    .navwrapper nav a
+    {
+        text-decoration:none;
+        /*border:2px solid #C5C6C7;*/
+        padding:3px;
+        color:white;
+        
+    }
+    
+    .navwrapper nav a:hover
+    {
+        color:white;
+    }
+    
+    .navwrapper nav a:visited
+    {
+        color:#45A29E;
+    }
+    
+    .wrapper
+    {
+        border:1px solid white;
+        min-width:700px;
+        max-width:1024px;
+        box-shadow: 5px 5px #828282;
+        background-image:none;
+        background-color:#7fdaeb;
+        width: 50%;
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 300px;
+        padding-bottom:25px;
+    }
+    
+    #wrapper
+    {
+        border:1px solid white;
+        min-width:700px;
+        max-width:1024px;
+        box-shadow: 5px 5px #828282;
+        background-image:none;
+        background-color:#7fdaeb;
+        width: 50%;
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 300px;
+        padding-bottom:25px;
+    }
+    #wrapper-c
+    {
+        border:1px solid white;
+        min-width:700px;
+        max-width:1024px;
+        box-shadow: 5px 5px #828282;
+        background-image:none;
+        background-color:white;
+        width: 50%;
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 300px;
+        padding-bottom:25px;
+    }
+    
+    .btn {
+    border: 2px solid transparent;
+    background: #3498DB;
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 25px;
+    padding: 10px 0;
+    text-decoration: none;
+    text-shadow: none;
+    border-radius: 3px;
+    box-shadow: none;
+    transition: 0.25s;
+    display: block;
+    width: 250px;
+    margin: 0 auto;
+    }
+    
+    .autocomplete-suggestions
+    {
+        background-color: #ECF0F1;
+    }
+    .autocomplete-suggestion:hover
+    {
+        background-color: #888888;
+    }
+    
+    .btn:hover {
+    background-color: #2980B9;
+    }
+    
+    .apptbutton{
+        float:right;
+        width:125px;
+        height:50px;
+        text-align: center;
+        font-size: small;
+    }
+    
+    .login-link {
+    font-size: 12px;
+    color: #444;
+    display: block;
+    margin-top: 12px;
+    }
+    
+    .assign-username{
+        margin-top: 10px;
+        padding:5px;
+        padding-top: 15px;
+    
+    }
+    
+    .emptyFolder
+    {
+        width:100%;
+        background-color:#EEE;
+        color:#b0b0b0;
+        text-align:center;
+        font-size:150%;
+      border-radius: 5px;
+      padding-top:15px;
+      padding-bottom:15px;
+    }
+    
+    .assign-username a{
+        font-size: medium;
+    }
