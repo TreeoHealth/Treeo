@@ -1,0 +1,84 @@
+{% extends "patient_log/patient_log_base.html" %}
+{% block content %}
+<div class="orange">
+	<h1>Edit Today's Health & Wellness Log</h1>
+	{% if messages %}
+	{% for message in messages %}
+	<h2 style="color:green;">{{message}}</h2>
+	{% endfor %}
+	{% endif %}
+
+	<div class="patientLog">
+		<form method="POST">
+			{% csrf_token %}
+			<!-- {{ form.as_p }} -->
+			<p>
+				<b> {{edit_log.calories.label_tag}} </b>
+				{{edit_log.calories}}
+				<!-- <br><br> -->
+				<!-- <div class="current">
+				Your Current Calories are <span>{{form.calories}}</span>
+			</div> -->
+			</p>
+
+			<p>
+				<b> {{edit_log.water.label_tag}} </b>
+				{{edit_log.water}}
+				<!-- <br><br> -->
+				<!-- <div class="current">
+				Your Current Water Intake is <span>{{form.water}}</span>
+			</div> -->
+			</p>
+
+			<p>
+				<b> {{edit_log.sleep.label_tag}} </b>
+				{{edit_log.sleep}}
+				<!-- <br><br> -->
+				<!-- <div class="current">
+				Your Current Sleep is <span>{{form.sleep}}</span>
+			</div> -->
+			</p>
+
+			<p>
+				<b> {{edit_log.mood.label_tag}} </b>
+				{{edit_log.mood}}
+				<!-- <br><br> -->
+				<!-- <div class="current">
+				Your Current Mood is <span>{{form.mood}}</span>
+			</div> -->
+			</p>
+
+			<div class="button patientLogButton">
+				<button type="submit" class="btn btn-primary btn-large btn-block">Edit Log</button>
+			</div>
+		</form>
+	</div>
+	<div class="current">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th colspan="2">Current Values</th>
+				</tr>
+			</thead>
+			<tbody class="border-end-0">
+				<tr>
+					<td>Calories (kCal)</td>
+					<td>{{form.calories}}</td>
+				</tr>
+				<tr>
+					<td>Water Intake (oz)</td>
+					<td>{{form.water}}</td>
+				</tr>
+				<tr>
+					<td>Sleep (hrs)</td>
+					<td>{{form.sleep}}</td>
+				</tr>
+				<tr>
+					<td>Mood (1-5)</td>
+					<td>{{form.mood}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock content %}

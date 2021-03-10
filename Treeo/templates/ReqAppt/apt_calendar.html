@@ -1,0 +1,15 @@
+{% extends "ReqAppt/apt_base.html" %}
+{% block content %}
+<div class="orange">
+    <h1>Feature: Calendar</h1>
+    <div class="button previousMonth">
+        <a class="btn btn-info mr-2" href="{% url 'reqAppt_calendar' %}?{{ prev_month }}">Previous Month</a>
+    </div>
+    <div class="button nextMonth">
+        <a class="btn btn-info mr-2" href="{% url 'reqAppt_calendar' %}?{{ next_month }} "> Next Month </a>
+    </div>
+    <div style="color: black;">
+        {{ calendar }}
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,25 @@
+{% extends "ReqAppt/apt_base.html" %}
+{% block content %}
+<div class="container">
+  <div class="first">
+    <div class="heading">
+      <h2 >Notes</h2>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Notes</th>
+          <th>Date and Time</th>
+        </tr>
+      </thead>
+      {% for i in notes %}
+      <tr>
+        <td> {{i.note}}</td>
+          <td>{{i.dateAdded}}</td>
+          <td><a href="{% url 'notes' i.apptId %}"> Add Note </a></td>
+      <tr>
+      {%endfor%}
+</table>
+</div>
+</div>
+{% endblock content %}

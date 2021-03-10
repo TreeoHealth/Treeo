@@ -1,0 +1,86 @@
+{% extends "ReqAppt/apt_base.html" %}
+{% block content %}
+<!-- <div class="whiteAppointments"> -->
+<div class="orange">
+  <div class="first">
+    <div class="heading">
+      <h2>Patient View Appointments</h2>
+    </div>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Doctor Name</th>
+          <th>Date and Time</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+
+      {% for a in ApptTable %}
+      <tr>
+        <td> {{a.provider.user.first_name}} {{a.provider.user.last_name}}</td>
+        <td>{{a.meetingDate}}</td>
+        {%if a.status%}
+        <td> <span class="Confirmed">Confirmed</span></td>
+        {% else %}
+        <td> <span class="Pending">Pending</span></td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </table>
+    <!-- <table class="table"> -->
+    <!-- <thead>
+        <tr>
+          <th>Date and Time</th>
+          <th>Doctor Name</th>
+          <th>Status</th>
+        </tr>
+      </thead> -->
+
+    <!-- <div class="appointmentBox">
+      <div class="appointmentTableHeaders">
+        <div class="datetime">date/time</div>
+        <div class="provider">provider</div>
+        <div class="status">appointment status</div>
+      </div>
+
+      <div class="appointmentTable">
+        {% for a in ApptTable %}
+        <div class="appointmentContainer">
+          <div class="appointmentBubbleDateTime">
+            {{a.meetingDate}}
+          </div>
+          <div class="with">
+            with
+          </div>
+          <div class="appointmentBubbleProvider">
+            {{a.provider.user.first_name}} {{a.provider.user.last_name}}
+          </div>
+          <div class="appointmentBubbleStatus">
+            {%if a.status%}
+            Confirmed
+            {% else %}
+            Pending
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div> -->
+
+    <!-- 
+        {% for a in ApptTable %}
+        <tr>
+          <td>{{a.meetingDate}}</td>
+          <td> {{a.provider.user.first_name}} {{a.provider.user.last_name}}</td>
+          {%if a.status%}
+          <td> <span class="Confirmed">Confirmed</span></td>
+          {% else %}
+          <td> <span class="Pending">Pending</span></td>
+          {% endif %}
+        </tr>
+        {% endfor %} -->
+    <!-- </table> -->
+  </div>
+</div>
+</div>
+{% endblock content %}

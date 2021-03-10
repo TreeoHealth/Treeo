@@ -1,0 +1,17 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+<div class="orange">
+  <form method="post" action="">
+    {% csrf_token %}
+    <h1>Are you sure you want to delete?</h1><br>
+    <div class="button deleteConfirmButtonAppointment">
+      <!-- <input class="btn btn-1" type="submit" value="Yes" />
+      <a href="{% url 'admin_display_team' patient %}">
+        <div class="btn btn-2">Cancel</div>
+      </a> -->
+      <button class="btn btn-primary btn-large btn-block" type="submit">Yes</button>
+      <a href="{% url 'admin_display_team' patient %}" class="btn btn-primary btn-large btn-block">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock content %}

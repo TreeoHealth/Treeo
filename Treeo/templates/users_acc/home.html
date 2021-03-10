@@ -1,0 +1,53 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+<div class="white">
+    {% if user.user_type == None%}
+
+    {%else%}
+    {% if user.user_type == 1%}
+    <div class="welcome">welcome!</div>
+    <div class="profileBorder">
+        <div class="profileName">{{user.first_name|lower}} {{user.last_name|lower}}</div>
+        <div class="profileDateJoined">member since {{user.date_joined}}</div>
+        <div class="profilePic">
+            <img class="rounded-circle account-img " src="{{user.profile_pic.url}} " alt="">
+        </div>
+    </div>
+    <div class="button adminButton">
+        <a href="{% url 'admin_view' %}" class="btn btn-primary btn-large btn-block">Assign A Care Team </a>
+        <a href="{% url 'admin_approve_provider_render' %}" class="btn btn-primary btn-large btn-block">Approve Doctor
+        </a>
+        <a href="{% url 'doctor_registration' %}" class="btn btn-primary btn-large btn-block">Register Doctor</a>
+    </div>
+    {% endif %}
+    {% if user.user_type == 2%}
+    <div class="welcome">welcome!</div>
+    <div class="profileBorder">
+        <div class="profileName">{{user.first_name|lower}} {{user.last_name|lower}}</div>
+        <div class="profileDateJoined">member since {{user.date_joined}}</div>
+        <div class="profilePic">
+            <img class="rounded-circle account-img " src="{{user.profile_pic.url}} " alt="">
+        </div>
+    </div>
+
+
+
+    {% endif %}
+    {% if user.user_type == 3%}
+    <div class="welcome">welcome!</div>
+    <div class="profileBorder">
+        <div class="profileName">{{user.first_name|lower}} {{user.last_name|lower}}</div>
+        <div class="profileDateJoined">member since {{user.date_joined}}</div>
+        <div class="profilePic">
+            <img class="rounded-circle account-img " src="{{user.profile_pic.url}} " alt="">
+        </div>
+    </div>
+
+
+
+
+    {% endif %}
+    {% endif %}
+    <div class="theT"></div>
+</div>
+{% endblock content %}

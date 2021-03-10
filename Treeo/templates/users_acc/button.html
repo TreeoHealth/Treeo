@@ -1,0 +1,10 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+<div class="error">
+    {{errorMsg}}
+</div>
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="submit" name="upvote" value="Test" class="btn btn-primary btn-large btn-block"/>
+</form>
+{% endblock content %}

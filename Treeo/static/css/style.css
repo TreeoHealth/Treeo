@@ -1,0 +1,2894 @@
+* {
+  box-sizing: border-box;
+}
+
+*:focus {
+  outline: none;
+}
+
+body {
+  /* font-family: Arial;
+  /* border: 20px solid black; */
+  /* background-color: #ddddf1; */
+  /* background-color: #ffffff; */
+  /* #ffc097 orange from before */
+  /* padding: 50px; */
+  /* background-color:#ffc097;
+  padding: 50px; */
+  font-family: "Titillium Web", sans-serif;
+}
+.login {
+  width: 300px;
+  /* margin: 20px auto; */
+  margin: auto auto;
+  vertical-align: top;
+  display: inline;
+  text-align: center;
+}
+
+.login-screen {
+  /* background-color: #ddddf1;
+  padding: 20px 0px 0px 0px; */
+  border-radius: 5px;
+  min-width: 400px;
+}
+
+.login-form {
+  text-align: center;
+}
+
+.login-field-search {
+  margin: 6px;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+input[type="text"] {
+  text-align: center;
+  background-color: white;
+  border: 2px solid transparent;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px 0;
+  width: 250px;
+  transition: border 0.5s;
+  box-sizing: border-box;
+}
+
+input[type="password"] {
+  text-align: center;
+  background-color: white;
+  border: 2px solid transparent;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px 0;
+  width: 250px;
+  transition: border 0.5s;
+  box-sizing: border-box;
+}
+
+input[type="email"] {
+  text-align: center;
+  background-color: white;
+  border: 2px solid transparent;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px 0;
+  width: 250px;
+  transition: border 0.5s;
+  box-sizing: border-box;
+}
+
+input[type="number"] {
+  text-align: center;
+  background-color: white;
+  border: 2px solid transparent;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px 0;
+  width: 250px;
+  transition: border 0.5s;
+  box-sizing: border-box;
+  -moz-appearance: textfield;
+}
+
+input[type="tel"] {
+  text-align: center;
+  background-color: white;
+  border: 2px solid transparent;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px 0;
+  width: 250px;
+  transition: border 0.5s;
+  box-sizing: border-box;
+  -moz-appearance: textfield;
+}
+
+select {
+  text-align: center;
+  background-color: white;
+  border: 2px solid transparent;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px 0;
+  width: 250px;
+  transition: border 0.5s;
+  box-sizing: border-box;
+  -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.id_username {
+  text-align: center;
+  background-color: white;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  font-size: 16px;
+  font-weight: 200;
+  padding: 10px 0;
+  width: 250px;
+  transition: border 0.5s;
+}
+
+input:focus {
+  border: 2px solid black;
+  box-shadow: none;
+}
+
+#navwrapper {
+  border: 2px solid #000000;
+  padding: 3px;
+  background-color: #0b0c10;
+  background-image: none;
+}
+#navwrapper nav a {
+  text-decoration: none;
+  border: 2px solid #c5c6c7;
+  padding: 3px;
+  color: white;
+  /* border: white solid 1px; */
+  padding: auto;
+  margin: 0px 3px;
+  /* margin: 0px auto; can possibly use to spread out further?*/
+}
+
+#navwrapper nav a:hover {
+  transition: 0.25s;
+  background: #3498db;
+}
+
+/* #navwrapper nav a:visited {
+  color: #45a29e;
+} */
+
+/* .navwrapper {
+  border: 2px solid #ffc097;
+  padding: 3px;
+  background-color: #0b0c10;
+  background-image: none;
+  min-width: -moz-fit-content;
+}
+
+.navwrapper nav a {
+  text-decoration: none;
+  /*border:2px solid #C5C6C7;*/
+/* padding: 3px;
+  color: white;
+} */
+
+.navwrapper nav a:hover {
+  color: white;
+}
+
+/* .navwrapper nav a:visited {
+  color: #45a29e;
+} */
+
+/* .wrapper {
+  border: 1px solid #ffc097;
+  min-width: 700px;
+  max-width: auto;
+  box-shadow: 5px 5px #828282;
+  background-image: none;
+  background-color: #ddddf1;
+  width: 50%;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 300px;
+  padding-bottom: 25px;
+} */
+
+#wrapper {
+  border: 1px solid #ffc097;
+  min-width: 700px;
+  max-width: auto;
+  /* box-shadow: 5px 5px #828282; */
+  background-image: none;
+  background-color: #ddddf1;
+  width: 100%;
+  height: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 300px;
+  padding-bottom: 25px;
+}
+#wrapper-c {
+  border: 1px solid #ffc097;
+  min-width: 700px;
+  max-width: 1024px;
+  box-shadow: 5px 5px #828282;
+  background-image: none;
+  background-color: white;
+  width: 50%;
+  margin-right: auto;
+  margin-left: auto;
+  margin-bottom: 300px;
+  padding-bottom: 25px;
+}
+
+.btn {
+  border: 2px solid transparent;
+  /* background: #3498db;
+  color: #ffffff; */
+  font-size: 16px;
+  line-height: 25px;
+  padding: 10px 0;
+  text-decoration: none;
+  text-shadow: none;
+  border-radius: 3px;
+  box-shadow: none;
+  transition: 0.25s;
+  display: block;
+  width: 250px;
+  /* margin: 0 auto; */
+  text-align: center;
+  align-self: center;
+  display: inline;
+  margin: 4px auto;
+}
+
+.button {
+  /* margin-left: 79px; */
+  display: grid;
+  align-self: center;
+}
+
+.autocomplete-suggestions {
+  background-color: #ecf0f1;
+}
+.autocomplete-suggestion:hover {
+  background-color: #888888;
+}
+
+.btn:hover {
+  /* background-color: #71a6c9; */
+}
+
+.apptbutton {
+  float: right;
+  width: 125px;
+  height: 50px;
+  text-align: center;
+  font-size: small;
+}
+
+.login-link {
+  font-size: 12px;
+  color: #444;
+  display: block;
+  margin-top: 12px;
+}
+
+.assign-username {
+  margin-top: 10px;
+  padding: 5px;
+  padding-top: 15px;
+}
+
+.emptyFolder {
+  width: 100%;
+  background-color: #eee;
+  color: #b0b0b0;
+  text-align: center;
+  font-size: 150%;
+  border-radius: 5px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.assign-username a {
+  font-size: medium;
+}
+
+.table {
+  vertical-align: center;
+  border-color: #000000;
+  width: 94%;
+  margin: 0 3%;
+}
+
+.message {
+  text-align: center;
+  font-weight: bold;
+}
+
+.close {
+  position: absolute;
+  right: 1%;
+}
+
+.rectangle {
+  position: absolute;
+  width: 799px;
+  height: 966px;
+  left: -39px;
+  top: 0px;
+  /* top: 56px; */
+
+  background: #f99f71;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 40px;
+}
+
+.treeoLogo {
+  background: url("../img/TreeoLogo.png") no-repeat;
+  background-size: 473px 461px;
+  position: absolute;
+  width: 444px;
+  height: 500px;
+  left: 125px;
+  top: 97px;
+}
+
+.twitter {
+  background: url("../img/TwitterLogo.png");
+  background-size: 177px 162px;
+  position: absolute;
+  width: 141px;
+  height: 118px;
+  left: 125px;
+  top: 630px;
+}
+
+.instagram {
+  background: url("../img/InstagramLogo.png");
+  background-size: 133px 125px;
+  position: absolute;
+  width: 141px;
+  height: 118px;
+  left: 250px;
+  top: 651px;
+}
+.facebook {
+  background: url("../img/FacebookLogo.png");
+  background-size: 133px 125px;
+  position: absolute;
+  width: 141px;
+  height: 118px;
+  left: 350px;
+  top: 651px;
+}
+
+.textOne {
+  position: absolute;
+  width: 473px;
+  height: 157px;
+  left: 170px;
+  top: 441px;
+  text-align: left;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 50px;
+  line-height: 72px;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.textTwo {
+  position: absolute;
+  width: 452px;
+  height: 40px;
+  left: 868px;
+  top: 255px;
+  font-style: normal;
+  font-size: 30px;
+  line-height: 62px;
+  letter-spacing: -0.04em;
+  color: #faa172;
+}
+
+.textTwo span {
+  font-weight: bold;
+}
+
+.textThree {
+  position: absolute;
+  width: 452px;
+  height: 40px;
+  left: 868px;
+  /* top: 255px; temp until can put placeholder in username and password*/
+  top: 525px;
+  font-style: normal;
+  font-size: 30px;
+  line-height: 62px;
+  letter-spacing: -0.04em;
+  color: #faa172;
+}
+
+.username {
+  position: absolute;
+  width: 481px;
+  height: 107px;
+  left: 851px;
+  top: 390px;
+
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.usernameInput {
+  position: absolute;
+  width: 374px;
+  height: 38px;
+  /* left: 34px; */
+  /* top: 431px; */
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #faa172;
+}
+
+.usernameInput input[type="text"] {
+  border-radius: 100px;
+  font-size: 24px;
+  padding: 0px 0px;
+  width: 481px;
+  height: 108px;
+}
+
+.usernameInput input[type="text"]:focus {
+  border: 4px solid #faa172;
+}
+
+.password {
+  position: absolute;
+  width: 481px;
+  height: 107px;
+  left: 851px;
+  top: 600px;
+  /* top: 545px; temp until can put placeholder text in username and password */
+
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.passwordInput {
+  position: absolute;
+  width: 374px;
+  height: 38px;
+  /* left: 34px; */
+  /* top: 431px; */
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #faa172;
+}
+
+.passwordInput input[type="password"] {
+  border-radius: 100px;
+  font-size: 24px;
+  padding: 0px 0px;
+  width: 481px;
+  height: 108px;
+}
+
+.passwordInput input[type="password"]:focus {
+  border: 4px solid #faa172;
+}
+
+.loginButton {
+  position: absolute;
+  width: 112px;
+  height: 97px;
+  left: 931px;
+  top: 745px;
+  /* top: 715px; temp until can put placeholder in username and password */
+}
+
+.signupLink {
+  position: absolute;
+  width: 448px;
+  height: 40px;
+  left: 868px;
+  top: 845px;
+  /* top: 715px; temp until can put placeholder in username and password */
+}
+
+.signupLink p {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 32px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #faa172;
+}
+
+.signupLink p span {
+  font-style: normal;
+  font-weight: 800;
+  color: #faa172;
+}
+
+.signupLink a {
+  text-decoration: none;
+  color: #faa172;
+}
+
+.loginButton .btn {
+  /* width: 334px;
+  margin: 7px auto;
+  background: #faa172; */
+  background: #faa172;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  width: 352px;
+  height: 68px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 26px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.registerButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 823px;
+  /* top: 1057px; */
+  top: 1078px;
+  /* top: 822px; temp until password reqs accounted for in another way */
+  /* top: 715px; temp until can put placeholder in username and password */
+}
+
+.registerButton .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 36px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.previousMonth {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 1429px;
+  top: 40px;
+  display: inline-flex;
+  /* top: 715px; temp until can put placeholder in username and password */
+}
+
+.previousMonth .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  height: 60px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.nextMonth {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 1647px;
+  top: 40px;
+  display: inline-flex;
+  /* top: 715px; temp until can put placeholder in username and password */
+}
+
+.nextMonth .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  height: 60px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.passResetButton {
+  position: absolute;
+  width: 224px;
+  height: 103px;
+  left: 852px;
+  top: 700px;
+}
+
+.passResetButton .btn {
+  background: #faa172;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  width: 224px;
+  height: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.confirmResetButton {
+  position: absolute;
+  width: 198px;
+  height: 103px;
+  left: 900px;
+  top: 615px;
+}
+
+.confirmResetButton .btn {
+  background: #faa172;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  width: 168px;
+  height: 86px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.orange {
+  background-color: #f99f71;
+  min-height: 1280px;
+  padding-top: 5px;
+  width: 100%;
+  font-family: "Titillium Web", sans-serif;
+}
+
+.orange .treeoLogo {
+  background: url("../img/TreeoLogo.png") no-repeat;
+  background-size: 473px 461px;
+  position: absolute;
+  width: 444px;
+  height: 281px;
+  left: 1376px;
+  top: -86px;
+}
+
+@media only screen and (max-width: 1280px) {
+  .orange {
+    width: 200%;
+  }
+  .navbar {
+    width: 200%;
+  }
+  .orange .messaging {
+    width: 60%;
+    left: 185px;
+  }
+  .messaging .navbar {
+    width: 100%;
+  }
+  body {
+    width: 50%;
+  }
+  body .assignCareTeamButton {
+    position: absolute;
+    width: 196px;
+    height: 110px;
+    left: 515px;
+  }
+}
+
+.white {
+  background-color: #ffffff;
+  max-height: 1080px;
+  position: absolute;
+}
+
+.whiteAppointments {
+  background-color: #ffffff;
+  min-height: 1080px;
+  padding-top: 5px;
+}
+
+.signup {
+  position: absolute;
+  width: 422px;
+  height: 157px;
+  left: 190px;
+  top: 191px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 96px;
+  line-height: 115px;
+  letter-spacing: 0.025em;
+  color: #ffffff;
+}
+
+.providerSignup {
+  position: absolute;
+  width: 910px;
+  height: 157px;
+  left: 190px;
+  top: 191px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 96px;
+  line-height: 115px;
+  letter-spacing: 0.025em;
+  color: #ffffff;
+}
+
+.fname {
+  position: absolute;
+  width: 200px;
+  height: 40px;
+  left: 256px;
+  top: 364px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.fnameBox {
+  position: absolute;
+  width: 329px;
+  height: 107px;
+  left: 234px;
+  top: 435px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.fnameInput {
+  position: absolute;
+  width: 216px;
+  height: 30px;
+  left: 0px;
+  top: 0px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+.fnameInput input[type="text"] {
+  border-radius: 100px;
+  font-size: 36px;
+  padding: 0px 0px;
+  width: 329px;
+  height: 107px;
+}
+
+.fnameInput input[type="text"]:focus {
+  border: 4px solid #faa172;
+}
+
+.lname {
+  position: absolute;
+  width: 167px;
+  height: 40px;
+  left: 808px;
+  top: 364px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.lnameBox {
+  position: absolute;
+  width: 329px;
+  height: 107px;
+  left: 783px;
+  top: 435px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.lnameInput {
+  position: absolute;
+  width: 216px;
+  height: 30px;
+  left: 0px;
+  top: 0px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+.lnameInput input[type="text"] {
+  border-radius: 100px;
+  font-size: 36px;
+  padding: 0px 0px;
+  width: 329px;
+  height: 107px;
+}
+
+.lnameInput input[type="text"]:focus {
+  border: 4px solid #faa172;
+}
+
+.email {
+  position: absolute;
+  width: 167px;
+  height: 40px;
+  left: 1326px;
+  top: 364px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.emailBox {
+  position: absolute;
+  width: 329px;
+  height: 107px;
+  left: 1332px;
+  top: 435px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.emailBoxReset {
+  position: absolute;
+  width: 446px;
+  height: 107px;
+  left: 747px;
+  top: 435px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.emailInput {
+  position: absolute;
+  width: 216px;
+  height: 30px;
+  left: 0px;
+  top: 0px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+.emailInput input[type="email"] {
+  border-radius: 100px;
+  font-size: 36px;
+  padding: 0px 0px;
+  width: 329px;
+  height: 107px;
+}
+
+.emailInput input[type="email"]:focus {
+  border: 4px solid #faa172;
+}
+
+.emailBoxInput {
+  position: absolute;
+  width: 216px;
+  height: 30px;
+  /* left: 16px; */
+  top: 5px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+.emailBoxInput input[type="email"] {
+  border-radius: 100px;
+  font-size: 24px;
+  padding: 0px 0px;
+  width: 446px;
+  height: 102px;
+}
+
+.emailBoxInput input[type="email"]:focus {
+  border: 4px solid #faa172;
+}
+
+/*#ui-datepicker-div {*/
+/*  background: white;*/
+/*}*/
+
+/*.ui-datepicker-prev {*/
+/*  margin-right: 70px;*/
+/*}*/
+
+/*.ui-datepicker-calendar a {*/
+/*  margin-right: 5px;*/
+/*}*/
+
+.calendar-patient.confirmed {
+  color: green;
+}
+
+.calendar-patient.pending {
+  color: red;
+}
+
+/*Datepicker stuff*/
+
+@import url(https://fonts.googleapis.com/css?family=Noto+Sans:400,700italic,700,400italic);
+
+.registerUsername {
+  position: absolute;
+  width: 200px;
+  height: 40px;
+  left: 256px;
+  top: 600px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.registerUsernameBox {
+  position: absolute;
+  width: 329px;
+  height: 107px;
+  left: 234px;
+  top: 670px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.registerUsernameInput {
+  position: absolute;
+  width: 216px;
+  height: 30px;
+  left: 0px;
+  top: 0px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+.registerUsernameInput input[type="text"] {
+  border-radius: 100px;
+  font-size: 36px;
+  padding: 0px 0px;
+  width: 329px;
+  height: 107px;
+}
+
+.registerUsernameInput input[type="text"]:focus {
+  border: 4px solid #faa172;
+}
+
+.registerPasswordOne {
+  position: absolute;
+  width: 167px;
+  height: 40px;
+  left: 808px;
+  top: 600px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.registerPasswordOneBox {
+  position: absolute;
+  width: 329px;
+  height: 107px;
+  left: 783px;
+  top: 670px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.registerPasswordOneInput {
+  position: absolute;
+  width: 216px;
+  height: 30px;
+  left: 0px;
+  top: 0px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+.registerPasswordOneInput p {
+  font-size: 18px;
+  color: black;
+  line-height: 30px;
+  position: absolute;
+  width: 342px;
+  top: 105px;
+}
+
+.registerPasswordOneInput input[type="password"] {
+  border-radius: 100px;
+  font-size: 36px;
+  padding: 0px 0px;
+  width: 329px;
+  height: 107px;
+}
+
+.registerPasswordOneInput input[type="password"]:focus {
+  border: 4px solid #faa172;
+}
+
+.registerPasswordTwo {
+  position: absolute;
+  width: 333px;
+  height: 40px;
+  left: 1326px;
+  top: 600px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.registerPasswordTwoBox {
+  position: absolute;
+  width: 329px;
+  height: 107px;
+  left: 1332px;
+  top: 670px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.registerPasswordTwoInput {
+  position: absolute;
+  width: 216px;
+  height: 30px;
+  left: 0px;
+  top: 0px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+
+.registerPasswordTwoInput input[type="password"] {
+  border-radius: 100px;
+  font-size: 36px;
+  padding: 0px 0px;
+  width: 329px;
+  height: 107px;
+}
+
+.registerPasswordTwoInput input[type="password"]:focus {
+  border: 4px solid #faa172;
+}
+
+.registerPhone {
+  position: absolute;
+  width: 267px;
+  height: 40px;
+  left: 256px;
+  top: 820px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.registerPhoneBox {
+  position: absolute;
+  width: 329px;
+  height: 107px;
+  left: 234px;
+  top: 890px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.registerPhoneInput {
+  position: absolute;
+  width: 216px;
+  height: 30px;
+  left: 0px;
+  top: 0px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+.registerPhoneInput p {
+  font-size: 18px;
+  color: black;
+  line-height: 30px;
+  position: absolute;
+  width: 342px;
+  top: 105px;
+}
+
+.registerPhoneInput input[type="tel"] {
+  border-radius: 100px;
+  font-size: 36px;
+  padding: 0px 0px;
+  width: 329px;
+  height: 107px;
+}
+
+.registerPhoneInput input[type="tel"]:focus {
+  border: 4px solid #faa172;
+}
+
+.registerProvider {
+  position: absolute;
+  width: 222px;
+  height: 40px;
+  left: 1357px;
+  top: 819px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.registerProviderBox {
+  position: absolute;
+  width: 329px;
+  height: 96px;
+  left: 1332px;
+  top: 891px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 34px;
+}
+
+.registerProviderInput {
+  position: absolute;
+  width: 366px;
+  height: 30px;
+  left: -19px;
+  top: 13px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+.registerProviderInput select {
+  text-align: center;
+  background-color: white;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  padding: 10px 0;
+  width: 310px;
+  transition: border 0.5s;
+  box-sizing: border-box;
+  font-size: 32px;
+  -moz-appearance: textfield;
+  /* position: absolute;
+  width: 216px;
+  height: 30px;
+  left: 16px;
+  top: 5px;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5; */
+}
+
+.alert {
+  margin-bottom: 0px;
+}
+
+.verification {
+  position: absolute;
+  width: 884px;
+  height: 157px;
+  left: 522px;
+  top: 150px;
+
+  font-style: normal;
+  font-weight: 600;
+  font-size: 72px;
+  line-height: 115px;
+  letter-spacing: 0.01em;
+
+  color: #faa172;
+}
+
+.emailClick {
+  background: url("../img/EmailClick.png") no-repeat;
+  background-size: 379px 361px;
+  position: absolute;
+  width: 379px;
+  height: 420px;
+  left: 786px;
+  top: 250px;
+}
+
+.almostDone {
+  position: absolute;
+  width: 700px;
+  height: 40px;
+  left: 635px;
+  top: 647px;
+  font-style: normal;
+  /* font-weight: bold; */
+  font-size: 30px;
+  line-height: 43px;
+  text-align: center;
+  letter-spacing: -0.04em;
+  color: #faa172;
+}
+
+.almostDone span {
+  font-weight: bold;
+}
+
+.theT {
+  background: url("../img/T.png") no-repeat;
+  background-size: 217px 209px;
+  position: absolute;
+  width: 238px;
+  height: 184px;
+  left: 1677px;
+  top: 744px;
+}
+
+.checkmark {
+  background: url("../img/Checkmark.png") no-repeat;
+  background-size: 379px 361px;
+  position: absolute;
+  width: 379px;
+  height: 420px;
+  left: 786px;
+  top: 250px;
+}
+
+.portalButton {
+  position: absolute;
+  width: 224px;
+  height: 103px;
+  left: 852px;
+  top: 763px;
+}
+
+.portalButton .btn {
+  background: #faa172;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  width: 224px;
+  height: 86px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.resetPassword {
+  position: absolute;
+  width: 884px;
+  height: 157px;
+  left: 522px;
+  top: 155px;
+
+  font-style: normal;
+  font-weight: 600;
+  font-size: 72px;
+  line-height: 115px;
+  letter-spacing: 0.01em;
+
+  color: #faa172;
+}
+
+.stepOne {
+  position: absolute;
+  width: 657px;
+  height: 60px;
+  left: 641px;
+  top: 321px;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 34px;
+  line-height: 173%;
+
+  /* or 83px */
+  letter-spacing: 0.015em;
+
+  color: #faa172;
+}
+
+.emailSent {
+  position: absolute;
+  width: 813px;
+  height: 86px;
+  left: 592px;
+  top: 461px;
+  font-style: normal;
+  font-size: 30px;
+  line-height: 43px;
+  text-align: center;
+  letter-spacing: -0.04em;
+
+  color: #faa172;
+}
+
+.emailSent span {
+  font-weight: bold;
+}
+
+.resetPasswordTwo {
+  position: absolute;
+  width: 884px;
+  height: 157px;
+  left: 522px;
+  top: 115px;
+
+  font-style: normal;
+  font-weight: 600;
+  font-size: 72px;
+  line-height: 115px;
+  letter-spacing: 0.01em;
+
+  color: #faa172;
+}
+
+.stepThree {
+  position: absolute;
+  width: 657px;
+  height: 60px;
+  left: 641px;
+  top: 237px;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 34px;
+  line-height: 173%;
+  /* or 83px */
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.newPassword {
+  position: absolute;
+  width: 319px;
+  height: 40px;
+  left: 700px;
+  top: 314px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 28px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.newPasswordBox {
+  position: absolute;
+  width: 465px;
+  height: 107px;
+  left: 737px;
+  top: 370px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.newPasswordInput {
+  position: absolute;
+  width: 216px;
+  height: 30px;
+  /* left: 16px; */
+  top: 5px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+.newPasswordInput input[type="password"] {
+  border-radius: 100px;
+  font-size: 24px;
+  padding: 0px 0px;
+  width: 466px;
+  height: 102px;
+}
+
+.newPasswordInput input[type="password"]:focus {
+  border: 4px solid #faa172;
+}
+
+.confirmPassword {
+  position: absolute;
+  width: 319px;
+  height: 40px;
+  left: 720px;
+  top: 500px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 28px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.confirmPasswordBox {
+  position: absolute;
+  width: 465px;
+  height: 107px;
+  left: 737px;
+  top: 561px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+}
+
+.confirmPasswordInput {
+  position: absolute;
+  width: 216px;
+  height: 30px;
+  /* left: 16px; */
+  top: 5px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 43px;
+  letter-spacing: -0.04em;
+
+  color: #e5e5e5;
+}
+
+.confirmPasswordInput input[type="password"] {
+  border-radius: 100px;
+  font-size: 24px;
+  padding: 0px 0px;
+  width: 466px;
+  height: 102px;
+}
+
+.confirmPasswordInput input[type="password"]:focus {
+  border: 4px solid #faa172;
+}
+
+.successReset {
+  position: absolute;
+  width: 907px;
+  height: 157px;
+  left: 540px;
+  top: 242px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 72px;
+  line-height: 115px;
+  letter-spacing: 0.01em;
+  color: #faa172;
+}
+
+.passwordSaved {
+  position: absolute;
+  width: 813px;
+  height: 86px;
+  left: 592px;
+  top: 461px;
+  font-style: normal;
+  font-size: 30px;
+  line-height: 43px;
+  text-align: center;
+  letter-spacing: -0.04em;
+
+  color: #faa172;
+}
+
+.passwordSaved span {
+  font-weight: 800;
+}
+
+.profile {
+  position: absolute;
+  width: 884px;
+  height: 157px;
+  left: 509px;
+}
+
+.currentCareTeam {
+  position: absolute;
+  width: auto;
+  height: 21.2%;
+  left: 838px;
+  top: 0px;
+  background: white;
+  color: black;
+  
+}
+
+.currentCareTeam table {
+  /* border-radius: 50%; */
+  /* color: #00a8b2; */
+  border-collapse: collapse;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.currentCareTeam .table {
+  width: auto;
+  margin: auto;
+}
+
+.currentCareTeam thead {
+  background: #009879;
+  color: white;
+}
+
+.currentCareTeam td {
+  padding: 12px 15px;
+}
+
+.currentCareTeam tbody tr {
+  border-bottom: 1px solid #dddddd;
+  background-color: #f3f3f3;
+  font-weight: bold;
+  color: #000;
+}
+
+.currentCareTeam tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+
+.editProfileButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 331px;
+  /* top: 1057px; */
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  /* top: 715px; temp until can put placeholder in username and password */
+}
+
+.editProfileButton .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.editProfileButtonConfirm {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 360px;
+  top: 360px;
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  /* top: 715px; temp until can put placeholder in username and password */
+}
+
+.editProfileButtonConfirm .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.newProfilePic {
+  position: absolute;
+  left: 288px;
+  text-align: end;
+  max-width: 530px;
+}
+
+.deleteConfirmButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 823px;
+  /* top: 1057px; */
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  /* top: 715px;  temp until can put placeholder in username and password */
+}
+
+.deleteConfirmButton .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+/* .assignCareTeamTable {
+  position: absolute;
+  left: 336px;
+  width: auto;
+} */
+
+
+.assignCareTeamButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 823px;
+  /* top: 1057px; */
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  /* top: 715px;  temp until can put placeholder in username and password */
+}
+
+.assignCareTeamButton .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.fileUploadCompleteButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 823px;
+  /* top: 1057px; */
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  /* top: 715px;  temp until can put placeholder in username and password */
+}
+
+.fileUploadCompleteButton .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.adminButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 823px;
+  /* top: 1057px; */
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  top: 715px; /*  temp until can put placeholder in username and password */
+}
+
+.adminButton .btn {
+  background: #faa172;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+.assignProvidersButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 823px;
+  /* top: 1057px; */
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  top: 715px;
+}
+
+.assignProvidersButton .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 19px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.btn:active {
+  transform: translateY(4px);
+}
+
+.welcome {
+  position: absolute;
+  width: 351px;
+  height: 76px;
+  left: 387px;
+  top: 121px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 90px;
+  line-height: 108px;
+  letter-spacing: 0.01em;
+
+  color: #fac372;
+}
+
+.profileBorder {
+  position: absolute;
+  width: 389px;
+  height: 246px;
+  left: 367px;
+  top: 317px;
+
+  background: #ffffff;
+  border: 4px solid #faa172;
+  box-sizing: border-box;
+  border-radius: 100px;
+}
+
+.profileName {
+  position: absolute;
+  width: 377px;
+  height: 49px;
+  /* left: 451px; */
+  top: 104px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 58px;
+  letter-spacing: 0.01em;
+
+  color: #faa172;
+}
+
+.profileDateJoined {
+  position: absolute;
+  width: 373px;
+  height: 49px;
+  /* left: 451px; */
+  top: 162px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 23px;
+  letter-spacing: 0.01em;
+
+  color: #faa172;
+}
+
+.profilePic {
+  position: absolute;
+  width: 172px;
+  height: 172px;
+  top: -75px;
+  left: 85px;
+}
+
+.white .theT {
+  width: 226px;
+  top: 723px;
+}
+
+.approve span {
+  font-size: 30px;
+}
+
+.approve a {
+  text-decoration: none;
+}
+
+.appointment {
+  position: absolute;
+  width: 884px;
+  height: 157px;
+  left: 197px;
+  text-align: right;
+}
+
+.makeAppointmentButton {
+  position: absolute;
+  width: 169px;
+  height: 52px;
+  left: 672px;
+  top: 207px;
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.deleteConfirmButtonAppointment {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 823px;
+  /* top: 1057px; */
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  /* top: 715px;  temp until can put placeholder in username and password */
+}
+
+.deleteConfirmButtonAppointment .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.patientLog {
+  position: absolute;
+  width: 884px;
+  height: 157px;
+  left: 197px;
+  text-align: right;
+}
+
+.current {
+  position: absolute;
+  width: auto;
+  height: 21.2%;
+  left: 1342px;
+  background: white;
+  color: black;
+  
+}
+
+.current table {
+  /* border-radius: 50%; */
+  /* color: #00a8b2; */
+  border-collapse: collapse;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.current .table {
+  width: auto;
+  margin: auto;
+}
+
+.current thead {
+  background: #009879;
+  color: white;
+}
+
+.current td {
+  padding: 12px 15px;
+}
+
+.current tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.current tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.current tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+
+
+.current tr:nth-child(even) {
+  font-weight: bold;
+  color: #009879;
+}
+
+.patientLogButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 635px;
+  /* top: 1057px; */
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  /* top: 715px;  temp until can put placeholder in username and password */
+}
+
+.patientLogButton .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+/*This was added by Gio*/
+/* .calendar {
+  width: 98%;
+  margin: auto;
+  font-size: 13px;
+}
+
+.calendar tr,
+.calendar td {
+  border: 1px solid black;
+}
+*/
+
+.assignCareTeamButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 823px;
+  /* top: 1057px; */
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  /* top: 715px;  temp until can put placeholder in username and password */
+}
+
+.assignCareTeamButton .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.assignProvidersButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 823px;
+  /* top: 1057px; */
+  /* top: 890px; */
+  /* top: 822px; temp until password reqs accounted for in another way */
+  top: 715px;
+}
+
+.assignProvidersButton .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 19px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.btn:active {
+  transform: translateY(4px);
+}
+
+.welcome {
+  position: absolute;
+  width: 351px;
+  height: 76px;
+  left: 340px;
+  top: 121px;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 90px;
+  line-height: 108px;
+  letter-spacing: 0.01em;
+
+  color: #fac372;
+}
+
+.profileBorder {
+  position: absolute;
+  width: 389px;
+  height: 246px;
+  left: 367px;
+  top: 317px;
+
+  background: #ffffff;
+  border: 4px solid #faa172;
+  box-sizing: border-box;
+  border-radius: 100px;
+}
+
+.profileName {
+  position: absolute;
+  width: 377px;
+  height: 49px;
+  /* left: 451px; */
+  top: 104px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 58px;
+  letter-spacing: 0.01em;
+
+  color: #faa172;
+}
+
+.profileDateJoined {
+  position: absolute;
+  width: 373px;
+  height: 49px;
+  /* left: 451px; */
+  top: 162px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 23px;
+  letter-spacing: 0.01em;
+
+  color: #faa172;
+}
+
+.profilePic {
+  position: absolute;
+  width: 172px;
+  height: 172px;
+  top: -75px;
+  left: 85px;
+}
+
+.white .theT {
+  width: 226px;
+  top: 723px;
+}
+
+.approve span {
+  font-size: 30px;
+}
+
+.appointmentBox {
+  position: absolute;
+  width: 1038px;
+  height: 593px;
+  left: 437px;
+  top: 116px;
+}
+
+.appointmentTableHeaders {
+  position: absolute;
+  width: 1038px;
+  height: 36px;
+  left: 125px;
+  /* top: 388px; */
+  display: inline;
+}
+
+.datetime {
+  position: absolute;
+  width: 76px;
+  height: 24px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18.9366px;
+  line-height: 106%;
+
+  /* or 20px */
+  letter-spacing: 0.01em;
+
+  color: #faa172;
+}
+
+.provider {
+  position: absolute;
+  width: 76px;
+  height: 24px;
+  left: 355px;
+
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18.9366px;
+  line-height: 106%;
+
+  /* or 20px */
+  letter-spacing: 0.01em;
+
+  color: #faa172;
+}
+
+.status {
+  position: absolute;
+  width: 185px;
+  height: 24px;
+  left: 658px;
+
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18.9366px;
+  line-height: 106%;
+
+  /* or 20px */
+  letter-spacing: 0.01em;
+
+  color: #faa172;
+}
+
+.appointmentTable {
+  position: absolute;
+  width: 1038px;
+  height: 593px;
+  left: 45px;
+  top: 30px;
+}
+
+.appointmentContainer {
+  position: absolute;
+  width: 990px;
+  height: 128px;
+  /* left: 288px; */
+  /* top: 424px; */
+
+  background: #fff;
+  border: 3.95711px solid #e5e5e5;
+  box-sizing: border-box;
+  border-radius: 39.5711px;
+}
+
+.appointmentBubbleDateTime {
+  position: absolute;
+  width: 229px;
+  height: 60px;
+  left: 30px;
+  top: 31px;
+
+  background: #676464;
+  color: white;
+  text-align: center;
+  line-height: 55px;
+  border-radius: 100px;
+}
+
+.with {
+  position: absolute;
+  width: 33px;
+  height: 40px;
+  left: 301px;
+  top: 49px;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18.9366px;
+  line-height: 106%;
+
+  /* or 20px */
+  letter-spacing: 0.01em;
+
+  color: #676464;
+}
+
+.appointmentBubbleProvider {
+  position: absolute;
+  width: 229px;
+  height: 60px;
+  left: 376px;
+  top: 31px;
+
+  background: #676464;
+  color: white;
+  text-align: center;
+  line-height: 55px;
+  border-radius: 100px;
+}
+
+.appointmentBubbleStatus {
+  position: absolute;
+  width: 229px;
+  height: 60px;
+  left: 721px;
+  top: 31px;
+
+  background: #676464;
+  color: white;
+  text-align: center;
+  line-height: 55px;
+  border-radius: 100px;
+}
+
+.messaging {
+  left: 583px;
+  margin-top: 10px;
+  position: absolute;
+  background-color: #ddddf1;
+  border: 2px solid;
+  min-width: 770px;
+  min-height: 415px;
+}
+
+.messaging .table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid;
+  margin: auto;
+}
+
+.messaging .table tr {
+  background: #b8d1f3;
+  border: black;
+}
+
+.messaging .table td {
+  padding: 7px;
+  border: #000 1px solid;
+  text-align: left;
+}
+
+.messageBox {
+  position: absolute;
+  height: 157px;
+  text-align: center;
+}
+
+.messagingTable {
+  overflow: auto;
+  max-height: 200px;
+  padding: 5px 9px;
+  border-top: 2px solid;
+}
+
+.messageButton {
+  position: absolute;
+  width: 196px;
+  height: 110px;
+  left: 253px;
+  top: 205px;
+}
+
+.messageButton .btn {
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 173%;
+  letter-spacing: 0.015em;
+  color: #faa172;
+}
+
+.logoutButton {
+  position: absolute;
+  width: 224px;
+  height: 103px;
+  left: 852px;
+  top: 763px;
+}
+
+.logoutButton .btn {
+  background: #faa172;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  width: 224px;
+  height: 86px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 173%;
+  /* or 62px */
+  letter-spacing: 0.015em;
+  color: #ffffff;
+}
+
+/*This was added by Gio*/
+/* .calendar {
+  width: 98%;
+  margin: auto;
+  font-size: 13px;
+}
+
+.calendar tr,
+.calendar td {
+  border: 1px solid black;
+}
+
+.calendar th {
+  padding: 10px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.calendar td {
+  width: 200px;
+  height: 150px;
+  padding: 20px 0px 0px 5px;
+}
+
+.month {
+  font-size: 25px;
+}
+
+.date {
+  font-size: 16px;
+}
+
+ul {
+  height: 100%;
+  padding: 0px 5px 0px 20px;
+}
+
+a {
+  color: #17a2b8;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.btn {
+  outline: none;
+  color: black;
+  background-color: transparent;
+  box-shadow: 0 0 0 0;
+}
+
+#ui-datepicker-div {
+  background: white;
+}
+
+.ui-datepicker-prev {
+  margin-right: 70px;
+}
+
+.ui-datepicker-calendar a {
+  margin-right: 5px;
+}
+
+.calendar-patient.confirmed {
+  color: green;
+}
+
+.calendar-patient.pending {
+  color: red;
+} */
+
+/*------------*/
+/* .calendar {
+  width: 98%;
+  margin: 30px 0px;
+  font-size: 13px;
+}
+
+.calendar tr,
+.calendar td {
+  border: 1px solid black;
+}
+
+.calendar th {
+  padding: 10px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.calendar td {
+  width: 200px;
+  height: 150px;
+  padding: 20px 0px 0px 5px;
+} */
+
+.table td {
+  width: 250px;
+  /* height: 150px; */
+  /* padding: 20px 0px 0px 5px; */
+}
+/* 
+.month {
+  font-size: 25px;
+}
+
+.date {
+  font-size: 16px;
+}
+
+ul {
+  height: 100%;
+  padding: 0px 5px 0px 20px;
+} */
+
+/* a {
+  color: #17a2b8;
+} */
+
+/* .left {
+  float: left;
+} */
+
+/* .right {
+  float: right;
+} */
+
+/* .btn {
+  outline: none;
+  color: black;
+  background-color: transparent;
+  box-shadow: 0 0 0 0;
+} */
+
+/* #ui-datepicker-div {
+  top: 124px;
+  left: 1092px;
+}
+
+.ui-widget-content,
+.ui-widget-content,
+.ui-datepicker .ui-datepicker-header,
+.ui-datepicker .ui-datepicker-title,
+.ui-datepicker .ui-datepicker-title,
+.ui-datepicker .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-next,
+.ui-datepicker table,
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default,
+.ui-state-default {
+  background: #484848 url("none"); 
+  background: #ddddf1 url("none");
+} */
+
+/* .ui-datepicker-title {
+  text-align: center;
+  position: absolute;
+  left: 126px;
+  top: 20px;
+}
+
+.ui-datepicker-inline {
+  padding: 0;
+}
+
+.ui-widget-header {
+  border: none;
+}
+
+.ui-datepicker .ui-datepicker-header {
+  padding: 1.2em 0;
+} */
+
+/* .ui-datepicker .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-next {
+  /* top: 23px; 
+} */
+
+/* .ui-datepicker-next {
+  position: absolute;
+  left: 345px;
+}
+
+.ui-datepicker-prev:hover {
+  background-color: #68c1fd;
+  cursor: pointer;
+}
+
+.ui-datepicker-next:hover {
+  background-color: #68c1fd;
+  cursor: pointer;
+}
+
+#ui-datepicker-div
+  .ui-datepicker-calendar
+  .ui-datepicker-days-cell-over
+  .ui-datepicker-today {
+  padding: 0px;
+} */
+
+/* .ui-icon,
+.ui-datepicker-month,
+.ui-datepicker-year {
+  color: #ffe800; 
+  color: black;
+} */
+
+/* a.ui-state-default,
+.ui-datepicker th {
+  color: black !important;
+  border: none !important;
+  text-align: center !important;
+}
+
+.ui-datepicker {
+  width: 24.4em;
+  font-family: "Noto Sans", san-serif !important;
+  text-transform: uppercase;
+}
+
+.ui-datepicker td {
+  padding: 15px;
+  border: 1px solid transparent;
+}
+
+.ui-datepicker-today {
+  padding: 0px;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active {
+  color: #f5f5f5 !important;
+} */
+
+/* .ui-state-highlight,
+.ui-widget-content .ui-state-highlight,
+.ui-widget-header .ui-state-highlight {
+  background-color: yellow;
+  color: black !important;
+  border-top-left-radius: 1.5em;
+  border-bottom-right-radius: 1.5em;
+}
+/* padding: 15px; */
+
+/*
+/*Style #2 for datepicker*/
+/*
+body {
+/*  background: #fdfcf9;*/
+/*  font-family: sans-serif;*/
+/*}*/
+/*.calendar {*/
+/*  position: absolute;*/
+/*  width: 350px;*/
+/*  left: 50%;*/
+/*  top: 50%;*/
+/*  margin: -150px 0px 0px -175px;*/
+/*}*/
+/*.ui-datepicker-header {*/
+/*  height: 24px;*/
+/*  line-height: 24px;*/
+/*  color: #5ed1cc;*/
+/*  margin-bottom: 20px;*/
+/*}*/
+/*.ui-datepicker-prev,*/
+/*.ui-datepicker-next {*/
+/*  width: 20px;*/
+/*  height: 20px;*/
+/*  text-indent: 9999px;*/
+/*  border: 2px solid #cbd1d2;*/
+/*  border-radius: 100%;*/
+/*  cursor: pointer;*/
+/*  overflow: hidden;*/
+/*}*/
+/*.ui-datepicker-prev {*/
+/*  float: left;*/
+/*  margin-left: 12px;*/
+/*}*/
+/*.ui-datepicker-prev:after {*/
+/*  transform: rotate(45deg);*/
+/*  margin: -17px 0px 0px 8px;*/
+/*}*/
+/*.ui-datepicker-next {*/
+/*  float: right;*/
+/*  margin-right: 12px;*/
+/*}*/
+/*.ui-datepicker-next:after {*/
+/*  transform: rotate(-135deg);*/
+/*  margin: -17px 0px 0px 6px;*/
+/*}*/
+/*.ui-datepicker-prev:after,*/
+/*.ui-datepicker-next:after {*/
+/*  content: '';*/
+/*  position: absolute;*/
+/*  display: block;*/
+/*  width: 4px;*/
+/*  height: 4px;*/
+/*  border-left: 2px solid #cbd1d2;*/
+/*  border-bottom: 2px solid #cbd1d2;*/
+/*}*/
+/*.ui-datepicker-prev:hover,*/
+/*.ui-datepicker-next:hover,*/
+/*.ui-datepicker-prev:hover:after,*/
+/*.ui-datepicker-next:hover:after {*/
+/*  border-color: #5ed1cc;*/
+/*}*/
+/*.ui-datepicker-title {*/
+/*  text-align: center;*/
+/*}*/
+/*.ui-datepicker-calendar {*/
+/*  width: 100%;*/
+/*  text-align: center;*/
+/*}*/
+/*.ui-datepicker-calendar thead tr th span {*/
+/*  margin-bottom: 10px;*/
+/*  display: block;*/
+/*  width: 50px;*/
+/*  color: #777;*/
+/*}*/
+/*.ui-state-default {*/
+/*  display: block;*/
+/*  text-decoration: none;*/
+/*  color: #b5b5b5;*/
+/*  border: 2px solid transparent;*/
+/*  line-height: 46px;*/
+/*  border-radius: 100%;*/
+/*}*/
+/*.ui-state-default:hover {*/
+/*  border: 2px solid #5ed1cc;*/
+/*}*/
+/*.ui-state-highlight:before {*/
+/*  content: '';*/
+/*  position: absolute;*/
+/*  display: block;*/
+/*  width: 8px;*/
+/*  height: 8px;*/
+/*  border-radius: 100%;*/
+/*  margin: 33px 0px 0px 19px;*/
+/*  background: #5ed1cc;*/
+/*}*/
+/*.ui-state-active {*/
+/*  color: #5ed1cc;*/
+/*}*/
+/*.ui-datepicker-unselectable .ui-state-default {*/
+/*  color: #eee;*/
+/*  border: 2px solid transparent;*/
+/*}
+*/
+
+.calendar {
+  position: absolute;
+  width: 280px;
+  left: 50%;
+  top: 50%;
+  margin: -145px 0px 0px -140px;
+  background: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#ui-datepicker-div {
+  background: white;
+}
+
+.ui-datepicker-header {
+  height: 50px;
+  line-height: 50px;
+  color: #b0aead;
+  background: #e9e5e3;
+  margin-bottom: 10px;
+}
+.ui-datepicker-prev,
+.ui-datepicker-next {
+  width: 20px;
+  height: 20px;
+  text-indent: 9999px;
+  border: 2px solid #b0aead;
+  border-radius: 100%;
+  cursor: pointer;
+  overflow: hidden;
+  margin-top: 12px;
+}
+.ui-datepicker-prev {
+  float: left;
+  margin-left: 12px;
+}
+.ui-datepicker-prev:after {
+  transform: rotate(45deg);
+  margin: -43px 0px 0px 8px;
+}
+.ui-datepicker-next {
+  float: right;
+  margin-right: 12px;
+}
+.ui-datepicker-next:after {
+  transform: rotate(-135deg);
+  margin: -43px 0px 0px 6px;
+}
+.ui-datepicker-prev:after,
+.ui-datepicker-next:after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-left: 2px solid #b0aead;
+  border-bottom: 2px solid #b0aead;
+}
+.ui-datepicker-prev:hover,
+.ui-datepicker-next:hover,
+.ui-datepicker-prev:hover:after,
+.ui-datepicker-next:hover:after {
+  border-color: #5ed1cc;
+}
+.ui-datepicker-title {
+  text-align: center;
+}
+.ui-datepicker-calendar {
+  width: 100%;
+  text-align: center;
+}
+.ui-datepicker-calendar thead tr th span {
+  display: block;
+  width: 40px;
+  color: #00a8b2;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.ui-state-default {
+  display: block;
+  text-decoration: none;
+  color: #b5b5b5;
+  line-height: 40px;
+  font-size: 12px;
+}
+.ui-state-default:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+.ui-state-highlight {
+  color: #000;
+}
+.ui-state-active {
+  color: #5ed1cc;
+}
+.ui-datepicker-unselectable .ui-state-default {
+  color: #eee;
+  border: 2px solid transparent;
+}

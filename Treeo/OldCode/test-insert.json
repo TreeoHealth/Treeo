@@ -1,0 +1,29 @@
+{
+  "YourTestTable": [
+    {
+      "PutRequest": {
+        "Item":
+        {
+          "username": {
+            "S": "sophia"
+          },
+          "password": {
+            "S": "hello"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item":         {
+          "username": {
+            "S": "abc"
+          },
+          "password": {
+            "S": "123"
+          }
+        }
+      }
+    }
+  ]
+}

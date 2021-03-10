@@ -1,0 +1,14 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+<div class="orange">
+    <h1>File Upload</h1>
+    <br>
+    <form method="post" enctype="multipart/form-data" class="File">
+        {% csrf_token %}
+        <!-- <div class="button"> -->
+        <input type="file" accept=".doc,.docx,.odf,.pdf,.jpeg,.jpg,.png,.bmp,.gif" name="file" id="file" />
+        <input type="submit" value="Upload File" /></p>
+        <!-- </div> -->
+    </form>
+</div>
+{% endblock content %}

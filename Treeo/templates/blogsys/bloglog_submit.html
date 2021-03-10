@@ -1,0 +1,19 @@
+{% extends "users_acc/base2.html" %}
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+<h2> style="color:green;">{{message}}</h2>
+{% endfor %}
+{% endif %}
+<h3>
+<p>
+    <b>You have successfully submitted your Message!</b>
+</p>
+<div>
+<!--    <b>Name: {{form.Name}}</b>-->
+</div>
+<div>
+   <b>Message: {{form.Message}}</b>
+</div>
+</h3>
+{% endblock content %}

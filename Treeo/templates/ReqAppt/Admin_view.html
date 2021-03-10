@@ -1,0 +1,35 @@
+<!-- <head> -->
+  <!-- <title>Admin Appointment View</title> -->
+<!-- </head> -->
+{% extends "ReqAppt/apt_base.html" %}
+{% block content %}
+  <div class="orange">
+    <div class="first">
+      <div class="heading">
+        <h2 class="title">Admin View of Appointments</h2>
+      </div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">Doctor Name</th>
+            <th scope="col">Patient Name</th>
+            <th scope="col">Date and Time</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        {% for a in ApptTable %}
+        <tr>
+          <td> {{a.provider.user.first_name}} {{a.provider.user.last_name}}</td>
+          <td>{{a.patient.user.first_name}} {{a.patient.user.last_name}}</td>
+          <td>{{a.meetingDate}}</td>
+          {%if a.status%}
+          <td> <span class="Confirmed">Confirmed</span></td>
+          {% else %}
+          <td> <span class="Pending">Pending</span></td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock content %}

@@ -1,0 +1,14 @@
+MySQL Installation process
+	https://dev.mysql.com/downloads/file/?id=498596 (64 bit msi install)
+	pip install mysql (command line)
+	https://dev.mysql.com/downloads/workbench/ download mysql workbench
+	download mysql https://dev.mysql.com/downloads/installer/
+	Installed mysql and set root password
+	reloaded workbench to detect new server
+ 
+ 
+ 
+ 
+ 
+Eventually 
+	datagrip to allow external hosting/connection to database https://www.jetbrains.com/datagrip/

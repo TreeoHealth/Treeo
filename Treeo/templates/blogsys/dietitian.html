@@ -1,0 +1,54 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+
+<div class="orange">
+  <div class="messaging">
+    <div id="container">
+      <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav ">
+            <a class="nav-link" href="{% url 'Health_Coach' %}">Health Coach</a>
+            <a class="nav-link" href="{% url 'provider' %}">Physician</a>
+            <a class="nav-link" href="{% url 'dietitian' %}">Dietitian</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <h1>Dietitian: {{ First }} {{ Last }}</h1>
+    <!-- {% if messages %}
+    {% for message in messages %}
+    <h2 style="color:green;">{{message}}</h2>
+    {% endfor %}
+    {% endif %} -->
+    <form method="POST">
+      {% csrf_token %}
+      <div class="messageBox">
+        <b>Please enter your message in the box below</b>
+        {{ form.Message }}
+      </div>
+      <br><br><br><br><br><br><br><br>
+      <div class="button messageButton">
+        <input type="submit" value="Submit" class="btn btn-primary btn-large btn-block" />
+      </div>
+    </form>
+    <div class="messagingTable">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Sent By</th>
+            <th>Messages</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        {% for a in PostQ %}
+        <tr>
+          <td>{{a.TheActualsender}}</td>
+          <td>{{a.Message}}</td>
+          <td>{{a.meetingDate}}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,32 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+{% load static %}
+<div class="orange">
+    <h1>File Download</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>User</th>
+                <th>Date Created</th>
+                <th>Download</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in file_list %}
+            <tr>
+                <td>{{file.FileName}}</td>
+                <td>{{file.Uploader}}</td>
+                <td>{{file.date_uploaded}}</td>
+                <td><a href="{{file.file}}" target="_blank"
+                        download="file.FileName"><img alt="Download" src="{% static 'img/downloadArrow.png' %}"
+                            width="90" height="40" alt="" loading="lazy"/></a></td>
+                <td><a href="{% url 'upload_download_file_delete' file.id %}"
+                        ><img alt="Delete"
+                            src="{% static 'img/trash.png' %}" width="30" height="40" alt="" loading="lazy" /></a></td>
+                {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

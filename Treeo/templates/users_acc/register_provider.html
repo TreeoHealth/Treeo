@@ -1,0 +1,94 @@
+{% extends "users_acc/baseNoNavBar.html" %}
+{% block content %}
+<div class="orange">
+    <h2>{{error}}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="error">
+            {{ field.errors }}
+        </div>
+        {% endfor %}
+        <div class="treeoLogo"></div>
+        <div class="providerSignup">provider sign up</div>
+        <div class="fname">
+            first name
+        </div>
+        <div class="fnameBox">
+            <div class="fnameInput">
+                {{form.first_name}}
+            </div>
+        </div>
+
+        <div class="lname">
+            last name
+        </div>
+        <div class="lnameBox">
+            <div class="lnameInput">
+                {{form.last_name}}
+            </div>
+        </div>
+
+        <div class="email">
+            email
+        </div>
+        <div class="emailBox">
+            <div class="emailInput">
+                {{form.email}}
+            </div>
+        </div>
+
+        <div class="registerUsername">
+            username
+        </div>
+        <div class="registerUsernameBox">
+            <div class="registerUsernameInput">
+                {{form.username}}
+            </div>
+        </div>
+
+        <div class="registerPasswordOne">
+            password
+        </div>
+        <div class="registerPasswordOneBox">
+            <div class="registerPasswordOneInput">
+                {{form.password1}}
+                <p>At least 8 characters, not entirely numeric, not too similar to your personal information, not a
+                    commonly used password</p>
+            </div>
+        </div>
+
+        <div class="registerPasswordTwo">
+            confirm password
+        </div>
+        <div class="registerPasswordTwoBox">
+            <div class="registerPasswordTwoInput">
+                {{form.password2}}
+            </div>
+        </div>
+
+        <div class="registerPhone">
+            phone number
+        </div>
+        <div class="registerPhoneBox">
+            <div class="registerPhoneInput">
+                {{form.phone_no}}
+                <p>This field is optional. Do not include the country code, spaces, or any other characters</p>
+            </div>
+        </div>
+
+        <div class="registerProvider">
+            provider type
+        </div>
+        <div class="registerProviderBox">
+            <div class="registerProviderInput">
+                {{form.providertype}}
+            </div>
+        </div>
+
+        <div class="button registerButton">
+            <button type="submit" class="btn btn-primary btn-large btn-block">done</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

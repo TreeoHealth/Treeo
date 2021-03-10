@@ -1,0 +1,60 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+<form method = "post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="error">
+        {{ field.errors }}
+    </div>
+    {% endfor %}
+    <!-- {{form.as_p}} -->
+    <!-- <div class="row">
+        <div class="col">
+            <div style="color: red; font-size: 1em;">
+                {{form.new_password1.errors}}
+            </div>
+            <div style="display:inline-block; text-align:left; margin-left: 25px;">
+                <b> {{form.new_password1.label_tag}} </b>
+                {{form.new_password1}}
+                {% if form.new_password1.help_text %}
+                <div style="margin-top: 5px;">{{form.new_password1.help_text}}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div style="color: red; font-size: 1em; padding-right:50px;">
+                {{form.new_password2.errors}}
+            </div>
+            <div style="display:inline-block; text-align:left; padding-right: 225px;  padding-bottom:10px;">
+                <b> {{form.new_password2.label_tag}} </b>
+                {{form.new_password2}}
+                {% if form.new_password2.help_text %}
+            </div>
+            <div style="padding-top: 5px; padding-right:17px;">
+                {{form.new_password2.help_text}}
+            </div>
+            {% endif %}
+        </div>
+    </div> -->
+    <div class="resetPasswordTwo">reset password</div>
+    <div class="stepThree">step 3: set new password</div>
+    <div class="newPassword">new password</div>
+    <div class="newPasswordBox">
+        <div class="newPasswordInput">
+            {{form.new_password1}}
+        </div>
+    </div>
+    <div class="confirmPassword">confirm password</div>
+    <div class="confirmPasswordBox">
+        <div class="confirmPasswordInput">
+            {{form.new_password2}}
+        </div>
+    </div>
+    <div class="button passResetButton">
+        <button type="submit" class="btn btn-primary btn-large btn-block">save</button>
+    </div>
+    <div class="theT"></div>
+</form>
+{% endblock content %}

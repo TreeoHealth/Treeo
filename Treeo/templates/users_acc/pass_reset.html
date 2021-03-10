@@ -1,0 +1,29 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <!-- <div class="row">
+        <div class="col">
+            <div style="display:inline-block; text-align:left; padding-right:75px; padding-bottom: 10px">
+                <b> {{form.email.label_tag}} </b>
+                {{form.email}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <button type="submit" class="btn btn-primary btn-large btn-block">Request Password Reset</button>
+            </div>
+        </div> -->
+    <div class="resetPassword">reset password</div>
+    <div class="stepOne">step 1: enter your email</div>
+    <div class="emailBoxReset">
+        <div class="emailBoxInput">
+            {{form.email}}
+        </div>
+    </div>
+    <div class="button passResetButton">
+        <button type="submit" class="btn btn-primary btn-large btn-block">done</button>
+    </div>
+    <div class="theT"></div>
+</form>
+{% endblock content %}

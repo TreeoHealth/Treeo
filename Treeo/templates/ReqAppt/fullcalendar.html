@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Appointments Calendar</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.0/fullcalendar.min.css" rel="stylesheet"
+		type="text/css" />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.0/fullcalendar.print.css" rel="stylesheet"
+		type="text/css" media="print" />
+	<link href="https://code.jquery.com/ui/1.12.0/themes/flick/jquery-ui.css" rel="stylesheet" />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+	<link rel="stylesheet" href="../../static/css/apptCalendarStyle.css" type="text/css">
+</head>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.0/fullcalendar.min.js"></script>
+
+<style>
+	body {
+		font-family: "Titillium Web", sans-serif;
+	}
+</style>
+
+<body>
+	<div id="container">
+		<div class="orange" style="padding-top: 0px;">
+			<!-- <div id="navwrapper"> -->
+			<nav class="navbar navbar-expand navbar-dark bg-dark">
+				<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+					<div class="navbar-nav ">
+						<a class="nav-link" href="{% url 'home' %}">Home</a>
+						{% if user.user_type == 1%}
+						<a class="nav-link" href="{% url 'reqAppt' %}">Search Appointments</a>
+						{% else %}
+						<a class="nav-link" href="{% url 'reqAppt' %}">My Appointments</a>
+						{% endif %}
+						<a class="nav-link" href="{% url 'reqAppt_calendar' %}">Appointments Calendar</a>
+						<!--				<a href="{% url 'reqAppt_Admin' %}">Admin Appointment View</a>-->
+						<!--				<a href="{% url 'reqAppt_Doctor' %}">Doctor Appointment View</a>-->
+						<!--				<a href="{% url 'reqAppt_Patient' %}">Patient Appointment View</a>-->
+						{% if user.user_type == 1%}
+						{% else %}
+						<a class="nav-link" href="{% url 'create_Appointment' %}">Make an Appointment</a>
+						{% endif %}
+						<!--	<a href="{% url 'register' %}">Inbox</a>-->
+						<a class="nav-link" href="{% url 'apptArchive' %}">View Archived Appointments</a>
+						<a class="nav-link" href="{% url 'logout' %}">Logout</a>
+					</div>
+				</div>
+			</nav>
+			<!-- </div> -->
+			<div class="login">
+				<div class="login-screen">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div style="margin: 5%; width: 90%; margin-top: 15px; margin-bottom: 15px; ">
+		<div id="calendar" class="calendar">
+		</div>
+	</div>
+
+</body>
+
+
+
+<script>
+
+
+
+    $('#calendar').fullCalendar({
+  header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+      events: '/ReqAppt/calendar-events',
+
+  theme: true,
+			eventBorderColor: '#f99f71',
+				eventBackgroundColor: '#f99f71',
+  defaultView: 'agendaWeek',
+});
+
+if (window.innerWidth < 800) {
+            $('#calendar').fullCalendar('changeView', 'agendaDay');
+        }
+
+</script>
+

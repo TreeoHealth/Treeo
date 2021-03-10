@@ -1,0 +1,57 @@
+{% extends "patient_log/patient_log_base.html" %}
+{% block content %}
+<div class="orange">
+    {% if user.user_type == 3%}
+    <h1>Welcome To Your Daily Health Wellness Log</h1>
+    {% else %}
+    <h1>View Wellness Log</h1>
+    {% endif %}
+    {% if messages %}
+    {% for message in messages %}
+    <h2 style="color:green;">{{message}}</h2>
+    {% endfor %}
+    {% endif %}
+
+    {% if user.user_type == 3 %}
+    <div class="patientLog">
+        <form method="POST">
+            {% csrf_token %}
+            <!-- {{ form.as_p }} -->
+            <p>
+                <b> {{form.calories.label_tag}} </b>
+                {{form.calories}}
+            </p>
+
+            <p>
+                <b> {{form.water.label_tag}} </b>
+                {{form.water}}
+            </p>
+
+            <p>
+                <b> {{form.sleep.label_tag}} </b>
+                {{form.sleep}}
+            </p>
+
+            <p>
+                <b> {{form.mood.label_tag}} </b>
+                {{form.mood}}
+            </p>
+
+            <div class="button patientLogButton">
+                <button type="submit" class="btn btn-primary btn-large btn-block">Submit</button>
+            </div>
+        </form>
+    </div>
+
+
+    {% else %}
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.patient }}
+        <div class="button assignCareTeamButton">
+            <button type="submit" class="btn btn-primary btn-large btn-block">Submit</button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+{% endblock content %}

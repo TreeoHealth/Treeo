@@ -1,0 +1,13 @@
+{% extends "ReqAppt/apt_base.html" %}
+{% block content %}
+<div class="orange">
+  <form method="post" action="">
+    {% csrf_token %}
+    <h1>Are you sure you want to delete?</h1><br>
+    <div class="button deleteConfirmButtonAppointment">
+      <button class="btn btn-primary btn-large btn-block" type="submit">Yes</button>
+      <a href="{% url 'reqAppt_Doctor' %}" class="btn btn-primary btn-large btn-block">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock content %}

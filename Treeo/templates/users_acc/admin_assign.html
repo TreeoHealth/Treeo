@@ -1,0 +1,25 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+
+<div class="orange">
+    {% if patient %}
+    <p>{{patient.user.first_name}}</p>
+    <p>{{patient.user.last_name}}</p>
+    {% else %}
+    <h1>Assign Care Team</h1>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {% for route in form %}
+        <p> {{route}} </p>
+        {% endfor %}
+        {% for k in form2 %}
+        <p> {{k}} </p>
+        {% endfor %}
+        <!--    should be nested four loops for a combined dictioarny-->
+        <div class="button assignCareTeamButton">
+            <button type="submit" class="btn btn-primary btn-large btn-block">Ok</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

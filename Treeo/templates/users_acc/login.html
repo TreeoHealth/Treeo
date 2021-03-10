@@ -1,0 +1,50 @@
+{% extends "users_acc/baseNoNavBar.html" %}
+{% block content %}
+<!-- <div class="error">
+    {{errorMsg}}
+</div> -->
+<form method="post">
+    {% csrf_token %}
+    <div class="white">
+        <div class="rectangle">
+            <div class="treeoLogo"></div>
+            <div class="twitter"></div>
+            <div class="instagram"></div>
+            <div class="facebook"></div>
+            <p class="textOne">we’re here to help you start healing.</p>
+        </div>
+        <div class="textTwo">
+            <span>log in</span> to access your health portal
+            please enter a username
+        </div>
+
+        <div class="username">
+            <div class="usernameInput">
+                {{form.username}}
+            </div>
+        </div>
+
+        <div class="textThree">
+            please enter a password
+        </div>
+
+        <div class="password">
+            <div class="passwordInput">
+                {{form.password}}
+            </div>
+        </div>
+
+        <div class="button loginButton">
+            <button type="submit" class="btn btn-primary btn-large btn-block">login</button>
+            <!-- <a href="{% url 'pass_reset' %}" class="btn btn-primary btn-large btn-block">forgot your password?</a> -->
+            <!-- <a href="{% url 'register' %}" class="btn btn-primary btn-large btn-block">register</a> -->
+        </div>
+        <div class="signupLink">
+            <p>don't have an account? <a href="{% url 'register' %}"><span>sign up</span></a></p>
+            <p><a href="{% url 'pass_reset' %}"><span>forgot your password?</span></a></p>
+        </div>
+    </div>
+</form>
+<br>
+
+{% endblock content %}

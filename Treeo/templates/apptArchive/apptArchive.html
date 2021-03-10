@@ -1,0 +1,27 @@
+{% extends "ReqAppt/apt_base.html" %}
+{% block content %}
+<div class="orange">
+  <div class="first">
+    <div class="heading">
+      <h2 >Archived Appointments</h2>
+    </div>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Doctor Name</th>
+          <th>Patient Name</th>
+          <th>Date and Time</th>
+          <!-- <th>View Notes</th> -->
+        </tr>
+      </thead>
+      {% for i in apptArchive %}
+      <tr>
+        <td> {{i.provider.user.first_name}} {{i.provider.user.last_name}}</td>
+          <td>{{i.patient.user.first_name}} {{i.patient.user.last_name}}</td>
+          <td>{{i.meetingDate}}</td>
+      <tr>
+      {%endfor%}
+</table>
+</div>
+</div>
+{% endblock content %}

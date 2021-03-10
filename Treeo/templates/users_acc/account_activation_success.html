@@ -1,0 +1,17 @@
+{% extends "users_acc/baseNoNavBar.html" %}
+
+{% block content %}
+<!-- <p>Please confirm your email address to complete the registration. </p> -->
+<div class="verification">
+    email verified.
+</div>
+<div class="checkmark"></div>
+<div class="almostDone">
+    <span>You've successfully created your account.</span>
+    Continue to log into your health portal.
+</div>
+<div class="theT"></div>
+<div class="button portalButton">
+    <a href="{% url 'home' %}" class="btn btn-primary btn-large btn-block">go to portal</a>
+</div>
+{% endblock %}

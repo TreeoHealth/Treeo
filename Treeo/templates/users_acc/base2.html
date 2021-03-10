@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Treeo</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+	<link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+
+</head>
+
+<body>
+	<div id="container">
+		<nav class="navbar navbar-expand  navbar-dark bg-dark">
+			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+				<div class="navbar-nav ">
+					<a class="nav-link" href="{% url 'home' %}">Home</a>
+					<a class="nav-link" href="{% url 'Health_Coach' %}">Health Coach</a>
+					<a class="nav-link" href="{% url 'provider' %}">Provider</a>
+					<a class="nav-link" href="{% url 'dietitian' %}">Dietitian</a>
+					<!--	<a href="{% url 'register' %}">Inbox</a>-->
+				</div>
+			</div>
+		</nav>
+	</div>
+
+	{% if messages%}
+	{%for message in messages%}
+	<div class="message">
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+			<strong>{{message.tags}}!</strong>
+			{{message}}
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	</div>
+	{% endfor %}
+	{% endif %}
+ 	<!-- Form Error messaging -->
+    {% if formerrors %}
+	<div id="errors">
+		<div class="inner">
+			<p>There was a problem with the information you entered. Please correct the following:</p>
+			{{ formerrors.non_field_errors }}
+			<ul>
+				{% for field in formerrors %}
+					{% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+{% endif %}
+	<!-- /Form Error messaging -->
+	<div class="login">
+		<div class="login-screen">
+			{% block content %}
+			{% endblock %}
+		</div>
+	</div>
+</body>

@@ -1,0 +1,53 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+<div class="orange">
+    <h1>Profile</h1>
+    <div class="profile">
+        <img class="rounded-circle account-img " src="{{user.profile_pic.url}} " alt="">
+        <p><b>Username: </b>{{user.username}}</p>
+
+        <p><b>Email: </b>{{user.email}}</p>
+
+        <p><b>First Name: </b>{{user.first_name}}</p>
+
+        <p><b>Last Name: </b>{{user.last_name}}</p>
+        <p><b>Phone Number: </b>{{user.phone_no.as_national}}</p>
+        <!-- check whatsapp for bootstrap -->
+
+        <div class="button editProfileButton">
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-large btn-block">Edit Profile</a>
+            <a href="{% url 'pass_reset' %}" class="btn btn-primary btn-large btn-block">Change Password</a>
+        </div>
+
+        {% if user.user_type == 3 %}
+        <div class="currentCareTeam">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th colspan="2">Your Current Care Team</th>
+                    </tr>
+                </thead>
+                <tbody class="border-end-0">
+                    <tr>
+                        <td>Dietitian</td>
+                        <td>{{user.patient.doc_d.user.first_name}}
+                            {{user.patient.doc_d.user.last_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Physician</td>
+                        <td> {{user.patient.doc_p.user.first_name}}
+                            {{user.patient.doc_p.user.last_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Health Coach</td>
+                        <td> {{user.patient.doc_c.user.first_name}}
+                            {{user.patient.doc_c.user.last_name}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

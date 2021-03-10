@@ -1,0 +1,16 @@
+{% extends "users_acc/baseNoNavBar.html" %}
+{% block content %}
+<div class="verification">
+    you're logged out.
+</div>
+<div class="checkmark"></div>
+<div class="almostDone">
+    <span>You've successfully logged out of your account.</span>
+    Continue to log into your health portal.
+</div>
+<div class="theT"></div>
+
+<div class="button logoutButton">
+    <a href="{% url 'login' %}" class="btn btn-primary btn-large btn-block">go to log in</a>
+</div>
+{% endblock content %}

@@ -1,0 +1,57 @@
+{% extends "users_acc/base.html" %}
+{% block content %}
+
+<div class="orange">
+  <div class="messaging">
+    <div id="container">
+      <nav class="navbar navbar-expand  navbar-dark bg-dark">
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav ">
+            <a class="nav-link" href="{% url 'Patient1' %}">Patient1</a>
+            <a class="nav-link" href="{% url 'Patient2' %}">Patient2</a>
+            <a class="nav-link" href="{% url 'Patient3' %}">Patient3</a>
+            <a class="nav-link" href="{% url 'Patient4' %}">Patient4</a>
+            <a class="nav-link" href="{% url 'Patient5' %}">Patient5</a>
+            <a class="nav-link" href="{% url 'Patient6' %}">Patient6</a>
+            <a class="nav-link" href="{% url 'Patient7' %}">Patient7</a>
+            <a class="nav-link" href="{% url 'Patient8' %}">Patient8</a>
+            <a class="nav-link" href="{% url 'Patient9' %}">Patient9</a>
+            <a class="nav-link" href="{% url 'Patient10' %}">Patient10</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <h1>Patient 10: {{ q.user.first_name}} {{ q.user.last_name}}</h1>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="messageBox">
+        <b>Please enter your message in the box below</b>
+        {{ form.Message }}
+      </div>
+      <br><br><br><br><br><br><br><br>
+      <div class="button messageButton">
+        <input type="submit" value="Submit" class="btn btn-primary btn-large btn-block" />
+      </div>
+    </form>
+
+    <div class="messagingTable">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Sent By</th>
+            <th>Messages</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        {% for a in PostQ %}
+        <tr>
+          <td>{{a.TheActualsender}}</td>
+          <td>{{a.Message}}</td>
+          <td>{{a.meetingDate}}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}
