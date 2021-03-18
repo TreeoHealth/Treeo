@@ -1,0 +1,13 @@
+run "python -m pip install -r requirements.txt"
+delete all migration files in each module (Treeo>module folder>migrations) except init.py 
+target localholst database 
+drop all exiswting/local tables
+    -in workbench run "show tables;" to get all table names
+    -run dropAllTablesSQLScript.sql (but check and change the table names if needed)
+run "python manage.py makemigrations users_acc"
+for each other module -> run "python manage.py makemigrations <module_name>"
+run "python manage.py migrate"
+    NOTE: if you had any users/superuser/etc, you have to make it again (all table info was dropped)
+
+TO RUN
+*****run "python manage.py runserver"******

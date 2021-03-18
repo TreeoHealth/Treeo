@@ -1,0 +1,8 @@
+<h1>Create Note</h1>
+    <form method="post">
+        {% csrf_token %}
+                {{form.notes}}
+        <div>
+            <button type="submit">save note</button>
+        </div>
+    </form>

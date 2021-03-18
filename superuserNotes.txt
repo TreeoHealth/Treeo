@@ -1,0 +1,17 @@
+Make superuser account
+    -run "python manage.py createsuperuser"
+    -enter username, dummy email, password
+    -run "python manage.py runserver" and go to http://127.0.0.1:8000/admin/ (+ login)
+
+Manually adding patient users to the database
+    Go to Patients link -> click grey + add button (top right) -> green + to add new username/pw combination ->
+        enter + hit save in popup window (inserts into database) -> go to the Home link (top left) -> click on new
+        user in list of recent actions -> enter name + email -> save
+    NOTE: by default, email is left blank (which can't be done twice bc then they would match), so you have
+         to update the email of the first user before making another one
+
+Go into workbench + update confirmation flag manually
+    use treeohealthdb;
+    UPDATE users_acc_user SET is_email_confirmed=1 WHERE username = "first_user";
+
+(Now you should be able to use the user as if they verified their external email)

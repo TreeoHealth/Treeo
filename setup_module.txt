@@ -1,0 +1,12 @@
+To start a new module
+-make a new folder with the module name
+-cd into project file (Treeo)
+-run command line "python manage.py startapp moduleName"
+-add app to list of installed apps in project settings.py
+    -make sure the name of the config you give matches capilization of appconfig in module's apps.py
+-add models to model.py
+-add urls to urls.py
+-add views to views.py
+-check all includes for module imports
+-run command line "python manage.py makemigrations moduleName"
+-run command line "python manage.py migrate" (actually creates the table in the DB)

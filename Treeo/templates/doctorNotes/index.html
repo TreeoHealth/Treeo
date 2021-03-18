@@ -1,0 +1,23 @@
+<h1>Dr notes</h1>
+<p><a href="{% url 'create_note' %}"><span>create new note </span></a></p>
+{% for note in all_dr_notes %}
+	<!-- <label>Provider</label><br>
+	<input readonly type="text" value={{note.apptId.provider}}>
+    <label>Patient</label><br>
+	<input readonly type="text" value={{note.apptId.patient}}>
+	<label>Appt schduled</label><br>
+	<input readonly type="text" value="{{note.apptId.meetingDate}}"> -->
+	<br><label>Note ID</label><br>
+	<input readonly type="text" value="{{note.apptId}}">
+	<br>
+    <label>Notes Created</label><br>
+	<input readonly type="text" value="{{note.dateAdded}}">
+	<br>
+    <label>Note Content</label><br>
+	<textarea readonly>{{note.notes}}</textarea>
+	<br>
+	<label>Is Original</label><br>
+	<input readonly type="text" value="{{note.isOriginalNote}}">
+	<br>
+---------------------------------------------------------------------------
+{% endfor %}

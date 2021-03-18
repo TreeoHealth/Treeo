@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'ReqAppt.apps.ReqapptConfig',
     'messaging.apps.MessagingConfig',
     'upload_download.apps.UploadDownloadConfig',
+    'doctorNotes.apps.DoctornotesConfig', ##
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

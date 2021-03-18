@@ -1,0 +1,26 @@
+Low level
+-how to link foreign key objects that already exist in the db
+-how to correctly use forms.py to collect a dr note from the view
+
+-MAKE a low level set of users (2 of each type), appts, and archive appts so if you have to drop and remake, you
+    don't lose all functionality that relies on having items in the db
+
+Dr notes
+-model -> appt #, provider, patient, 1000 word limit, time stamp, original note flag
+-encrypt all dr notes
+-button on archived appt list to show dr notees page
+-make interface for dr to write notes
+-make button to save 1st note 
+    -"are you sure you want to save this note? you will not be able to change it"
+    -automatically save ? min after appt ends (give them time to edit)??
+-make button for dr on appt>dr notes page ("append") -> makes a new model obj
+-make readonly display for patients to read in time order (mark orig vs edits)
+    -make same display for dr but w button
+-make button for "make appt notes" next to appt that they can't do until 10 min before appt starts
+
+General TODO
+-make "share w provider" button so all docs have a level of protection from assigned providers
+-dr sign up link -> admin gen
+-limit admin access (only provider uploads)
+    -make a "share w treeo admin" button
+-fully encryption of wellness/msging
